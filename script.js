@@ -105,8 +105,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Verificar vencimientos al cargar la página y luego cada hora
-            verificarVencimientos(db);
-            setInterval(() => verificarVencimientos(db), 3600000);
+            // Código eliminado para evitar notificaciones automáticas.
+            // verificarVencimientos(db);
+            // setInterval(() => verificarVencimientos(db), 3600000);
 
             // Muestra la sección inicial
             showSection('tramites');
@@ -533,7 +534,6 @@ function consultarUtilidades() {
             </div>
         ` : '<p style="margin-top: 15px;">No hay movimientos para esta fecha.</p>'}
     `;
-    
     resultadosUtilidad.innerHTML = resultadosHTML;
 }
 
@@ -542,7 +542,6 @@ async function editarMovimiento(id) {
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return;
     const movimiento = docSnap.data();
-    
     const modalBody = `
         <form id="editMovimientoForm">
             <div class="form-row">
@@ -580,16 +579,13 @@ async function editarMovimiento(id) {
             </div>
         </form>
     `;
-    
     document.getElementById('modalTitle').textContent = 'Editar Movimiento';
     document.getElementById('modalBody').innerHTML = modalBody;
     document.getElementById('editModal').style.display = 'block';
-    
     document.getElementById('editMovimientoForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const montoInput = document.getElementById('editContaMonto').value;
         const monto = parseFloat(montoInput.replace(/\./g, ''));
-
         const updatedMovimiento = {
             fecha: document.getElementById('editContaFecha').value,
             cliente: document.getElementById('editContaCliente').value,
@@ -624,23 +620,18 @@ async function eliminarMovimiento(id) {
 async function agregarClienteCRM(e, db) {
     e.preventDefault();
     const cliente = {
-        cliente: document.getElementById('crmCliente').value,
-        placa: document.getElementById('crmPlaca').value.toUpperCase(),
-        propietario: document.getElementById('crmPropietario').value,
-        cedula: document.getElementById('crmCedula').value,
-        telefono: document.getElementById('crmTelefono').value,
-        correo: document.getElementById('crmCorreo').value,
-        venceSOAT: document.getElementById('crmVenceSOAT').value,
-        venceRTM: document.getElementById('crmVenceRTM').value,
-        cantidadAvisos: 0
+        nombre: document.getElementById('crmNombre').value,
+        contacto: document.getElementById('crmContacto').value,
+        tipo: document.getElementById('crmTipo').value,
+        detalles: document.getElementById('crmDetalles').value
     };
     try {
         await addDoc(collection(db, 'clientesCRM'), cliente);
         document.getElementById('crmForm').reset();
-        mostrarNotificacion('Cliente agregado al CRM correctamente', 'success');
+        mostrarNotificacion('Cliente agregado al CRM', 'success');
     } catch (error) {
-        console.error("Error al agregar el cliente: ", error);
-        mostrarNotificacion('Error al agregar el cliente', 'error');
+        console.error("Error al agregar el cliente CRM: ", error);
+        mostrarNotificacion('Error al agregar el cliente al CRM', 'error');
     }
 }
 
@@ -651,119 +642,34 @@ function actualizarTablaCRM() {
         container.innerHTML = '<p>No hay clientes registrados en el CRM.</p>';
         return;
     }
-    
     const tabla = `
         <table>
             <thead>
                 <tr>
-                    <th>Cliente</th>
-                    <th>Placa</th>
-                    <th>Propietario</th>
-                    <th>Cédula</th>
-                    <th>Teléfono</th>
-                    <th>Correo</th>
-                    <th>Vence SOAT</th>
-                    <th>Vence RTM</th>
-                    <th>Avisos</th>
+                    <th>Nombre</th>
+                    <th>Contacto</th>
+                    <th>Tipo</th>
+                    <th>Detalles</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                ${clientesCRM.map(cliente => {
-                    const soatVencimiento = calcularDiasVencimiento(cliente.venceSOAT);
-                    const rtmVencimiento = calcularDiasVencimiento(cliente.venceRTM);
-                    return `
-                        <tr>
-                            <td>${cliente.cliente}</td>
-                            <td>${cliente.placa}</td>
-                            <td>${cliente.propietario}</td>
-                            <td>${cliente.cedula}</td>
-                            <td>${cliente.telefono}</td>
-                            <td>${cliente.correo}</td>
-                            <td>
-                                ${new Date(cliente.venceSOAT).toLocaleDateString()}
-                                ${soatVencimiento <= 30 && soatVencimiento >= 0 ? '<span class="alerta-vencimiento">¡Próximo a vencer!</span>' : ''}
-                            </td>
-                            <td>
-                                ${new Date(cliente.venceRTM).toLocaleDateString()}
-                                ${rtmVencimiento <= 30 && rtmVencimiento >= 0 ? '<span class="alerta-vencimiento">¡Próximo a vencer!</span>' : ''}
-                            </td>
-                            <td>
-                                <span class="cant-avisos cant-avisos-${Math.min(cliente.cantidadAvisos, 3)}">
-                                    ${cliente.cantidadAvisos}
-                                </span>
-                            </td>
-                            <td>
-                                <button class="btn-edit" onclick="editarClienteCRM('${cliente.id}')">Editar</button>
-                                <button class="btn-delete" onclick="eliminarClienteCRM('${cliente.id}')">Eliminar</button>
-                                <button class="btn-whatsapp" onclick="notificarWhatsApp('${cliente.id}', '${cliente.telefono}', '${cliente.propietario}', '${cliente.placa}', '${cliente.venceSOAT}', '${cliente.venceRTM}')">Notificar WhatsApp</button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('')}
+                ${clientesCRM.map(c => `
+                    <tr>
+                        <td>${c.nombre}</td>
+                        <td>${c.contacto}</td>
+                        <td>${capitalizeFirst(c.tipo)}</td>
+                        <td>${c.detalles}</td>
+                        <td>
+                            <button class="btn-edit" onclick="editarClienteCRM('${c.id}')">Editar</button>
+                            <button class="btn-delete" onclick="eliminarClienteCRM('${c.id}')">Eliminar</button>
+                        </td>
+                    </tr>
+                `).join('')}
             </tbody>
         </table>
     `;
     container.innerHTML = tabla;
-}
-
-async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, venceRTM) {
-    try {
-        const docRef = doc(db, 'clientesCRM', id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            const cliente = docSnap.data();
-            const newAvisos = (cliente.cantidadAvisos || 0) + 1;
-            await updateDoc(docRef, { cantidadAvisos: newAvisos });
-        }
-        
-        const vencimientoSOAT = new Date(venceSOAT).toLocaleDateString();
-        const vencimientoRTM = new Date(venceRTM).toLocaleDateString();
-        const mensaje = `¡Hola ${propietario}! Te recordamos que el SOAT de tu vehículo con placa ${placa} vence el ${vencimientoSOAT} y la RTM vence el ${vencimientoRTM}. ¡Contáctanos para renovarlos!`;
-        const mensajeCodificado = encodeURIComponent(mensaje);
-        const url = `https://api.whatsapp.com/send?phone=${telefono}&text=${mensajeCodificado}`;
-        window.open(url, '_blank');
-    } catch (error) {
-        console.error("Error al notificar por WhatsApp: ", error);
-        mostrarNotificacion('Error al enviar la notificación', 'error');
-    }
-}
-
-async function verificarVencimientos(db) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const hoyISO = today.toISOString().split('T')[0];
-    let avisosEnviados = 0;
-
-    const snapshot = await getDocs(collection(db, 'clientesCRM'));
-    const clientes = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-
-    for (const cliente of clientes) {
-        const venceSOAT = new Date(cliente.venceSOAT);
-        venceSOAT.setHours(0, 0, 0, 0);
-        const venceRTM = new Date(cliente.venceRTM);
-        venceRTM.setHours(0, 0, 0, 0);
-        const diasSOAT = Math.ceil((venceSOAT - today) / (1000 * 60 * 60 * 24));
-        const diasRTM = Math.ceil((venceRTM - today) / (1000 * 60 * 60 * 24));
-        const keySOAT = `notificacion_enviada_${cliente.id}_SOAT_${hoyISO}`;
-        const keyRTM = `notificacion_enviada_${cliente.id}_RTM_${hoyISO}`;
-        
-        if (diasSOAT <= 30 && diasSOAT >= 0 && !localStorage.getItem(keySOAT)) {
-            await notificarWhatsApp(cliente.id, cliente.telefono, cliente.propietario, cliente.placa, cliente.venceSOAT, cliente.venceRTM);
-            localStorage.setItem(keySOAT, true);
-            avisosEnviados++;
-        }
-        
-        if (diasRTM <= 30 && diasRTM >= 0 && !localStorage.getItem(keyRTM)) {
-            await notificarWhatsApp(cliente.id, cliente.telefono, cliente.propietario, cliente.placa, cliente.venceSOAT, cliente.venceRTM);
-            localStorage.setItem(keyRTM, true);
-            avisosEnviados++;
-        }
-    }
-
-    if (avisosEnviados > 0) {
-        mostrarNotificacion(`Se han enviado ${avisosEnviados} avisos de vencimiento por WhatsApp.`, 'info');
-    }
 }
 
 async function editarClienteCRM(id) {
@@ -771,43 +677,27 @@ async function editarClienteCRM(id) {
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return;
     const cliente = docSnap.data();
-    
     const modalBody = `
-        <form id="editCrmForm">
+        <form id="editCRMForm">
             <div class="form-row">
                 <div class="form-group">
-                    <label>Cliente</label>
-                    <input type="text" id="editCrmCliente" value="${cliente.cliente}" required>
+                    <label>Nombre</label>
+                    <input type="text" id="editCrmNombre" value="${cliente.nombre}" required>
                 </div>
                 <div class="form-group">
-                    <label>Placa</label>
-                    <input type="text" id="editCrmPlaca" value="${cliente.placa}" required>
+                    <label>Contacto</label>
+                    <input type="text" id="editCrmContacto" value="${cliente.contacto}" required>
                 </div>
                 <div class="form-group">
-                    <label>Propietario</label>
-                    <input type="text" id="editCrmPropietario" value="${cliente.propietario}" required>
+                    <label>Tipo</label>
+                    <select id="editCrmTipo" required>
+                        <option value="persona" ${cliente.tipo === 'persona' ? 'selected' : ''}>Persona</option>
+                        <option value="empresa" ${cliente.tipo === 'empresa' ? 'selected' : ''}>Empresa</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label>Cédula</label>
-                    <input type="text" id="editCrmCedula" value="${cliente.cedula}" required>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Teléfono</label>
-                    <input type="tel" id="editCrmTelefono" value="${cliente.telefono}" required>
-                </div>
-                <div class="form-group">
-                    <label>Correo</label>
-                    <input type="email" id="editCrmCorreo" value="${cliente.correo}">
-                </div>
-                <div class="form-group">
-                    <label>Vence SOAT</label>
-                    <input type="date" id="editCrmVenceSOAT" value="${cliente.venceSOAT}" required>
-                </div>
-                <div class="form-group">
-                    <label>Vence RTM</label>
-                    <input type="date" id="editCrmVenceRTM" value="${cliente.venceRTM}" required>
+                    <label>Detalles</label>
+                    <textarea id="editCrmDetalles">${cliente.detalles}</textarea>
                 </div>
             </div>
             <div style="margin-top: 20px;">
@@ -816,27 +706,22 @@ async function editarClienteCRM(id) {
             </div>
         </form>
     `;
-    
     document.getElementById('modalTitle').textContent = 'Editar Cliente CRM';
     document.getElementById('modalBody').innerHTML = modalBody;
     document.getElementById('editModal').style.display = 'block';
     
-    document.getElementById('editCrmForm').addEventListener('submit', async function(e) {
+    document.getElementById('editCRMForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const updatedCliente = {
-            cliente: document.getElementById('editCrmCliente').value,
-            placa: document.getElementById('editCrmPlaca').value.toUpperCase(),
-            propietario: document.getElementById('editCrmPropietario').value,
-            cedula: document.getElementById('editCrmCedula').value,
-            telefono: document.getElementById('editCrmTelefono').value,
-            correo: document.getElementById('editCrmCorreo').value,
-            venceSOAT: document.getElementById('editCrmVenceSOAT').value,
-            venceRTM: document.getElementById('editCrmVenceRTM').value
+            nombre: document.getElementById('editCrmNombre').value,
+            contacto: document.getElementById('editCrmContacto').value,
+            tipo: document.getElementById('editCrmTipo').value,
+            detalles: document.getElementById('editCrmDetalles').value
         };
         try {
             await updateDoc(docRef, updatedCliente);
             document.getElementById('editModal').style.display = 'none';
-            mostrarNotificacion('Cliente actualizado correctamente', 'success');
+            mostrarNotificacion('Cliente CRM actualizado correctamente', 'success');
         } catch (error) {
             console.error("Error al actualizar el cliente: ", error);
             mostrarNotificacion('Error al actualizar el cliente', 'error');
@@ -859,72 +744,31 @@ async function eliminarClienteCRM(id) {
 // SECCIÓN PLACAS
 async function registrarPlaca(e, db) {
     e.preventDefault();
-    
-    const placaInicialStr = document.getElementById('placaInicial').value.toUpperCase();
-    const placaFinalStr = document.getElementById('placaFinal').value.toUpperCase();
-    const asignadaA = document.getElementById('placaAsignadaA').value;
-    const fechaRecepcion = document.getElementById('placaFechaRecepcion').value;
-    const fechaAsignada = document.getElementById('placaFechaAsignada').value;
-    const fechaMatricula = document.getElementById('placaFechaMatricula').value;
-    const observaciones = document.getElementById('placaObservaciones').value;
-    
-    function parsePlaca(placa) {
-        const match = placa.match(/^([A-Z]+)(\d+)([A-Z]?)$/);
-        if (!match) {
-            mostrarNotificacion('Formato de placa inválido. Ej: JHP34G', 'error');
-            throw new Error('Formato de placa inválido');
-        }
-        return {
-            letras1: match[1],
-            numero: parseInt(match[2], 10),
-            letras2: match[3] || ''
-        };
-    }
-
+    const placa = {
+        placa: document.getElementById('placaNumero').value.toUpperCase(),
+        dueno: document.getElementById('placaDueno').value,
+        fechaRecepcion: document.getElementById('placaFechaRecepcion').value,
+        fechaVencimientoSOAT: document.getElementById('placaFechaSoat').value,
+        fechaVencimientoTecno: document.getElementById('placaFechaTecno').value,
+        fechaVencimientoLicencia: document.getElementById('placaFechaLicencia').value,
+        estado: 'activo',
+        observaciones: document.getElementById('placaObservaciones').value
+    };
     try {
-        const placaInicial = parsePlaca(placaInicialStr);
-        const placaFinal = parsePlaca(placaFinalStr);
-
-        if (placaInicial.letras1 !== placaFinal.letras1 || placaInicial.letras2 !== placaFinal.letras2 || placaInicial.numero > placaFinal.numero) {
-            mostrarNotificacion('El rango de placas no es válido. Las letras deben coincidir y la placa final debe ser mayor que la inicial.', 'error');
-            return;
-        }
-
-        const padding = placaInicialStr.match(/\d+/)[0].length;
-        const batch = writeBatch(db);
-
-        for (let i = placaInicial.numero; i <= placaFinal.numero; i++) {
-            const numeroFormateado = String(i).padStart(padding, '0');
-            const nuevaPlaca = `${placaInicial.letras1}${numeroFormateado}${placaInicial.letras2}`;
-
-            const placaData = {
-                placa: nuevaPlaca,
-                asignadaA,
-                fechaRecepcion,
-                fechaAsignada,
-                fechaMatricula,
-                observaciones,
-                estado: obtenerEstadoPlaca(fechaAsignada, fechaMatricula, asignadaA)
-            };
-            const docRef = doc(collection(db, 'placas'));
-            batch.set(docRef, placaData);
-        }
-        await batch.commit();
-
+        await addDoc(collection(db, 'placas'), placa);
         document.getElementById('placasForm').reset();
         document.getElementById('placaFechaRecepcion').value = new Date().toISOString().split('T')[0];
-        mostrarNotificacion(`Rango de placas de ${placaInicialStr} a ${placaFinalStr} registrado correctamente`, 'success');
-
-    } catch (e) {
-        console.error(e);
-        mostrarNotificacion('Error al registrar las placas', 'error');
+        mostrarNotificacion('Placa registrada correctamente', 'success');
+    } catch (error) {
+        console.error("Error al registrar la placa: ", error);
+        mostrarNotificacion('Error al registrar la placa', 'error');
     }
 }
 
 function actualizarTablaPlacas() {
     const container = document.getElementById('tablaPlacas');
     if (!container) return;
-    if (!placas || placas.length === 0) {
+    if (placas.length === 0) {
         container.innerHTML = '<p>No hay placas registradas.</p>';
         return;
     }
@@ -934,50 +778,44 @@ function actualizarTablaPlacas() {
             <thead>
                 <tr>
                     <th>Placa</th>
-                    <th>Asignada a</th>
-                    <th>F. Recepción</th>
-                    <th>F. Asignada</th>
-                    <th>F. Matrícula</th>
-                    <th>Observaciones</th>
-                    <th>Estado</th>
+                    <th>Dueño</th>
+                    <th>Fechas de Vencimiento</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                ${placas.map(p => {
-                    const estado = obtenerEstadoPlaca(p.fechaAsignada, p.fechaMatricula, p.asignadaA);
-                    return `
-                    <tr>
-                        <td>${p.placa}</td>
-                        <td>${p.asignadaA || 'N/A'}</td>
-                        <td>${p.fechaRecepcion ? new Date(p.fechaRecepcion).toLocaleDateString() : 'N/A'}</td>
-                        <td>${p.fechaAsignada ? new Date(p.fechaAsignada).toLocaleDateString() : 'N/A'}</td>
-                        <td>${p.fechaMatricula ? new Date(p.fechaMatricula).toLocaleDateString() : 'N/A'}</td>
-                        <td>${p.observaciones || 'N/A'}</td>
-                        <td><span class="badge badge-${estado.toLowerCase().replace(' ', '-')}">${estado}</span></td>
-                        <td>
-                            <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
-                            <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
-                        </td>
-                    </tr>
-                `;
-                }).join('')}
+                ${placas.map(p => generarPlacaHTML(p)).join('')}
             </tbody>
         </table>
     `;
     container.innerHTML = tabla;
 }
 
-function obtenerEstadoPlaca(fechaAsignada, fechaMatricula, asignadaA) {
-    if (fechaMatricula && fechaMatricula.length > 0) {
-        return 'Matriculada';
-    } else if (fechaAsignada && fechaAsignada.length > 0) {
-        return 'Asignada';
-    } else if (asignadaA && asignadaA.length > 0) {
-        return 'Recibida';
-    } else {
-        return 'En Trámite';
-    }
+function generarPlacaHTML(placa) {
+    const diasSoat = placa.fechaVencimientoSOAT ? calcularDiasVencimiento(placa.fechaVencimientoSOAT) : null;
+    const diasTecno = placa.fechaVencimientoTecno ? calcularDiasVencimiento(placa.fechaVencimientoTecno) : null;
+    const diasLicencia = placa.fechaVencimientoLicencia ? calcularDiasVencimiento(placa.fechaVencimientoLicencia) : null;
+
+    return `
+        <tr>
+            <td>
+                <strong>${placa.placa}</strong><br>
+                <small>${placa.dueno}</small>
+            </td>
+            <td>
+                SOAT: <span class="badge ${diasSoat < 30 ? 'vence-pronto' : ''}">${placa.fechaVencimientoSOAT || 'N/A'} ${diasSoat !== null ? `(${diasSoat} días)` : ''}</span><br>
+                T.Mecánica: <span class="badge ${diasTecno < 30 ? 'vence-pronto' : ''}">${placa.fechaVencimientoTecno || 'N/A'} ${diasTecno !== null ? `(${diasTecno} días)` : ''}</span><br>
+                Licencia: <span class="badge ${diasLicencia < 30 ? 'vence-pronto' : ''}">${placa.fechaVencimientoLicencia || 'N/A'} ${diasLicencia !== null ? `(${diasLicencia} días)` : ''}</span>
+            </td>
+            <td>
+                <button class="btn-edit" onclick="editarPlaca('${placa.id}')">Editar</button>
+                <button class="btn-delete" onclick="eliminarPlaca('${placa.id}')">Eliminar</button>
+                <button class="btn-whatsapp" onclick="notificarWhatsApp('${placa.placa}', '${placa.dueno}')">
+                    <i class="fab fa-whatsapp"></i> Notificar
+                </button>
+            </td>
+        </tr>
+    `;
 }
 
 async function editarPlaca(id) {
@@ -985,35 +823,37 @@ async function editarPlaca(id) {
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return;
     const placa = docSnap.data();
-    
+
     const modalBody = `
         <form id="editPlacaForm">
             <div class="form-row">
                 <div class="form-group">
                     <label>Placa</label>
-                    <input type="text" id="editPlaca" value="${placa.placa}" required>
+                    <input type="text" id="editPlacaNumero" value="${placa.placa}" required>
                 </div>
                 <div class="form-group">
-                    <label>Asignada a</label>
-                    <input type="text" id="editPlacaAsignadaA" value="${placa.asignadaA || ''}" required>
+                    <label>Dueño</label>
+                    <input type="text" id="editPlacaDueno" value="${placa.dueno}" required>
                 </div>
                 <div class="form-group">
                     <label>Fecha Recepción</label>
                     <input type="date" id="editPlacaFechaRecepcion" value="${placa.fechaRecepcion}" required>
                 </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group">
-                    <label>Fecha Asignada</label>
-                    <input type="date" id="editPlacaFechaAsignada" value="${placa.fechaAsignada}">
+                    <label>Vencimiento SOAT</label>
+                    <input type="date" id="editPlacaFechaSoat" value="${placa.fechaVencimientoSOAT || ''}">
                 </div>
                 <div class="form-group">
-                    <label>Fecha Matrícula</label>
-                    <input type="date" id="editPlacaFechaMatricula" value="${placa.fechaMatricula}">
+                    <label>Vencimiento Tecno</label>
+                    <input type="date" id="editPlacaFechaTecno" value="${placa.fechaVencimientoTecno || ''}">
                 </div>
                 <div class="form-group">
+                    <label>Vencimiento Licencia</label>
+                    <input type="date" id="editPlacaFechaLicencia" value="${placa.fechaVencimientoLicencia || ''}">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
                     <label>Observaciones</label>
-                    <textarea id="editPlacaObservaciones" placeholder="Observaciones adicionales">${placa.observaciones || ''}</textarea>
+                    <textarea id="editPlacaObservaciones">${placa.observaciones || ''}</textarea>
                 </div>
             </div>
             <div style="margin-top: 20px;">
@@ -1022,28 +862,20 @@ async function editarPlaca(id) {
             </div>
         </form>
     `;
-    
-    document.getElementById('modalTitle').textContent = 'Editar Registro de Placa';
+    document.getElementById('modalTitle').textContent = 'Editar Placa';
     document.getElementById('modalBody').innerHTML = modalBody;
     document.getElementById('editModal').style.display = 'block';
-    
+
     document.getElementById('editPlacaForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const nuevaPlaca = document.getElementById('editPlaca').value.toUpperCase();
-        const nuevaAsignadaA = document.getElementById('editPlacaAsignadaA').value;
-        const nuevaFechaRecepcion = document.getElementById('editPlacaFechaRecepcion').value;
-        const nuevaFechaAsignada = document.getElementById('editPlacaFechaAsignada').value;
-        const nuevaFechaMatricula = document.getElementById('editPlacaFechaMatricula').value;
-        const nuevasObservaciones = document.getElementById('editPlacaObservaciones').value;
-
         const updatedPlaca = {
-            placa: nuevaPlaca,
-            asignadaA: nuevaAsignadaA,
-            fechaRecepcion: nuevaFechaRecepcion,
-            fechaAsignada: nuevaFechaAsignada,
-            fechaMatricula: nuevaFechaMatricula,
-            observaciones: nuevasObservaciones,
-            estado: obtenerEstadoPlaca(nuevaFechaAsignada, nuevaFechaMatricula, nuevaAsignadaA)
+            placa: document.getElementById('editPlacaNumero').value.toUpperCase(),
+            dueno: document.getElementById('editPlacaDueno').value,
+            fechaRecepcion: document.getElementById('editPlacaFechaRecepcion').value,
+            fechaVencimientoSOAT: document.getElementById('editPlacaFechaSoat').value,
+            fechaVencimientoTecno: document.getElementById('editPlacaFechaTecno').value,
+            fechaVencimientoLicencia: document.getElementById('editPlacaFechaLicencia').value,
+            observaciones: document.getElementById('editPlacaObservaciones').value
         };
         try {
             await updateDoc(docRef, updatedPlaca);
@@ -1068,7 +900,7 @@ async function eliminarPlaca(id) {
     }
 }
 
-// FUNCIONES DE UTILIDAD
+// OTRAS FUNCIONES ÚTILES
 function capitalizeFirst(str) {
     if (!str) return '';
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -1095,13 +927,23 @@ function calcularDiasVencimiento(fecha) {
     return Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
 }
 
+async function notificarWhatsApp(placa, dueno) {
+    const mensaje = `Hola ${dueno}, te notificamos que tienes un trámite de placa pendiente. La placa es: ${placa}.`;
+    const numero = '+573212046892'; // Número de teléfono al que se enviará el mensaje
+    const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+    
+    // Abre una nueva ventana o pestaña con el enlace de WhatsApp
+    window.open(url, '_blank');
+    mostrarNotificacion('Mensaje de WhatsApp enviado', 'success');
+}
+
 // Expone las funciones a la ventana global para que el HTML pueda acceder a ellas.
 window.showSection = showSection;
 window.cambiarEstadoTramite = cambiarEstadoTramite;
 window.cambiarEstadoPago = cambiarEstadoPago;
 window.actualizarObservaciones = actualizarObservaciones;
 window.editarTramite = editarTramite;
-window.eliminarTramite = eliminarTramite;
+window.eliminarTramite = eliminarTraminar;
 window.consultarUtilidades = consultarUtilidades;
 window.editarMovimiento = editarMovimiento;
 window.eliminarMovimiento = eliminarMovimiento;
@@ -1111,4 +953,3 @@ window.notificarWhatsApp = notificarWhatsApp;
 window.verificarVencimientos = verificarVencimientos;
 window.editarPlaca = editarPlaca;
 window.eliminarPlaca = eliminarPlaca;
-window.actualizarRegistrosContables = actualizarRegistrosContables;
