@@ -3,88 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Contable Integral</title>
+    <title>RH Asesorías - Panel de Control</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .login-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            text-align: center;
-        }
-        .login-form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-        .login-form input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .login-form button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .login-form button:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="loginPanel" class="login-container">
-        <div class="login-form">
+    <div id="notificacion" class="notificacion"></div>
+
+    <section id="loginPanel" class="section active">
+        <div class="login-container">
             <h2>Iniciar Sesión</h2>
             <form id="loginForm">
-                <input type="text" id="email" placeholder="Usuario" required>
-                <input type="password" id="password" placeholder="Contraseña" required>
-                <button type="submit">Acceder</button>
+                <div class="form-group">
+                    <label for="emailInput">Correo Electrónico:</label>
+                    <input type="email" id="emailInput" required>
+                </div>
+                <div class="form-group">
+                    <label for="passwordInput">Contraseña:</label>
+                    <input type="password" id="passwordInput" required>
+                </div>
+                <button type="submit" class="btn-primary">Iniciar Sesión</button>
             </form>
         </div>
-    </div>
+    </section>
 
-    <div id="appContainer" style="display: none;">
-        <div class="container">
-            <header class="header">
-                <h1>Sistema de Gestión Contable</h1>
-                <nav class="nav">
-                    <button class="nav-btn active" onclick="showSection('tramites')">Trámites</button>
-                    <button class="nav-btn" onclick="showSection('contabilidad')">Contabilidad</button>
-                    <button class="nav-btn" onclick="showSection('crm')">CRM</button>
-                    <button class="nav-btn" onclick="showSection('placas')">Placas</button>
-                </nav>
-            </header>
-            <section id="tramites" class="section active">
-                </section>
+    <div id="appContainer" class="hidden">
+        <header>
+            <div class="logo">RH Asesorías</div>
+            <nav>
+                <button id="btnTramites" class="nav-btn">Trámites</button>
+                <button id="btnContabilidad" class="nav-btn">Contabilidad</button>
+                <button id="btnCRM" class="nav-btn">CRM</button>
+                <button id="btnPlacas" class="nav-btn">Placas</button>
+                <button id="logoutBtn" class="nav-btn btn-logout">Cerrar Sesión</button>
+            </nav>
+        </header>
+
+        <main>
+            <section id="tramites" class="section">
+                <h2>Gestión de Trámites</h2>
+                <div class="card">
+                    <h3>Registrar Nuevo Trámite</h3>
+                    <form id="tramiteForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tramiteFecha">Fecha:</label>
+                                <input type="date" id="tramiteFecha" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tramiteCliente">Cliente:</label>
+                                <input type="text" id="tramiteCliente" placeholder="Nombre del Cliente" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tramitePlaca">Placa:</label>
+                                <input type="text" id="tramitePlaca" placeholder="Placa" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tramiteEstado">Estado Inicial:</label>
+                                <select id="tramiteEstado" required>
+                                    <option value="proceso">En Proceso</option>
+                                    <option value="terminado">Terminado</option>
+                                    <option value="rechazado">Rechazado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Agregar Trámite</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Trámites en Proceso</h3>
+                    <div id="tramitesProceso" class="tramites-list"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Trámites Terminados</h3>
+                    <div id="tramitesTerminados" class="tramites-list"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Trámites Rechazados</h3>
+                    <div id="tramitesRechazados" class="tramites-list"></div>
+                </div>
+            </section>
+
             <section id="contabilidad" class="section">
-                </section>
+                <h2>Contabilidad</h2>
+                <div class="card">
+                    <h3>Registrar Movimiento</h3>
+                    <form id="contabilidadForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contaFecha">Fecha:</label>
+                                <input type="date" id="contaFecha" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contaCliente">Cliente:</label>
+                                <input type="text" id="contaCliente" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contaBanco">Banco / Efectivo:</label>
+                                <select id="contaBanco" required>
+                                    <option value="victor">Banco de Víctor</option>
+                                    <option value="maira">Banco de Maira</option>
+                                    <option value="efectivo">Efectivo</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="contaTipo">Tipo:</label>
+                                <select id="contaTipo" required>
+                                    <option value="ingreso">Ingreso</option>
+                                    <option value="egreso">Egreso</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="contaMonto">Monto:</label>
+                                <input type="number" id="contaMonto" placeholder="Ej: 500000" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Registrar Movimiento</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Consultar Utilidades</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fechaConsulta">Fecha:</label>
+                            <input type="date" id="fechaConsulta" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="personaConsulta">Consultar por:</label>
+                            <select id="personaConsulta">
+                                <option value="">Todo</option>
+                                <option value="victor">Víctor</option>
+                                <option value="maira">Maira</option>
+                                <option value="efectivo">Efectivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="consultarUtilidades()" class="btn-primary">Consultar</button>
+                    <div id="resultadosUtilidad" class="resultados-utilidad"></div>
+                </div>
+                
+                <div class="card">
+                    <h3>Registros Contables</h3>
+                    <div class="filtro-movimientos">
+                        <label for="filtroMovimiento">Filtrar por:</label>
+                        <select id="filtroMovimiento" onchange="actualizarRegistrosContables()">
+                            <option value="todos">Todos</option>
+                            <option value="ingreso">Ingresos</option>
+                            <option value="egreso">Egresos</option>
+                        </select>
+                    </div>
+                    <div id="registrosContables"></div>
+                </div>
+            </section>
+            
             <section id="crm" class="section">
-                </section>
+                <h2>CRM - Clientes y Vencimientos</h2>
+                <div class="card">
+                    <h3>Registrar Nuevo Cliente</h3>
+                    <form id="crmForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="crmCliente">Nombre de Cliente:</label>
+                                <input type="text" id="crmCliente" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="crmPlaca">Placa:</label>
+                                <input type="text" id="crmPlaca" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="crmPropietario">Propietario:</label>
+                                <input type="text" id="crmPropietario" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="crmCedula">Cédula:</label>
+                                <input type="text" id="crmCedula" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="crmTelefono">Teléfono:</label>
+                                <input type="tel" id="crmTelefono" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="crmCorreo">Correo:</label>
+                                <input type="email" id="crmCorreo">
+                            </div>
+                            <div class="form-group">
+                                <label for="crmVenceSOAT">Vence SOAT:</label>
+                                <input type="date" id="crmVenceSOAT" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="crmVenceRTM">Vence RTM:</label>
+                                <input type="date" id="crmVenceRTM" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Agregar Cliente</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Listado de Clientes y Vencimientos</h3>
+                    <div id="tablaCRM" class="tabla-container"></div>
+                </div>
+            </section>
+            
             <section id="placas" class="section">
-                </section>
-        </div>
+                <h2>Gestión de Placas</h2>
+                <div class="card">
+                    <h3>Registrar Placa</h3>
+                    <form id="placasForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="placaInicial">Placa Inicial:</label>
+                                <input type="text" id="placaInicial" placeholder="Ej: JHP34G" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="placaFinal">Placa Final:</label>
+                                <input type="text" id="placaFinal" placeholder="Ej: JHP35H" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="placaAsignadaA">Asignada a:</label>
+                                <input type="text" id="placaAsignadaA" placeholder="Ej: Asesor 1">
+                            </div>
+                            <div class="form-group">
+                                <label for="placaFechaRecepcion">Fecha de Recepción:</label>
+                                <input type="date" id="placaFechaRecepcion" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="placaFechaAsignada">Fecha Asignada:</label>
+                                <input type="date" id="placaFechaAsignada">
+                            </div>
+                            <div class="form-group">
+                                <label for="placaFechaMatricula">Fecha Matrícula:</label>
+                                <input type="date" id="placaFechaMatricula">
+                            </div>
+                            <div class="form-group">
+                                <label for="placaObservaciones">Observaciones:</label>
+                                <textarea id="placaObservaciones" placeholder="Observaciones adicionales"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Registrar Rango</button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h3>Listado de Placas</h3>
+                    <div id="tablaPlacas" class="tabla-container"></div>
+                </div>
+            </section>
+
+        </main>
     </div>
 
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h3 id="modalTitle">Editar Registro</h3>
+            <h3 id="modalTitle"></h3>
             <div id="modalBody"></div>
         </div>
     </div>
-    
-    <div id="notificacion" class="notificacion" style="display: none;"></div>
-    <script type="module" src="script.js"></script>
+
+    <script src="script.js" type="module"></script>
 </body>
 </html>
