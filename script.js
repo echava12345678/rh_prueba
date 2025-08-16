@@ -1,5 +1,5 @@
 // script.js
-// Importa las funciones necesarias del SDK de Firebase, incluyendo Auth y Firestore
+// Importa las funciones necesarias del SDK de Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, writeBatch, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
@@ -22,7 +22,8 @@ const firebaseConfig = {
     measurementId: "G-TJW55F5KKY"
 };
 
-// Inicializa Firebase de forma global para que sea accesible para todas las funciones
+// **INICIALIZA FIREBASE UNA SOLA VEZ DE FORMA GLOBAL**
+// Estas variables (app, db, auth) estarán disponibles para todas las funciones.
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
@@ -36,6 +37,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (loginForm) loginForm.addEventListener('submit', (e) => handleLogin(e, auth));
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) logoutBtn.addEventListener('click', () => handleLogout(auth));
+
+    // **NUEVO: Asigna oyentes de eventos a los botones de navegación**
+    document.getElementById('btnTramites').addEventListener('click', () => showSection('tramites'));
+    document.getElementById('btnContabilidad').addEventListener('click', () => showSection('contabilidad'));
+    document.getElementById('btnCRM').addEventListener('click', () => showSection('crm'));
+    document.getElementById('btnPlacas').addEventListener('click', () => showSection('placas'));
 
     // Ocultar/mostrar la interfaz de la aplicación según el estado de autenticación
     onAuthStateChanged(auth, (user) => {
@@ -151,7 +158,7 @@ function showSection(sectionId) {
     const navButtons = document.querySelectorAll('.nav-btn');
     navButtons.forEach(btn => {
         btn.classList.remove('active');
-        if (btn.getAttribute('onclick').includes(sectionId)) {
+        if (btn.getAttribute('id') === `btn${capitalizeFirst(sectionId)}`) {
             btn.classList.add('active');
         }
     });
