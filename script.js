@@ -1,5 +1,7 @@
 // script.js
 // Importa las funciones necesarias del SDK de Firebase
+// Añade la importación para Firebase Authentication
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, writeBatch, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
@@ -1157,3 +1159,46 @@ window.editarPlaca = editarPlaca;
 window.eliminarPlaca = eliminarPlaca;
 window.actualizarRegistrosContables = actualizarRegistrosContables;
 window.notificarEmail = notificarEmail;
+
+// Inicializa Firebase Authentication
+const auth = getAuth(app);
+
+// Escucha el evento de envío del formulario de inicio de sesión
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // El usuario ha iniciado sesión con éxito
+                const user = userCredential.user;
+                console.log('Usuario autenticado:', user.uid);
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.error('Error de autenticación:', errorCode, errorMessage);
+                alert('Error de inicio de sesión. Revisa tu usuario y contraseña.');
+            });
+    });
+}
+
+// Escucha los cambios en el estado de autenticación
+onAuthStateChanged(auth, (user) => {
+    const loginPanel = document.getElementById('loginPanel');
+    const appContainer = document.getElementById('appContainer');
+
+    if (user) {
+        // El usuario está conectado, muestra la aplicación y oculta el panel de inicio de sesión
+        loginPanel.style.display = 'none';
+        appContainer.style.display = 'block';
+    } else {
+        // El usuario no está conectado, oculta la aplicación y muestra el panel de inicio de sesión
+        loginPanel.style.display = 'flex';
+        appContainer.style.display = 'none';
+    }
+});
+
