@@ -752,6 +752,16 @@ async function enviarNotificacionVencimiento(cliente, documento, dias) {
 
         const data = await response.json();
         console.log('Respuesta del servidor:', data.message);
+        const docRef = doc(db, 'clientesCRM', cliente.id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const clienteData = docSnap.data();
+            const newAvisos = (clienteData.cantidadAvisos || 0) + 1;
+            await updateDoc(docRef, { cantidadAvisos: newAvisos });
+            console.log(`Contador de avisos actualizado a ${newAvisos} para el cliente con ID: ${cliente.id}`);
+        } else {
+            console.error(`Error: No se encontró el documento para el cliente con ID: ${cliente.id}`);
+        }
         return true;
 
     } catch (error) {
