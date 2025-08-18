@@ -1157,3 +1157,7 @@ window.editarPlaca = editarPlaca;
 window.eliminarPlaca = eliminarPlaca;
 window.actualizarRegistrosContables = actualizarRegistrosContables;
 window.notificarEmail = notificarEmail;
+window.agregarTramite = agregarTramite;
+window.agregarMovimiento = agregarMovimiento;
+window.agregarClienteCRM = agregarClienteCRM;
+window.registrarPlaca = registrarPlaca;
