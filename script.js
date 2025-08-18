@@ -3,6 +3,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, writeBatch, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 // Variables globales para almacenar datos
 let tramites = [];
@@ -21,71 +22,127 @@ const firebaseConfig = {
     measurementId: "G-TJW55F5KKY"
 };
 
+// **INICIALIZA FIREBASE UNA SOLA VEZ DE FORMA GLOBAL**
+// Estas variables (app, db, auth) estarán disponibles para todas las funciones.
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
 // Espera a que la página se cargue
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializa Firebase
-    const app = initializeApp(firebaseConfig);
-    getAnalytics(app);
-    const db = getFirestore(app);
     
-    // Cargar datos de Firestore en tiempo real usando onSnapshot
-    // Esto asegura que la aplicación se actualice automáticamente cada vez que los datos cambien.
-    onSnapshot(collection(db, 'tramites'), (snapshot) => {
-        tramites = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        actualizarTramites();
+    // Configura los formularios y botones
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) loginForm.addEventListener('submit', (e) => handleLogin(e, auth));
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) logoutBtn.addEventListener('click', () => handleLogout(auth));
+
+    // **NUEVO: Asigna oyentes de eventos a los botones de navegación**
+    document.getElementById('btnTramites').addEventListener('click', () => showSection('tramites'));
+    document.getElementById('btnContabilidad').addEventListener('click', () => showSection('contabilidad'));
+    document.getElementById('btnCRM').addEventListener('click', () => showSection('crm'));
+    document.getElementById('btnPlacas').addEventListener('click', () => showSection('placas'));
+
+    // Ocultar/mostrar la interfaz de la aplicación según el estado de autenticación
+    onAuthStateChanged(auth, (user) => {
+        const loginPanel = document.getElementById('loginPanel');
+        const appContainer = document.getElementById('appContainer');
+
+        if (user) {
+            // El usuario ha iniciado sesión
+            loginPanel.style.display = 'none';
+            appContainer.style.display = 'block';
+
+            // Cargar datos de Firestore en tiempo real usando onSnapshot
+            onSnapshot(collection(db, 'tramites'), (snapshot) => {
+                tramites = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                actualizarTramites();
+            });
+
+            onSnapshot(collection(db, 'registrosContables'), (snapshot) => {
+                registrosContables = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                actualizarRegistrosContables();
+            });
+
+            onSnapshot(collection(db, 'clientesCRM'), (snapshot) => {
+                clientesCRM = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                actualizarTablaCRM();
+            });
+
+            onSnapshot(collection(db, 'placas'), (snapshot) => {
+                placas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                actualizarTablaPlacas();
+            });
+
+            // Configura la fecha actual por defecto en los campos de fecha
+            const today = new Date().toISOString().split('T')[0];
+            const tramiteFecha = document.getElementById('tramiteFecha');
+            if (tramiteFecha) tramiteFecha.value = today;
+            const contaFecha = document.getElementById('contaFecha');
+            if (contaFecha) contaFecha.value = today;
+            const placaFechaRecepcion = document.getElementById('placaFechaRecepcion');
+            if (placaFechaRecepcion) placaFechaRecepcion.value = today;
+            const fechaConsulta = document.getElementById('fechaConsulta');
+            if (fechaConsulta) fechaConsulta.value = today;
+            
+            // Event listeners para los formularios
+            const tramiteForm = document.getElementById('tramiteForm');
+            if (tramiteForm) tramiteForm.addEventListener('submit', (e) => agregarTramite(e, db));
+            const contabilidadForm = document.getElementById('contabilidadForm');
+            if (contabilidadForm) contabilidadForm.addEventListener('submit', (e) => agregarMovimiento(e, db));
+            const crmForm = document.getElementById('crmForm');
+            if (crmForm) crmForm.addEventListener('submit', (e) => agregarClienteCRM(e, db));
+            const placasForm = document.getElementById('placasForm');
+            if (placasForm) placasForm.addEventListener('submit', (e) => registrarPlaca(e, db));
+            
+            // Configura el modal de edición
+            const modal = document.getElementById('editModal');
+            const closeBtn = document.querySelector('.close');
+            if (closeBtn) closeBtn.onclick = function() { modal.style.display = 'none'; }
+            window.onclick = function(event) {
+                if (event.target === modal) modal.style.display = 'none';
+            }
+            
+            // Verificar vencimientos al cargar la página y luego cada hora
+            verificarVencimientos(db);
+            setInterval(() => verificarVencimientos(db), 3600000);
+
+            // Muestra la sección inicial
+            showSection('tramites');
+
+        } else {
+            // El usuario ha cerrado sesión o no ha iniciado sesión
+            loginPanel.style.display = 'block';
+            appContainer.style.display = 'none';
+        }
     });
-
-    onSnapshot(collection(db, 'registrosContables'), (snapshot) => {
-        registrosContables = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        actualizarRegistrosContables();
-    });
-
-    onSnapshot(collection(db, 'clientesCRM'), (snapshot) => {
-        clientesCRM = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        actualizarTablaCRM();
-    });
-
-    onSnapshot(collection(db, 'placas'), (snapshot) => {
-        placas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        actualizarTablaPlacas();
-    });
-
-    // Configura la fecha actual por defecto en los campos de fecha
-    const today = new Date().toISOString().split('T')[0];
-    const tramiteFecha = document.getElementById('tramiteFecha');
-    if (tramiteFecha) tramiteFecha.value = today;
-    const contaFecha = document.getElementById('contaFecha');
-    if (contaFecha) contaFecha.value = today;
-    const placaFechaRecepcion = document.getElementById('placaFechaRecepcion');
-    if (placaFechaRecepcion) placaFechaRecepcion.value = today;
-    const fechaConsulta = document.getElementById('fechaConsulta');
-    if (fechaConsulta) fechaConsulta.value = today;
-    
-    // Event listeners para los formularios
-    const tramiteForm = document.getElementById('tramiteForm');
-    if (tramiteForm) tramiteForm.addEventListener('submit', (e) => agregarTramite(e, db));
-    const contabilidadForm = document.getElementById('contabilidadForm');
-    if (contabilidadForm) contabilidadForm.addEventListener('submit', (e) => agregarMovimiento(e, db));
-    const crmForm = document.getElementById('crmForm');
-    if (crmForm) crmForm.addEventListener('submit', (e) => agregarClienteCRM(e, db));
-    const placasForm = document.getElementById('placasForm');
-    if (placasForm) placasForm.addEventListener('submit', (e) => registrarPlaca(e, db));
-    
-    // Configura el modal de edición
-    const modal = document.getElementById('editModal');
-    const closeBtn = document.querySelector('.close');
-    if (closeBtn) closeBtn.onclick = function() { modal.style.display = 'none'; }
-    window.onclick = function(event) {
-        if (event.target === modal) modal.style.display = 'none';
-    }
-    
-    // Verificar vencimientos al cargar la página y luego cada hora
-    verificarVencimientos(db);
-    setInterval(() => verificarVencimientos(db), 3600000);
-
-    // Muestra la sección inicial
-    showSection('tramites');
 });
+
+// FUNCIÓN DE AUTENTICACIÓN
+async function handleLogin(e, auth) {
+    e.preventDefault();
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passwordInput').value;
+
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        mostrarNotificacion('Inicio de sesión exitoso', 'success');
+    } catch (error) {
+        console.error("Error de inicio de sesión: ", error);
+        mostrarNotificacion('Credenciales incorrectas. Por favor, inténtalo de nuevo.', 'error');
+    }
+}
+
+async function handleLogout(auth) {
+    try {
+        await signOut(auth);
+        mostrarNotificacion('Sesión cerrada correctamente', 'info');
+    } catch (error) {
+        console.error("Error al cerrar sesión: ", error);
+        mostrarNotificacion('Error al cerrar sesión', 'error');
+    }
+}
 
 // FUNCIÓN PARA CAMBIAR DE SECCIÓN
 function showSection(sectionId) {
@@ -101,7 +158,7 @@ function showSection(sectionId) {
     const navButtons = document.querySelectorAll('.nav-btn');
     navButtons.forEach(btn => {
         btn.classList.remove('active');
-        if (btn.getAttribute('onclick').includes(sectionId)) {
+        if (btn.getAttribute('id') === `btn${capitalizeFirst(sectionId)}`) {
             btn.classList.add('active');
         }
     });
@@ -198,7 +255,6 @@ function generarTramiteHTML(tramite) {
 async function cambiarEstadoTramite(id, nuevoEstado) {
     if (!nuevoEstado) return;
     try {
-        const db = getFirestore(initializeApp(firebaseConfig));
         await updateDoc(doc(db, 'tramites', id), { estado: nuevoEstado });
         mostrarNotificacion('Estado del trámite actualizado', 'success');
     } catch (error) {
@@ -209,7 +265,6 @@ async function cambiarEstadoTramite(id, nuevoEstado) {
 
 async function cambiarEstadoPago(id, nuevoPago) {
     try {
-        const db = getFirestore(initializeApp(firebaseConfig));
         await updateDoc(doc(db, 'tramites', id), { pago: nuevoPago });
         mostrarNotificacion('Estado de pago actualizado', 'success');
     } catch (error) {
@@ -220,7 +275,6 @@ async function cambiarEstadoPago(id, nuevoPago) {
 
 async function actualizarObservaciones(id, observaciones) {
     try {
-        const db = getFirestore(initializeApp(firebaseConfig));
         await updateDoc(doc(db, 'tramites', id), { observaciones: observaciones });
     } catch (error) {
         console.error("Error al actualizar las observaciones: ", error);
@@ -228,7 +282,6 @@ async function actualizarObservaciones(id, observaciones) {
 }
 
 async function editarTramite(id) {
-    const db = getFirestore(initializeApp(firebaseConfig));
     const docRef = doc(db, 'tramites', id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return;
@@ -291,7 +344,6 @@ async function editarTramite(id) {
 async function eliminarTramite(id) {
     if (window.confirm('¿Está seguro de eliminar este trámite?')) {
         try {
-            const db = getFirestore(initializeApp(firebaseConfig));
             await deleteDoc(doc(db, 'tramites', id));
             mostrarNotificacion('Trámite eliminado', 'success');
         } catch (error) {
@@ -486,7 +538,6 @@ function consultarUtilidades() {
 }
 
 async function editarMovimiento(id) {
-    const db = getFirestore(initializeApp(firebaseConfig));
     const docRef = doc(db, 'registrosContables', id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return;
@@ -560,7 +611,6 @@ async function editarMovimiento(id) {
 async function eliminarMovimiento(id) {
     if (window.confirm('¿Está seguro de eliminar este movimiento contable?')) {
         try {
-            const db = getFirestore(initializeApp(firebaseConfig));
             await deleteDoc(doc(db, 'registrosContables', id));
             mostrarNotificacion('Movimiento eliminado', 'success');
         } catch (error) {
@@ -647,7 +697,6 @@ function actualizarTablaCRM() {
                                 <button class="btn-edit" onclick="editarClienteCRM('${cliente.id}')">Editar</button>
                                 <button class="btn-delete" onclick="eliminarClienteCRM('${cliente.id}')">Eliminar</button>
                                 <button class="btn-whatsapp" onclick="notificarWhatsApp('${cliente.id}', '${cliente.telefono}', '${cliente.propietario}', '${cliente.placa}', '${cliente.venceSOAT}', '${cliente.venceRTM}')">Notificar WhatsApp</button>
-                                <button class="btn-email" onclick="notificarEmail('${cliente.id}')">Notificar Email</button>
                             </td>
                         </tr>
                     `;
@@ -660,7 +709,6 @@ function actualizarTablaCRM() {
 
 async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, venceRTM) {
     try {
-        const db = getFirestore(initializeApp(firebaseConfig));
         const docRef = doc(db, 'clientesCRM', id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
@@ -681,76 +729,6 @@ async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, ve
     }
 }
 
-async function notificarEmail(id) {
-    const db = getFirestore(initializeApp(firebaseConfig));
-    const docRef = doc(db, 'clientesCRM', id);
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) {
-        mostrarNotificacion('Cliente no encontrado.', 'error');
-        return;
-    }
-    const cliente = { id, ...docSnap.data() };
-    if (!cliente.correo) {
-        mostrarNotificacion('El cliente no tiene un correo registrado.', 'error');
-        return;
-    }
-
-    const diasSOAT = calcularDiasVencimiento(cliente.venceSOAT);
-    const diasRTM = calcularDiasVencimiento(cliente.venceRTM);
-
-    let notificacionEnviada = false;
-
-    if (diasSOAT > 0 && diasSOAT <= 30) {
-        const emailSent = await enviarNotificacionVencimiento(cliente, 'SOAT', diasSOAT);
-        if (emailSent) notificacionEnviada = true;
-    }
-    if (diasRTM > 0 && diasRTM <= 30) {
-        const emailSent = await enviarNotificacionVencimiento(cliente, 'RTM', diasRTM);
-        if (emailSent) notificacionEnviada = true;
-    }
-
-    if (notificacionEnviada) {
-        const newAvisos = (cliente.cantidadAvisos || 0) + 1;
-        await updateDoc(docRef, { cantidadAvisos: newAvisos });
-        mostrarNotificacion(`Email enviado a ${cliente.correo} y contador de avisos actualizado.`, 'success');
-    } else {
-        mostrarNotificacion('Ningún documento de este cliente está próximo a vencer.', 'info');
-    }
-}
-
-async function enviarNotificacionVencimiento(cliente, documento, dias) {
-    const asuntoEmail = `Vencimiento ${documento} - Placa ${cliente.placa}`;
-    const cuerpoEmail = `Estimado/a ${cliente.propietario},\n\nSu ${documento} del vehículo con placa ${cliente.placa} vence en ${dias} día${dias > 1 ? 's' : ''}.\n\nFecha de vencimiento: ${new Date(documento === 'SOAT' ? cliente.venceSOAT : cliente.venceRTM).toLocaleDateString()}\n\nPor favor, renuévelo a tiempo para evitar inconvenientes.\n\nSaludos cordiales.`;
-
-    try {
-        const response = await fetch('http://localhost:3000/api/send-email', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                correo: cliente.correo,
-                asunto: asuntoEmail,
-                cuerpo: cuerpoEmail
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('La respuesta del servidor no fue exitosa.');
-        }
-
-        const data = await response.json();
-        console.log('Respuesta del servidor:', data.message);
-        return true;
-
-    } catch (error) {
-        console.error('Error al enviar el email:', error);
-        mostrarNotificacion(`Error al enviar el email: ${error.message}`, 'error');
-        return false;
-    }
-}
-
-
 async function verificarVencimientos(db) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -761,8 +739,6 @@ async function verificarVencimientos(db) {
     const clientes = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
     for (const cliente of clientes) {
-        if (!cliente.correo) continue;
-        
         const venceSOAT = new Date(cliente.venceSOAT);
         venceSOAT.setHours(0, 0, 0, 0);
         const venceRTM = new Date(cliente.venceRTM);
@@ -772,42 +748,25 @@ async function verificarVencimientos(db) {
         const keySOAT = `notificacion_enviada_${cliente.id}_SOAT_${hoyISO}`;
         const keyRTM = `notificacion_enviada_${cliente.id}_RTM_${hoyISO}`;
         
-        let notificacionEnviada = false;
-
-        // Verificar si el SOAT vence en 7 días o menos y no ha pasado la fecha
-        if (diasSOAT <= 7 && diasSOAT >= 0 && !localStorage.getItem(keySOAT)) {
-            const emailSent = await enviarNotificacionVencimiento(cliente, 'SOAT', diasSOAT);
-            if (emailSent) {
-                localStorage.setItem(keySOAT, true);
-                avisosEnviados++;
-                notificacionEnviada = true;
-            }
+        if (diasSOAT <= 30 && diasSOAT >= 0 && !localStorage.getItem(keySOAT)) {
+            await notificarWhatsApp(cliente.id, cliente.telefono, cliente.propietario, cliente.placa, cliente.venceSOAT, cliente.venceRTM);
+            localStorage.setItem(keySOAT, true);
+            avisosEnviados++;
         }
         
-        // Verificar si la RTM vence en 7 días o menos y no ha pasado la fecha
-        if (diasRTM <= 7 && diasRTM >= 0 && !localStorage.getItem(keyRTM)) {
-            const emailSent = await enviarNotificacionVencimiento(cliente, 'RTM', diasRTM);
-            if (emailSent) {
-                localStorage.setItem(keyRTM, true);
-                avisosEnviados++;
-                notificacionEnviada = true;
-            }
-        }
-        
-        if (notificacionEnviada) {
-            const docRef = doc(db, 'clientesCRM', cliente.id);
-            const newAvisos = (cliente.cantidadAvisos || 0) + 1;
-            await updateDoc(docRef, { cantidadAvisos: newAvisos });
+        if (diasRTM <= 30 && diasRTM >= 0 && !localStorage.getItem(keyRTM)) {
+            await notificarWhatsApp(cliente.id, cliente.telefono, cliente.propietario, cliente.placa, cliente.venceSOAT, cliente.venceRTM);
+            localStorage.setItem(keyRTM, true);
+            avisosEnviados++;
         }
     }
 
     if (avisosEnviados > 0) {
-        mostrarNotificacion(`Se han enviado ${avisosEnviados} avisos de vencimiento por correo electrónico.`, 'info');
+        mostrarNotificacion(`Se han enviado ${avisosEnviados} avisos de vencimiento por WhatsApp.`, 'info');
     }
 }
 
 async function editarClienteCRM(id) {
-    const db = getFirestore(initializeApp(firebaseConfig));
     const docRef = doc(db, 'clientesCRM', id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return;
@@ -888,7 +847,6 @@ async function editarClienteCRM(id) {
 async function eliminarClienteCRM(id) {
     if (window.confirm('¿Está seguro de eliminar este cliente del CRM?')) {
         try {
-            const db = getFirestore(initializeApp(firebaseConfig));
             await deleteDoc(doc(db, 'clientesCRM', id));
             mostrarNotificacion('Cliente eliminado', 'success');
         } catch (error) {
@@ -1023,7 +981,6 @@ function obtenerEstadoPlaca(fechaAsignada, fechaMatricula, asignadaA) {
 }
 
 async function editarPlaca(id) {
-    const db = getFirestore(initializeApp(firebaseConfig));
     const docRef = doc(db, 'placas', id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return;
@@ -1102,7 +1059,6 @@ async function editarPlaca(id) {
 async function eliminarPlaca(id) {
     if (window.confirm('¿Está seguro de eliminar esta placa?')) {
         try {
-            const db = getFirestore(initializeApp(firebaseConfig));
             await deleteDoc(doc(db, 'placas', id));
             mostrarNotificacion('Placa eliminada', 'success');
         } catch (error) {
@@ -1156,8 +1112,3 @@ window.verificarVencimientos = verificarVencimientos;
 window.editarPlaca = editarPlaca;
 window.eliminarPlaca = eliminarPlaca;
 window.actualizarRegistrosContables = actualizarRegistrosContables;
-window.notificarEmail = notificarEmail;
-window.agregarTramite = agregarTramite;
-window.agregarMovimiento = agregarMovimiento;
-window.agregarClienteCRM = agregarClienteCRM;
-window.registrarPlaca = registrarPlaca;
