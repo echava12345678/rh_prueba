@@ -728,6 +728,37 @@ async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, ve
         mostrarNotificacion('Error al enviar la notificación', 'error');
     }
 }
+async function enviarNotificacionVencimiento(cliente, documento, dias) {
+    const asuntoEmail = `Vencimiento ${documento} - Placa ${cliente.placa}`;
+    const cuerpoEmail = `Estimado/a ${cliente.propietario},\n\nSu ${documento} del vehículo con placa ${cliente.placa} vence en ${dias} día${dias > 1 ? 's' : ''}.\n\nFecha de vencimiento: ${new Date(documento === 'SOAT' ? cliente.venceSOAT : cliente.venceRTM).toLocaleDateString()}\n\nPor favor, renuévelo a tiempo para evitar inconvenientes.\n\nSaludos cordiales.`;
+
+    try {
+        const response = await fetch('http://localhost:3000/api/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                correo: cliente.correo,
+                asunto: asuntoEmail,
+                cuerpo: cuerpoEmail
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('La respuesta del servidor no fue exitosa.');
+        }
+
+        const data = await response.json();
+        console.log('Respuesta del servidor:', data.message);
+        return true;
+
+    } catch (error) {
+        console.error('Error al enviar el email:', error);
+        mostrarNotificacion(`Error al enviar el email: ${error.message}`, 'error');
+        return false;
+    }
+}
 
 async function verificarVencimientos(db) {
     const today = new Date();
@@ -739,6 +770,7 @@ async function verificarVencimientos(db) {
     const clientes = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
     for (const cliente of clientes) {
+        if (!cliente.correo) continue;
         const venceSOAT = new Date(cliente.venceSOAT);
         venceSOAT.setHours(0, 0, 0, 0);
         const venceRTM = new Date(cliente.venceRTM);
@@ -748,21 +780,24 @@ async function verificarVencimientos(db) {
         const keySOAT = `notificacion_enviada_${cliente.id}_SOAT_${hoyISO}`;
         const keyRTM = `notificacion_enviada_${cliente.id}_RTM_${hoyISO}`;
         
-        if (diasSOAT <= 30 && diasSOAT >= 0 && !localStorage.getItem(keySOAT)) {
-            await notificarWhatsApp(cliente.id, cliente.telefono, cliente.propietario, cliente.placa, cliente.venceSOAT, cliente.venceRTM);
-            localStorage.setItem(keySOAT, true);
-            avisosEnviados++;
+        if (diasSOAT <= 7 && diasSOAT >= 0 && !localStorage.getItem(keySOAT)) {
+            const emailSent = await enviarNotificacionVencimiento(cliente, 'SOAT', diasSOAT);
+            if (emailSent) {
+                localStorage.setItem(keySOAT, true);
+                avisosEnviados++;
+            }
         }
         
-        if (diasRTM <= 30 && diasRTM >= 0 && !localStorage.getItem(keyRTM)) {
-            await notificarWhatsApp(cliente.id, cliente.telefono, cliente.propietario, cliente.placa, cliente.venceSOAT, cliente.venceRTM);
-            localStorage.setItem(keyRTM, true);
-            avisosEnviados++;
+        if (diasRTM <= 7 && diasRTM >= 0 && !localStorage.getItem(keyRTM)) {
+            const emailSent = await enviarNotificacionVencimiento(cliente, 'RTM', diasRTM);
+            if (emailSent) {
+                localStorage.setItem(keyRTM, true);
+                avisosEnviados++;
+            }
         }
-    }
 
     if (avisosEnviados > 0) {
-        mostrarNotificacion(`Se han enviado ${avisosEnviados} avisos de vencimiento por WhatsApp.`, 'info');
+        mostrarNotificacion(`Se han enviado ${avisosEnviados} avisos de vencimiento por Email.`, 'info');
     }
 }
 
