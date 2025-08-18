@@ -728,6 +728,7 @@ async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, ve
         mostrarNotificacion('Error al enviar la notificación', 'error');
     }
 }
+
 async function enviarNotificacionVencimiento(cliente, documento, dias) {
     const asuntoEmail = `Vencimiento ${documento} - Placa ${cliente.placa}`;
     const cuerpoEmail = `Estimado/a ${cliente.propietario},\n\nSu ${documento} del vehículo con placa ${cliente.placa} vence en ${dias} día${dias > 1 ? 's' : ''}.\n\nFecha de vencimiento: ${new Date(documento === 'SOAT' ? cliente.venceSOAT : cliente.venceRTM).toLocaleDateString()}\n\nPor favor, renuévelo a tiempo para evitar inconvenientes.\n\nSaludos cordiales.`;
@@ -795,6 +796,7 @@ async function verificarVencimientos(db) {
                 avisosEnviados++;
             }
         }
+    }
 
     if (avisosEnviados > 0) {
         mostrarNotificacion(`Se han enviado ${avisosEnviados} avisos de vencimiento por Email.`, 'info');
@@ -890,7 +892,6 @@ async function eliminarClienteCRM(id) {
         }
     }
 }
-
 // SECCIÓN PLACAS
 async function registrarPlaca(e, db) {
     e.preventDefault();
