@@ -1219,7 +1219,7 @@ async function descargarReciboTramite(tramiteId) {
         `;
 
         const options = {
-            margin: 10,
+            margin: 2,
             filename: `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 },
