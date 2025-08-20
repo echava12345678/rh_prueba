@@ -230,7 +230,7 @@ function generarTramiteHTML(tramite) {
      // Botón para descargar recibo solo si está terminado y tiene pago
     if (tramite.estado === 'terminado' && (tramite.pago === 'pendiente' || tramite.pago === 'pagado')) {
         reciboBtnHTML = `
-            <button class="btn-download" onclick="descargarReciboTramite('${tramite.id}')">Descargar Recibo</button>
+            <button class="btn-download" onclick="descargarReciboTramite('${tramite.id}')"><i class="fas fa-file-download"></i>Descargar Recibo</button>
         `;
     }
     
@@ -254,6 +254,7 @@ function generarTramiteHTML(tramite) {
                 </select>
                 <button class="btn-edit" onclick="editarTramite('${tramite.id}')">Editar</button>
                 <button class="btn-delete" onclick="eliminarTramite('${tramite.id}')">Eliminar</button>
+                 ${reciboBtnHTML}
             </div>
         </div>
     `;
