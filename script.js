@@ -1014,7 +1014,7 @@ function actualizarTablaPlacas() {
                 </tr>
             </thead>
             <tbody>
-                ${placas.map(p => {
+                ${placasOrdenadas.map(p => {
                     const estado = obtenerEstadoPlaca(p.fechaAsignada, p.fechaMatricula, p.asignadaA);
                     return `
                     <tr>
