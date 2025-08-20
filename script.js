@@ -204,6 +204,7 @@ function actualizarTramites() {
 function generarTramiteHTML(tramite) {
     let estadoPagoHTML = '';
     let observacionesHTML = '';
+    let reciboBtnHTML = '';
     
     if (tramite.estado === 'proceso' || tramite.estado === 'terminado') {
         estadoPagoHTML = `
@@ -224,6 +225,12 @@ function generarTramiteHTML(tramite) {
                 <textarea class="observaciones-input" placeholder="Motivo del rechazo..." 
                     onblur="actualizarObservaciones('${tramite.id}', this.value)">${tramite.observaciones || ''}</textarea>
             </div>
+        `;
+    }
+     // Botón para descargar recibo solo si está terminado y tiene pago
+    if (tramite.estado === 'terminado' && (tramite.pago === 'pendiente' || tramite.pago === 'pagado')) {
+        reciboBtnHTML = `
+            <button class="btn-download" onclick="descargarReciboTramite('${tramite.id}')">Descargar Recibo</button>
         `;
     }
     
@@ -974,6 +981,23 @@ function actualizarTablaPlacas() {
         container.innerHTML = '<p>No hay placas registradas.</p>';
         return;
     }
+    // Ordena las placas de menor a mayor
+    const placasOrdenadas = [...placas].sort((a, b) => {
+        // Extrae letras y números para comparación adecuada
+        const placaRegex = /^([A-Z]+)(\d+)([A-Z]?)$/;
+        const matchA = a.placa.match(placaRegex);
+        const matchB = b.placa.match(placaRegex);
+
+        if (matchA && matchB) {
+            // Compara letras1 (alfabético)
+            if (matchA[1] !== matchB[1]) return matchA[1].localeCompare(matchB[1]);
+            // Compara número (numérico)
+            if (parseInt(matchA[2]) !== parseInt(matchB[2])) return parseInt(matchA[2]) - parseInt(matchB[2]);
+            // Compara letras2 (alfabético)
+            return matchA[3].localeCompare(matchB[3]);
+        }
+        return a.placa.localeCompare(b.placa);
+    });
 
     const tabla = `
         <table>
@@ -1141,7 +1165,76 @@ function calcularDiasVencimiento(fecha) {
     return Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
 }
 
+async function descargarReciboTramite(tramiteId) {
+    try {
+        // Busca el trámite en la lista local
+        const tramite = tramites.find(t => t.id === tramiteId);
+        if (!tramite) {
+            mostrarNotificacion('No se encontró el trámite', 'error');
+            return;
+        }
+
+        // Contenido del recibo (puedes personalizar el estilo)
+        const reciboHTML = `
+            <div style="font-family: 'Poppins', sans-serif; padding: 24px; color: #222; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+                <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 16px; margin-bottom: 20px;">
+                    <h1 style="color: #3869D4; margin: 0;">RECIBO DE TRÁMITE</h1>
+                    <p style="font-size: 15px; color: #444;">RH Asesorías &middot; Gestión de Trámites</p>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 18px;">
+                    <div>
+                        <p><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
+                        <p><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p><strong>Nombre:</strong> ${tramite.cliente}</p>
+                        <p><strong>Placa:</strong> ${tramite.placa}</p>
+                    </div>
+                </div>
+                <h2 style="font-size: 17px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 7px; margin-bottom: 12px;">Detalle del Trámite</h2>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="padding: 8px; border: 1px solid #ddd;">Fecha</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">Estado</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">Estado de Pago</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="background-color: #eaf3ff; padding: 12px; border-radius: 8px; margin-top: 12px; text-align: right;">
+                    <span style="font-size: 15px; color: #555;">Firma profesional: ________________________</span>
+                </div>
+                <div style="margin-top: 24px; text-align: center; border-top: 1px solid #ddd; padding-top: 18px;">
+                    <p style="font-size: 11px; color: #aaa;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
+                </div>
+            </div>
+        `;
+
+        const options = {
+            margin: 10,
+            filename: `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().from(reciboHTML).set(options).save();
+    } catch (err) {
+        console.error("Error generando PDF:", err);
+        mostrarNotificacion('Error al generar el recibo', 'error');
+    }
+}
+
+
 // Expone las funciones a la ventana global para que el HTML pueda acceder a ellas.
+window.descargarReciboTramite = descargarReciboTramite;
 window.showSection = showSection;
 window.cambiarEstadoTramite = cambiarEstadoTramite;
 window.cambiarEstadoPago = cambiarEstadoPago;
