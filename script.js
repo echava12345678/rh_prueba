@@ -1185,40 +1185,41 @@ async function descargarReciboTramite(tramiteId) {
 
         const reciboDiv = document.createElement('div');
         reciboDiv.innerHTML = `
-            <div style="font-family: 'Poppins', sans-serif; padding: 24px; color: #222; max-width: 1000px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
-                <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 16px; margin-bottom: 20px;">
-                    <h1 style="color: #3869D4; margin: 0;">RECIBO DE TRÁMITE</h1>
-                    <p style="font-size: 15px; color: #444;">RH Asesorías &middot; Gestión de Trámites</p>
+            <div style="font-family: 'Poppins', sans-serif; padding: 60px; color: #222; max-width: 1000px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+                <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 35px; margin-bottom: 50px;">
+                    <h1 style="color: #3869D4; margin: 0; font-size: 32px;">RECIBO DE TRÁMITE</h1>
+                    <p style="font-size: 20px; color: #444;">RH Asesorías &middot; Gestión de Trámites</p>
                 </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 18px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
                     <div>
-                        <p style="margin: 0;"><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
-                        <p style="margin: 0; margin-top: 4px;"><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
+                        <p style="margin: 0; font-size: 18px;"><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
+                        <p style="margin: 0; margin-top: 10px; font-size: 18px;"><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
                     </div>
                     <div style="text-align: right;">
-                        <p style="margin: 0;"><strong>Nombre:</strong> ${tramite.cliente}</p>
-                        <p style="margin: 0; margin-top: 4px;"><strong>Placa:</strong> ${tramite.placa}</p>
+                        <p style="margin: 0; font-size: 18px;"><strong>Nombre:</strong> ${tramite.cliente}</p>
+                        <p style="margin: 0; margin-top: 10px; font-size: 18px;"><strong>Placa:</strong> ${tramite.placa}</p>
                     </div>
                 </div>
-                <h2 style="font-size: 13px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 2px; margin-bottom: 4px;">Detalle del Trámite</h2>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 12px;">
+                <h2 style="font-size: 22px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 15px;">Detalle del Trámite</h2>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 18px;">
                     <thead>
                         <tr style="background-color: #f2f2f2;">
-                            <th style="padding: 8px; border: 1px solid #ddd;">Fecha</th>
-                            <th style="padding: 8px; border: 1px solid #ddd;">Estado</th>
-                            <th style="padding: 8px; border: 1px solid #ddd;">Estado de Pago</th>
+                            <th style="padding: 15px; border: 1px solid #ddd;">Fecha</th>
+                            <th style="padding: 15px; border: 1px solid #ddd;">Estado</th>
+                            <th style="padding: 15px; border: 1px solid #ddd;">Estado de Pago</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
+                            <td style="padding: 15px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
+                            <td style="padding: 15px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
+                            <td style="padding: 15px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
                         </tr>
                     </tbody>
                 </table>
-                <div style="margin-top: 20px; text-align: center; border-top: 1px solid #ddd; padding-top: 10px;">
-                    <p style="font-size: 9px; color: #aaa; margin: 0;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
+                <div style="height: 250px;"></div>
+                <div style="margin-top: 40px; text-align: center; border-top: 1px solid #ddd; padding-top: 20px;">
+                    <p style="font-size: 14px; color: #aaa; margin: 0;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
                 </div>
             </div>
         `;
