@@ -1177,7 +1177,7 @@ async function descargarReciboTramite(tramiteId) {
 
         // Contenido del recibo (puedes personalizar el estilo)
      const reciboHTML = `
-    <div style="font-family: 'Poppins', Arial, sans-serif; color: #222; max-width: 400px; margin: 0; border: 1px solid #3869D4; border-radius: 10px; background: #fff;">
+    <div style="font-family: 'Poppins', Arial, sans-serif; color: #222; width: 100mm; border: 1px solid #3869D4; border-radius: 10px; background: #fff;">
         <div style="text-align: center; border-bottom: 2px solid #3869D4;">
             <h1 style="color: #3869D4; margin: 0; font-size: 22px; letter-spacing: 1px;">RECIBO DE TRÁMITE</h1>
             <p style="font-size: 13px; color: #555; margin: 0;">RH Asesorías · Gestión de Trámites</p>
@@ -1206,18 +1206,18 @@ async function descargarReciboTramite(tramiteId) {
         <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
             <thead>
                 <tr style="background-color: #f2f2f2;">
-                    <th style="padding: 5px; border: 1px solid #ddd;">Fecha</th>
-                    <th style="padding: 5px; border: 1px solid #ddd;">Estado</th>
-                    <th style="padding: 5px; border: 1px solid #ddd;">Estado de Pago</th>
-                    <th style="padding: 5px; border: 1px solid #ddd;">Observación</th>
+                    <th style="padding: 4px; border: 1px solid #ddd;">Fecha</th>
+                    <th style="padding: 4px; border: 1px solid #ddd;">Estado</th>
+                    <th style="padding: 4px; border: 1px solid #ddd;">Estado de Pago</th>
+                    <th style="padding: 4px; border: 1px solid #ddd;">Observación</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td style="padding: 5px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
-                    <td style="padding: 5px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
-                    <td style="padding: 5px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
-                    <td style="padding: 5px; border: 1px solid #ddd;">${tramite.observaciones || '---'}</td>
+                    <td style="padding: 4px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
+                    <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
+                    <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
+                    <td style="padding: 4px; border: 1px solid #ddd;">${tramite.observaciones || '---'}</td>
                 </tr>
             </tbody>
         </table>
@@ -1231,7 +1231,6 @@ async function descargarReciboTramite(tramiteId) {
         </div>
     </div>
 `;
-
 const options = {
     margin: 0,
     filename: `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
