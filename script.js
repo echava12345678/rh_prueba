@@ -1232,6 +1232,8 @@ async function descargarReciboTramite(tramiteId) {
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
+        await html2pdf().from(reciboHTML).set(options).save();
+
         html2pdf().from(reciboHTML).set(options).save();
     } catch (err) {
         console.error("Error generando PDF:", err);
