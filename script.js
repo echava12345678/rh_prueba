@@ -239,7 +239,7 @@ function generarTramiteHTML(tramite) {
             <div class="tramite-info">
                 <strong>Cliente:</strong> ${tramite.cliente}<br>
                 <strong>Placa:</strong> ${tramite.placa}<br>
-                <strong>Fecha:</strong> ${new Date(tramite.fecha).toLocaleDateString()}<br>
+                <strong>Fecha:</strong> ${formatDate(tramite.fecha)}<br>
                 <strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}
                 ${tramite.pago && tramite.pago !== 'pendiente' ? `<br><strong>Pago:</strong> ${capitalizeFirst(tramite.pago)}` : ''}
             </div>
@@ -417,7 +417,7 @@ function actualizarRegistrosContables() {
             <tbody>
                 ${registrosFiltrados.map(reg => `
                     <tr>
-                        <td>${new Date(reg.fecha).toLocaleDateString()}</td>
+                        <td>${formatDate(reg.fecha)}</td>
                         <td>${reg.cliente}</td>
                         <td>${capitalizeFirst(reg.banco.replace('_', ' '))}</td>
                         <td><span class="badge ${reg.tipo}">${capitalizeFirst(reg.tipo)}</span></td>
@@ -470,7 +470,7 @@ function consultarUtilidades() {
 
     const resultadosHTML = `
         <div class="utilidad-card">
-            <h4>Resumen del ${new Date(fecha).toLocaleDateString()} ${persona ? '- ' + capitalizeFirst(persona) : ''}</h4>
+            <h4>Resumen del ${formatDate(fecha)} ${persona ? '- ' + capitalizeFirst(persona) : ''}</h4>
             <div class="utilidad-detalle">
                 <div class="utilidad-item">
                     <strong>Total Ingresos</strong><br>
@@ -689,11 +689,11 @@ function actualizarTablaCRM() {
                             <td>${cliente.telefono}</td>
                             <td>${cliente.correo}</td>
                             <td>
-                                ${new Date(cliente.venceSOAT).toLocaleDateString()}
+                                ${formatDate(cliente.venceSOAT)}
                                 ${soatVencimiento <= 30 && soatVencimiento >= 0 ? '<span class="alerta-vencimiento">¡Próximo a vencer!</span>' : ''}
                             </td>
                             <td>
-                                ${new Date(cliente.venceRTM).toLocaleDateString()}
+                                ${formatDate(cliente.venceRTM)}
                                 ${rtmVencimiento <= 30 && rtmVencimiento >= 0 ? '<span class="alerta-vencimiento">¡Próximo a vencer!</span>' : ''}
                             </td>
                             <td>
@@ -725,8 +725,8 @@ async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, ve
             await updateDoc(docRef, { cantidadAvisos: newAvisos });
         }
         
-        const vencimientoSOAT = new Date(venceSOAT).toLocaleDateString();
-        const vencimientoRTM = new Date(venceRTM).toLocaleDateString();
+        const vencimientoSOAT = formatDate(venceSOAT);
+        const vencimientoRTM = formatDate(venceRTM);
         const mensaje = `¡Hola ${propietario}! Te recordamos que el SOAT de tu vehículo con placa ${placa} vence el ${vencimientoSOAT} y la RTM vence el ${vencimientoRTM}. ¡Contáctanos para renovarlos!`;
         const mensajeCodificado = encodeURIComponent(mensaje);
         const url = `https://api.whatsapp.com/send?phone=${telefono}&text=${mensajeCodificado}`;
@@ -739,7 +739,7 @@ async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, ve
 
 async function enviarNotificacionVencimiento(cliente, documento, dias) {
     const asuntoEmail = `Vencimiento ${documento} - Placa ${cliente.placa}`;
-    const cuerpoEmail = `Estimado/a ${cliente.propietario},\n\nSu ${documento} del vehículo con placa ${cliente.placa} vence en ${dias} día${dias > 1 ? 's' : ''}.\n\nFecha de vencimiento: ${new Date(documento === 'SOAT' ? cliente.venceSOAT : cliente.venceRTM).toLocaleDateString()}\n\nPor favor, renuévelo a tiempo para evitar inconvenientes.\n\nSaludos cordiales.`;
+    const cuerpoEmail = `Estimado/a ${cliente.propietario},\n\nSu ${documento} del vehículo con placa ${cliente.placa} vence en ${dias} día${dias > 1 ? 's' : ''}.\n\nFecha de vencimiento: ${formatDate(documento === 'SOAT' ? cliente.venceSOAT : cliente.venceRTM)}\n\nPor favor, renuévelo a tiempo para evitar inconvenientes.\n\nSaludos cordiales.`;
 
     try {
         const response = await fetch('http://localhost:3000/api/send-email', {
@@ -1021,9 +1021,9 @@ function actualizarTablaPlacas() {
                     <tr>
                         <td>${p.placa}</td>
                         <td>${p.asignadaA || 'N/A'}</td>
-                        <td>${p.fechaRecepcion ? new Date(p.fechaRecepcion).toLocaleDateString() : 'N/A'}</td>
-                        <td>${p.fechaAsignada ? new Date(p.fechaAsignada).toLocaleDateString() : 'N/A'}</td>
-                        <td>${p.fechaMatricula ? new Date(p.fechaMatricula).toLocaleDateString() : 'N/A'}</td>
+                        <td>${formatDate(p.fechaRecepcion)}</td>
+                        <td>${formatDate(p.fechaAsignada)}</td>
+                        <td>${formatDate(p.fechaMatricula)}</td>
                         <td>${p.observaciones || 'N/A'}</td>
                         <td><span class="badge badge-${estado.toLowerCase().replace(' ', '-')}">${estado}</span></td>
                         <td>
@@ -1166,6 +1166,15 @@ function calcularDiasVencimiento(fecha) {
     return Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
 }
 
+// NUEVA FUNCIÓN AÑADIDA PARA CORREGIR EL PROBLEMA DE LA FECHA
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    // Agrega un pequeño ajuste de 12 horas para evitar la transición de medianoche en la zona horaria.
+    date.setHours(date.getHours() + 12);
+    return date.toLocaleDateString();
+}
+
 async function descargarReciboTramite(tramiteId) {
     try {
         // Busca el trámite en la lista local
@@ -1203,7 +1212,7 @@ async function descargarReciboTramite(tramiteId) {
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="padding: 4px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
+                            <td style="padding: 4px; border: 1px solid #ddd;">${formatDate(tramite.fecha)}</td>
                             <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
                             <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
                         </tr>
@@ -1224,7 +1233,7 @@ async function descargarReciboTramite(tramiteId) {
                 </div>
                 
                 <div style="margin-top: 10px; text-align: center; border-top: 1px solid #ddd; padding-top: 6px;">
-                    <p style="font-size: 9px; color: #aaa;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
+                    <p style="font-size: 9px; color: #aaa;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${formatDate(new Date().toISOString().split('T')[0])}</p>
                 </div>
 
                 <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
@@ -1256,37 +1265,6 @@ async function descargarReciboTramite(tramiteId) {
         mostrarNotificacion('Error al generar el recibo', 'error');
     }
 }
-
-async function descargarTodosRecibos() {
-    const tramitesTerminados = tramites.filter(t => t.estado === 'terminado' && (t.pago === 'pagado' || t.pago === 'pendiente'));
-    
-    if (tramitesTerminados.length === 0) {
-        mostrarNotificacion('No hay recibos terminados para descargar.', 'info');
-        return;
-    }
-    
-    mostrarNotificacion(`Iniciando la descarga de ${tramitesTerminados.length} recibos...`, 'info');
-    
-    // Usar un bucle para descargar uno por uno con un pequeño retraso
-    for (let i = 0; i < tramitesTerminados.length; i++) {
-        const tramite = tramitesTerminados[i];
-        const reciboHTML = generarReciboHTML(tramite);
-        
-        const options = {
-            margin: 2,
-            filename: `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        
-        await new Promise(resolve => setTimeout(resolve, i * 1500)); // Espera 1.5s entre descargas
-        html2pdf().from(reciboHTML).set(options).save();
-    }
-
-    mostrarNotificacion('Todos los recibos se han descargado correctamente.', 'success');
-}
-
 
 
 // Expone las funciones a la ventana global para que el HTML pueda acceder a ellas.
