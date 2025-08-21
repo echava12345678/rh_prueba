@@ -1177,20 +1177,12 @@ function formatDate(dateString) {
 
 async function descargarReciboTramite(tramiteId) {
     try {
-        // Busca el trámite en la lista local
         const tramite = tramites.find(t => t.id === tramiteId);
         if (!tramite) {
             mostrarNotificacion('No se encontró el trámite', 'error');
             return;
         }
-        // Crear un elemento temporal en el DOM para el recibo
-        const tempDiv = document.createElement('div');
-        tempDiv.style.position = 'absolute';
-        tempDiv.style.left = '-9999px'; // Moverlo fuera de la pantalla
-        tempDiv.style.width = '210mm'; // Ancho de una hoja A4
-        tempDiv.style.padding = '20mm'; // Margen de impresión
 
-        // Contenido del recibo (limpiado y con campos de concepto/precio)
         const reciboHTML = `
             <div style="font-family: 'Poppins', sans-serif; padding: 24px; color: #222; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
                 <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 16px; margin-bottom: 20px;">
@@ -1238,10 +1230,9 @@ async function descargarReciboTramite(tramiteId) {
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
+        // Usa html2pdf con el string HTML
         await html2pdf().from(reciboHTML).set(options).save();
 
-       // Eliminar el elemento temporal del DOM
-        document.body.removeChild(tempDiv);
     } catch (err) {
         console.error("Error generando PDF:", err);
         mostrarNotificacion('Error al generar el recibo', 'error');
