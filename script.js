@@ -1257,6 +1257,37 @@ async function descargarReciboTramite(tramiteId) {
     }
 }
 
+async function descargarTodosRecibos() {
+    const tramitesTerminados = tramites.filter(t => t.estado === 'terminado' && (t.pago === 'pagado' || t.pago === 'pendiente'));
+    
+    if (tramitesTerminados.length === 0) {
+        mostrarNotificacion('No hay recibos terminados para descargar.', 'info');
+        return;
+    }
+    
+    mostrarNotificacion(`Iniciando la descarga de ${tramitesTerminados.length} recibos...`, 'info');
+    
+    // Usar un bucle para descargar uno por uno con un pequeño retraso
+    for (let i = 0; i < tramitesTerminados.length; i++) {
+        const tramite = tramitesTerminados[i];
+        const reciboHTML = generarReciboHTML(tramite);
+        
+        const options = {
+            margin: 2,
+            filename: `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        
+        await new Promise(resolve => setTimeout(resolve, i * 1500)); // Espera 1.5s entre descargas
+        html2pdf().from(reciboHTML).set(options).save();
+    }
+
+    mostrarNotificacion('Todos los recibos se han descargado correctamente.', 'success');
+}
+
+
 
 // Expone las funciones a la ventana global para que el HTML pueda acceder a ellas.
 window.descargarReciboTramite = descargarReciboTramite;
