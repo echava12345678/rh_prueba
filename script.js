@@ -1185,7 +1185,7 @@ async function descargarReciboTramite(tramiteId) {
 
         const reciboDiv = document.createElement('div');
         reciboDiv.innerHTML = `
-            <div style="font-family: 'Poppins', sans-serif; padding: 24px; color: #222; max-width: 800px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+            <div style="font-family: 'Poppins', sans-serif; padding: 24px; color: #222; max-width: 1000px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
                 <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 16px; margin-bottom: 20px;">
                     <h1 style="color: #3869D4; margin: 0;">RECIBO DE TRÁMITE</h1>
                     <p style="font-size: 15px; color: #444;">RH Asesorías &middot; Gestión de Trámites</p>
@@ -1224,7 +1224,7 @@ async function descargarReciboTramite(tramiteId) {
         `;
         document.body.appendChild(reciboDiv);
 
-        const canvas = await html2canvas(reciboDiv, { scale: 3 });
+        const canvas = await html2canvas(reciboDiv, { scale: 5 });
         const imgData = canvas.toDataURL('image/png');
 
         const { jsPDF } = window.jspdf;
