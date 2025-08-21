@@ -1285,3 +1285,4 @@ window.verificarVencimientos = verificarVencimientos;
 window.editarPlaca = editarPlaca;
 window.eliminarPlaca = eliminarPlaca;
 window.actualizarRegistrosContables = actualizarRegistrosContables;
+window.descargarTodosRecibos = descargarTodosRecibos;
