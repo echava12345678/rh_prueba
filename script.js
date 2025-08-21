@@ -1176,6 +1176,10 @@ async function descargarReciboTramite(tramiteId) {
         }
 
         // Contenido del recibo (puedes personalizar el estilo)
+const pagoEstado = tramite.pago === 'pagado'
+    ? '<span style="color:green; font-weight:bold;">PAGADO</span>'
+    : '<span style="color:#d32f2f; font-weight:bold;">PENDIENTE</span>';
+
 const reciboHTML = `
     <div style="font-family:'Poppins',Arial,sans-serif; color:#222; width:340px; margin:0 auto; border:1.5px solid #3869D4; border-radius:12px; background:#fff; display:flex; flex-direction:column; align-items:center;">
         <div style="text-align:center; border-bottom:2px solid #3869D4; width:100%; padding:18px 0 8px 0;">
@@ -1200,6 +1204,9 @@ const reciboHTML = `
                 <td style="padding:5px 0; text-align:right;">${tramite.placa}</td>
             </tr>
         </table>
+        <div style="width:92%; color:#222; font-size:15px; text-align:left; margin-bottom:12px;">
+            <b>Estado de pago:</b> ${pagoEstado}
+        </div>
         <div style="width:92%; color:#444; font-size:13px; text-align:center; margin-bottom:20px;">
             <b>Este recibo certifica el trámite realizado.</b><br>
             Para soporte o información adicional comuníquese con RH Asesorías.
@@ -1210,7 +1217,6 @@ const reciboHTML = `
         </div>
     </div>
 `;
-
 // Opciones recomendadas para centrar el recibo y hacerlo más grande:
 const options = {
     margin:       [40, 0, 0, 0], // top, right, bottom, left (mm)
