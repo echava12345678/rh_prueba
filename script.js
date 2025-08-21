@@ -1209,9 +1209,33 @@ async function descargarReciboTramite(tramiteId) {
                         </tr>
                     </tbody>
                 </table>
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
+                </div>
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
+                </div>
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
+                </div>
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
+                </div>
                 
                 <div style="margin-top: 10px; text-align: center; border-top: 1px solid #ddd; padding-top: 6px;">
                     <p style="font-size: 9px; color: #aaa;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
+                </div>
+
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
+                </div>
+
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
+                </div>
+
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
                 </div>
             </div>
         `;
