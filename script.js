@@ -1176,9 +1176,9 @@ async function descargarReciboTramite(tramiteId) {
         }
 
         // Contenido del recibo (puedes personalizar el estilo)
-        const reciboHTML = `
-    <div style="font-family: 'Poppins', Arial, sans-serif; padding: 18px 12px; color: #222; max-width: 430px; margin: 0 auto; border: 1px solid #3869D4; border-radius: 12px; box-shadow: 0 2px 12px rgba(56, 105, 212, 0.08); background: #fff;">
-        <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 10px; margin-bottom: 15px;">
+       const reciboHTML = `
+    <div style="font-family: 'Poppins', Arial, sans-serif; color: #222; max-width: 430px; margin: 0 auto; border: 1px solid #3869D4; border-radius: 12px; box-shadow: 0 2px 12px rgba(56, 105, 212, 0.08); background: #fff;">
+        <div style="text-align: center; border-bottom: 2px solid #3869D4; margin-bottom: 15px;">
             <h1 style="color: #3869D4; margin: 0; font-size: 25px; letter-spacing: 2px;">RECIBO DE TRÁMITE</h1>
             <p style="font-size: 14px; color: #555; margin: 0;">RH Asesorías · Gestión de Trámites</p>
         </div>
@@ -1221,7 +1221,7 @@ async function descargarReciboTramite(tramiteId) {
                 </tr>
             </tbody>
         </table>
-        <div style="background: #f7fafd; border-left: 3px solid #3869D4; padding: 12px 10px; border-radius: 8px; margin-bottom: 12px; font-size: 13px;">
+        <div style="background: #f7fafd; border-left: 3px solid #3869D4; border-radius: 8px; margin-bottom: 12px; font-size: 13px;">
             <strong>Nota:</strong> Guarde este recibo. Si requiere soporte, contáctenos.<br>
             <span style="color: #3869D4;">RH Asesorías</span> - Tel: <span style="color: #333;">+57 301 234 5678</span>
         </div>
