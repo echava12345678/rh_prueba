@@ -1183,7 +1183,9 @@ async function descargarReciboTramite(tramiteId) {
             return;
         }
 
-        const reciboHTML = `
+        // Crear un div temporal y añadir el contenido HTML del recibo
+        const reciboDiv = document.createElement('div');
+        reciboDiv.innerHTML = `
             <div style="font-family: 'Poppins', sans-serif; padding: 24px; color: #222; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
                 <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 16px; margin-bottom: 20px;">
                     <h1 style="color: #3869D4; margin: 0;">RECIBO DE TRÁMITE</h1>
@@ -1221,19 +1223,22 @@ async function descargarReciboTramite(tramiteId) {
                 </div>
             </div>
         `;
+        document.body.appendChild(reciboDiv); // Añadir al DOM para que html2canvas pueda procesarlo
 
-        const options = {
-            margin: 2,
-            filename: `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
+        const canvas = await html2canvas(reciboDiv, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
 
-        // Pausar brevemente para permitir la renderización completa del HTML en memoria
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Usar jspdf para crear y guardar el PDF
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-        await html2pdf().from(reciboHTML).set(options).save();
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`);
+
+        document.body.removeChild(reciboDiv); // Limpiar el elemento temporal del DOM
 
     } catch (err) {
         console.error("Error generando PDF:", err);
