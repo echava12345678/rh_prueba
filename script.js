@@ -1243,15 +1243,15 @@ async function descargarTodosRecibos() {
     // Filtra solo los trámites que están terminados y pagados
    const tramitesTerminados = tramites.filter(t => t.estado === 'terminado');
 
-    if (tramitesPagados.length === 0) {
+    if (tramitesTerminados.length === 0) {
         mostrarNotificacion('No hay recibos para descargar.', 'info');
         return;
     }
 
-    mostrarNotificacion(`Iniciando la descarga de ${tramitesPagados.length} recibos... Esto puede tomar un momento.`, 'info');
+    mostrarNotificacion(`Iniciando la descarga de ${tramitesTerminados.length} recibos... Esto puede tomar un momento.`, 'info');
 
     // Bucle asíncrono para descargar un recibo a la vez con un retraso
-    for (const tramite of tramitesPagados) {
+    for (const tramite of tramitesTerminados) {
         // Asegúrate de usar la versión corregida de descargarReciboTramite
         await new Promise(resolve => setTimeout(resolve, 1000)); // Retraso de 1 segundo
         await descargarReciboTramite(tramite.id);
