@@ -1176,9 +1176,6 @@ async function descargarReciboTramite(tramiteId) {
         }
 
         // Contenido del recibo (puedes personalizar el estilo)
-const pagoEstado = tramite.pago === 'pagado'
-    ? '<span style="color:green; font-weight:bold;">PAGADO</span>'
-    : '<span style="color:#d32f2f; font-weight:bold;">PENDIENTE</span>';
 
 const reciboHTML = `
     <div style="font-family:'Poppins',Arial,sans-serif; color:#222; width:340px; margin:0 auto; border:1.5px solid #3869D4; border-radius:12px; background:#fff; display:flex; flex-direction:column; align-items:center;">
@@ -1225,6 +1222,7 @@ const options = {
     html2canvas:  { scale: 2 },
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
 };
+         html2pdf().from(reciboHTML).set(options).save();
     } catch (err) {
         console.error("Error generando PDF:", err);
         mostrarNotificacion('Error al generar el recibo', 'error');
