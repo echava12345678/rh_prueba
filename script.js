@@ -5,9 +5,6 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase
 import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, writeBatch, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-// Importa las librerías de PDF que son necesarias dentro del módulo
-import html2pdf from "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-
 // Variables globales para almacenar datos
 let tramites = [];
 let registrosContables = [];
@@ -1171,90 +1168,90 @@ function calcularDiasVencimiento(fecha) {
 
 async function descargarReciboTramite(tramiteId) {
     try {
-        // Busca el trámite en la lista local para obtener sus datos.
+        // Busca el trámite en la lista local
         const tramite = tramites.find(t => t.id === tramiteId);
         if (!tramite) {
             mostrarNotificacion('No se encontró el trámite', 'error');
             return;
         }
 
-        // Determina el estado de pago para mostrarlo en el recibo.
-        const pagoEstado = tramite.pago === 'pagado'
-            ? '<span style="color:green; font-weight:bold;">PAGADO</span>'
-            : '<span style="color:#d32f2f; font-weight:bold;">PENDIENTE</span>';
-
-        // Crea el contenido HTML del recibo como una cadena.
+      // Contenido del recibo (puedes personalizar el estilo)
         const reciboHTML = `
-            <div style="font-family:'Poppins', Arial, sans-serif; color:#222; width:340px; margin:0 auto; border:1.5px solid #3869D4; border-radius:12px; background:#fff; display:flex; flex-direction:column; align-items:center;">
-                <div style="text-align:center; border-bottom:2px solid #3869D4; width:100%; padding:18px 0 8px 0;">
-                    <h1 style="color:#3869D4; margin:0; font-size:26px; letter-spacing:1px;">RECIBO DE TRÁMITE</h1>
-                    <div style="font-size:15px; color:#555; margin-bottom:2px;">RH Asesorías · Gestión de Trámites</div>
+            <div style="font-family: 'Poppins', sans-serif; padding: 24px; color: #222; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+                <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 16px; margin-bottom: 20px;">
+                    <h1 style="color: #3869D4; margin: 0;">RECIBO DE TRÁMITE</h1>
+                    <p style="font-size: 15px; color: #444;">RH Asesorías &middot; Gestión de Trámites</p>
                 </div>
-                <table style="width:92%; font-size:15px; margin:18px 0 8px 0; border-collapse:collapse;">
-                    <tr>
-                        <td style="padding:5px 0;"><b>Fecha de emisión:</b></td>
-                        <td style="padding:5px 0; text-align:right;">${new Date().toLocaleDateString('es-CO')}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding:5px 0;"><b>Nombre:</b></td>
-                        <td style="padding:5px 0; text-align:right;">${tramite.cliente}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding:5px 0;"><b>No. de trámite:</b></td>
-                        <td style="padding:5px 0; text-align:right;">${tramite.id.slice(0, 8)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding:5px 0;"><b>Placa:</b></td>
-                        <td style="padding:5px 0; text-align:right;">${tramite.placa}</td>
-                    </tr>
-                </table>
-                <div style="width:92%; color:#222; font-size:15px; text-align:left; margin-bottom:12px;">
-                    <b>Estado de pago:</b> ${pagoEstado}
+                <div style="display: flex; justify-content: space-between; margin-bottom: 18px;">
+                    <div>
+                        <p><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
+                        <p><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p><strong>Nombre:</strong> ${tramite.cliente}</p>
+                        <p><strong>Placa:</strong> ${tramite.placa}</p>
+                    </div>
                 </div>
-                <div style="width:92%; color:#444; font-size:13px; text-align:center; margin-bottom:20px;">
-                    <b>Este recibo certifica el trámite realizado.</b><br>
-                    Para soporte o información adicional comuníquese con RH Asesorías.
+                <h2 style="font-size: 13px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 2px; margin-bottom: 4px;">Detalle del Trámite</h2>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 12px;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="padding: 4px; border: 1px solid #ddd;">Fecha</th>
+                            <th style="padding: 4px; border: 1px solid #ddd;">Estado</th>
+                            <th style="padding: 4px; border: 1px solid #ddd;">Estado de Pago</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 4px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
+                            <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
+                            <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
                 </div>
-                <div style="width:100%; border-top:1px solid #eee; text-align:center; color:#888; font-size:11px; padding:6px 0;">
-                    Gracias por confiar en RH Asesorías.<br>
-                    Documento generado electrónicamente el ${new Date().toLocaleDateString('es-CO')}
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
+                </div>
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
+                </div>
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
+                </div>
+                
+                <div style="margin-top: 10px; text-align: center; border-top: 1px solid #ddd; padding-top: 6px;">
+                    <p style="font-size: 9px; color: #aaa;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
+                </div>
+
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
+                </div>
+
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
+                </div>
+
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;"></span>
                 </div>
             </div>
+            
         `;
 
-        // Crea un elemento temporal en el DOM para renderizar el recibo.
-        const reciboElemento = document.createElement('div');
-        reciboElemento.innerHTML = reciboHTML;
-        reciboElemento.style.position = 'absolute';
-        reciboElemento.style.left = '-9999px'; // Oculta el elemento de la vista.
-        document.body.appendChild(reciboElemento);
-
-        // Opciones de configuración para jsPDF y html2canvas.
         const options = {
-            margin:       [40, 0, 0, 0],
-            filename:     `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            margin: 2,
+            filename: `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // Usa html2canvas para convertir el div HTML en una imagen (canvas).
-        html2canvas(reciboElemento, options.html2canvas).then(canvas => {
-            // Inicializa jsPDF con las opciones definidas.
-            const pdf = new window.jsPDF(options.jsPDF);
-            // Convierte el canvas en una URL de datos (base64).
-            const imgData = canvas.toDataURL('image/png');
-            // Agrega la imagen al documento PDF.
-            pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
-            // Guarda el PDF.
-            pdf.save(options.filename);
-
-            // Elimina el elemento temporal del DOM para limpiar la página.
-            document.body.removeChild(reciboElemento);
-        });
-
+        html2pdf().from(reciboHTML).set(options).save();
     } catch (err) {
-        // Manejo de errores para notificar al usuario.
         console.error("Error generando PDF:", err);
         mostrarNotificacion('Error al generar el recibo', 'error');
     }
