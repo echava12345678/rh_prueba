@@ -1168,18 +1168,19 @@ function calcularDiasVencimiento(fecha) {
 
 async function descargarReciboTramite(tramiteId) {
     try {
-        // Busca el trámite en la lista local
+        // Busca el trámite en la lista local para obtener sus datos.
         const tramite = tramites.find(t => t.id === tramiteId);
         if (!tramite) {
             mostrarNotificacion('No se encontró el trámite', 'error');
             return;
         }
 
-        // Contenido del recibo (optimizado para mejor renderizado)
+        // Determina el estado de pago para mostrarlo en el recibo.
         const pagoEstado = tramite.pago === 'pagado'
             ? '<span style="color:green; font-weight:bold;">PAGADO</span>'
             : '<span style="color:#d32f2f; font-weight:bold;">PENDIENTE</span>';
 
+        // Crea el contenido HTML del recibo como una cadena.
         const reciboHTML = `
             <div style="font-family:'Poppins', Arial, sans-serif; color:#222; width:340px; margin:0 auto; border:1.5px solid #3869D4; border-radius:12px; background:#fff; display:flex; flex-direction:column; align-items:center;">
                 <div style="text-align:center; border-bottom:2px solid #3869D4; width:100%; padding:18px 0 8px 0;">
@@ -1218,14 +1219,14 @@ async function descargarReciboTramite(tramiteId) {
             </div>
         `;
 
-        // Crea un elemento temporal en el DOM para renderizar el recibo HTML.
+        // Crea un elemento temporal en el DOM para renderizar el recibo.
         const reciboElemento = document.createElement('div');
         reciboElemento.innerHTML = reciboHTML;
         reciboElemento.style.position = 'absolute';
-        reciboElemento.style.left = '-9999px';
+        reciboElemento.style.left = '-9999px'; // Oculta el elemento de la vista.
         document.body.appendChild(reciboElemento);
 
-        // Opciones recomendadas para centrar el recibo y hacerlo más grande:
+        // Opciones de configuración para jsPDF y html2canvas.
         const options = {
             margin:       [40, 0, 0, 0],
             filename:     `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
@@ -1234,12 +1235,15 @@ async function descargarReciboTramite(tramiteId) {
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // Usa html2canvas para convertir el div HTML en un canvas (imagen).
+        // Usa html2canvas para convertir el div HTML en una imagen (canvas).
         html2canvas(reciboElemento, options.html2canvas).then(canvas => {
             // Inicializa jsPDF con las opciones definidas.
             const pdf = new window.jsPDF(options.jsPDF);
+            // Convierte el canvas en una URL de datos (base64).
             const imgData = canvas.toDataURL('image/png');
+            // Agrega la imagen al documento PDF.
             pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+            // Guarda el PDF.
             pdf.save(options.filename);
 
             // Elimina el elemento temporal del DOM para limpiar la página.
@@ -1247,6 +1251,7 @@ async function descargarReciboTramite(tramiteId) {
         });
 
     } catch (err) {
+        // Manejo de errores para notificar al usuario.
         console.error("Error generando PDF:", err);
         mostrarNotificacion('Error al generar el recibo', 'error');
     }
