@@ -1263,6 +1263,7 @@ async function descargarTodosRecibos() {
 
 // Expone las funciones a la ventana global para que el HTML pueda acceder a ellas.
 window.descargarReciboTramite = descargarReciboTramite;
+window.descargarTodosRecibos = descargarTodosRecibos;
 window.showSection = showSection;
 window.cambiarEstadoTramite = cambiarEstadoTramite;
 window.cambiarEstadoPago = cambiarEstadoPago;
@@ -1279,4 +1280,4 @@ window.verificarVencimientos = verificarVencimientos;
 window.editarPlaca = editarPlaca;
 window.eliminarPlaca = eliminarPlaca;
 window.actualizarRegistrosContables = actualizarRegistrosContables;
-window.descargarTodosRecibos = descargarTodosRecibos;
+
