@@ -1183,6 +1183,12 @@ async function descargarReciboTramite(tramiteId) {
             mostrarNotificacion('No se encontró el trámite', 'error');
             return;
         }
+        // Crear un elemento temporal en el DOM para el recibo
+        const tempDiv = document.createElement('div');
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.left = '-9999px'; // Moverlo fuera de la pantalla
+        tempDiv.style.width = '210mm'; // Ancho de una hoja A4
+        tempDiv.style.padding = '20mm'; // Margen de impresión
 
         // Contenido del recibo (limpiado y con campos de concepto/precio)
         const reciboHTML = `
@@ -1234,7 +1240,8 @@ async function descargarReciboTramite(tramiteId) {
 
         await html2pdf().from(reciboHTML).set(options).save();
 
-        html2pdf().from(reciboHTML).set(options).save();
+       // Eliminar el elemento temporal del DOM
+        document.body.removeChild(tempDiv);
     } catch (err) {
         console.error("Error generando PDF:", err);
         mostrarNotificacion('Error al generar el recibo', 'error');
