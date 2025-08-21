@@ -1209,9 +1209,7 @@ const reciboHTML = `
                 </tr>
             </tbody>
         </table>
-        <div style="background-color: #eaf3ff; padding: 8px; border-radius: 8px; margin-top: 8px; text-align: right; font-size: 13px;">
-            Firma profesional: ________________________
-        </div>
+      
         <div style="margin-top: 14px; text-align: center; border-top: 1px solid #ddd; padding-top: 10px;">
             <p style="font-size: 10px; color: #aaa;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
         </div>
