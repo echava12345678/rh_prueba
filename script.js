@@ -1176,66 +1176,48 @@ async function descargarReciboTramite(tramiteId) {
         }
 
         // Contenido del recibo (puedes personalizar el estilo)
-     const reciboHTML = `
-    <div style="font-family: 'Poppins', Arial, sans-serif; color: #222; width: 100mm; border: 1px solid #3869D4; border-radius: 10px; background: #fff;">
-        <div style="text-align: center; border-bottom: 2px solid #3869D4;">
-            <h1 style="color: #3869D4; margin: 0; font-size: 22px; letter-spacing: 1px;">RECIBO DE TRÁMITE</h1>
-            <p style="font-size: 13px; color: #555; margin: 0;">RH Asesorías · Gestión de Trámites</p>
+   const reciboHTML = `
+    <div style="font-family: 'Poppins', Arial, sans-serif; color: #222; width: 110mm; border: 1.5px solid #3869D4; border-radius: 10px; background: #fff;">
+        <div style="text-align: center; border-bottom: 2px solid #3869D4; padding: 18px 0 8px 0;">
+            <h1 style="color: #3869D4; margin: 0; font-size: 26px; letter-spacing: 1px;">RECIBO DE TRÁMITE</h1>
+            <div style="font-size: 15px; color: #555; margin-bottom: 2px;">RH Asesorías · Gestión de Trámites</div>
         </div>
-        <div style="display: flex; justify-content: space-between; font-size: 13px;">
-            <div>
-                <p style="margin: 0;"><strong>Fecha Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
-                <p style="margin: 0;"><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
-            </div>
-            <div style="text-align: right;">
-                <p style="margin: 0;"><strong>Nombre:</strong> ${tramite.cliente}</p>
-                <p style="margin: 0;"><strong>Placa:</strong> ${tramite.placa}</p>
-            </div>
-        </div>
-        <div style="display: flex; justify-content: space-between; font-size: 12px;">
-            <div>
-                <p style="margin: 0;"><strong>Teléfono:</strong> ${tramite.telefono ? tramite.telefono : '---'}</p>
-                <p style="margin: 0;"><strong>Correo:</strong> ${tramite.correo ? tramite.correo : '---'}</p>
-            </div>
-            <div style="text-align: right;">
-                <p style="margin: 0;"><strong>Tipo de trámite:</strong> ${tramite.tipo || '---'}</p>
-                <p style="margin: 0;"><strong>Asesor:</strong> ${tramite.asesor || '---'}</p>
-            </div>
-        </div>
-        <h2 style="font-size: 13px; color: #333; border-bottom: 1px solid #eee; margin: 0;">Detalle del Trámite</h2>
-        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-            <thead>
-                <tr style="background-color: #f2f2f2;">
-                    <th style="padding: 4px; border: 1px solid #ddd;">Fecha</th>
-                    <th style="padding: 4px; border: 1px solid #ddd;">Estado</th>
-                    <th style="padding: 4px; border: 1px solid #ddd;">Estado de Pago</th>
-                    <th style="padding: 4px; border: 1px solid #ddd;">Observación</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="padding: 4px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
-                    <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
-                    <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
-                    <td style="padding: 4px; border: 1px solid #ddd;">${tramite.observaciones || '---'}</td>
-                </tr>
-            </tbody>
+        <table style="width: 100%; font-size: 15px; margin: 0; border-collapse: collapse;">
+            <tr>
+                <td style="padding:10px 0 5px 20px;"><b>Fecha de emisión:</b></td>
+                <td style="padding:10px 20px 5px 0; text-align:right;">${new Date().toLocaleDateString('es-CO')}</td>
+            </tr>
+            <tr>
+                <td style="padding:4px 0 4px 20px;"><b>Nombre:</b></td>
+                <td style="padding:4px 20px 4px 0; text-align:right;">${tramite.cliente}</td>
+            </tr>
+            <tr>
+                <td style="padding:4px 0 4px 20px;"><b>No. de trámite:</b></td>
+                <td style="padding:4px 20px 4px 0; text-align:right;">${tramite.id.slice(0, 8)}</td>
+            </tr>
+            <tr>
+                <td style="padding:4px 0 14px 20px;"><b>Placa:</b></td>
+                <td style="padding:4px 20px 14px 0; text-align:right;">${tramite.placa}</td>
+            </tr>
         </table>
-        <div style="background: #f7fafd; border-left: 3px solid #3869D4; border-radius: 8px; font-size: 12px;">
-            <strong>Nota:</strong> Guarde este recibo. Si requiere soporte, contáctenos.<br>
-            <span style="color: #3869D4;">RH Asesorías</span> - Tel: <span style="color: #333;">+57 301 234 5678</span>
+        <div style="height:1px; background:#ddd; margin:0 20px 20px 20px;"></div>
+        <div style="padding:0 20px 20px 20px; color:#555; font-size:13px; text-align:center;">
+            <b>Este recibo certifica el trámite realizado.<br>
+            Para soporte o información adicional comuníquese con RH Asesorías.</b>
         </div>
-        <div style="text-align: center; border-top: 1px solid #eee;">
-            <p style="font-size: 10px; color: #888; margin: 0;">Gracias por confiar en RH Asesorías.<br>
-            Este documento es generado electrónicamente el ${new Date().toLocaleDateString('es-CO')}</p>
+        <div style="border-top: 1px solid #eee; text-align:center; color:#888; font-size:11px; padding:6px 0 0 0;">
+            Gracias por confiar en RH Asesorías.<br>
+            Documento generado electrónicamente el ${new Date().toLocaleDateString('es-CO')}
         </div>
     </div>
 `;
+
+// Opciones html2pdf recomendadas para que salga grande y centrado:
 const options = {
-    margin: 0,
+    margin: 10, // mm, para centrarlo bonito en la hoja
     filename: `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 3 },
+    html2canvas: { scale: 2 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
 };
 
