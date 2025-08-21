@@ -1177,48 +1177,47 @@ async function descargarReciboTramite(tramiteId) {
 
         // Contenido del recibo (puedes personalizar el estilo)
    const reciboHTML = `
-    <div style="font-family: 'Poppins', Arial, sans-serif; color: #222; width: 110mm; border: 1.5px solid #3869D4; border-radius: 10px; background: #fff;">
-        <div style="text-align: center; border-bottom: 2px solid #3869D4; padding: 18px 0 8px 0;">
-            <h1 style="color: #3869D4; margin: 0; font-size: 26px; letter-spacing: 1px;">RECIBO DE TRÁMITE</h1>
-            <div style="font-size: 15px; color: #555; margin-bottom: 2px;">RH Asesorías · Gestión de Trámites</div>
+    <div style="font-family:'Poppins',Arial,sans-serif; color:#222; width:340px; margin:0 auto; border:1.5px solid #3869D4; border-radius:12px; background:#fff; display:flex; flex-direction:column; align-items:center;">
+        <div style="text-align:center; border-bottom:2px solid #3869D4; width:100%; padding:18px 0 8px 0;">
+            <h1 style="color:#3869D4; margin:0; font-size:26px; letter-spacing:1px;">RECIBO DE TRÁMITE</h1>
+            <div style="font-size:15px; color:#555; margin-bottom:2px;">RH Asesorías · Gestión de Trámites</div>
         </div>
-        <table style="width: 100%; font-size: 15px; margin: 0; border-collapse: collapse;">
+        <table style="width:92%; font-size:15px; margin:18px 0 8px 0; border-collapse:collapse;">
             <tr>
-                <td style="padding:10px 0 5px 20px;"><b>Fecha de emisión:</b></td>
-                <td style="padding:10px 20px 5px 0; text-align:right;">${new Date().toLocaleDateString('es-CO')}</td>
+                <td style="padding:5px 0;"><b>Fecha de emisión:</b></td>
+                <td style="padding:5px 0; text-align:right;">${new Date().toLocaleDateString('es-CO')}</td>
             </tr>
             <tr>
-                <td style="padding:4px 0 4px 20px;"><b>Nombre:</b></td>
-                <td style="padding:4px 20px 4px 0; text-align:right;">${tramite.cliente}</td>
+                <td style="padding:5px 0;"><b>Nombre:</b></td>
+                <td style="padding:5px 0; text-align:right;">${tramite.cliente}</td>
             </tr>
             <tr>
-                <td style="padding:4px 0 4px 20px;"><b>No. de trámite:</b></td>
-                <td style="padding:4px 20px 4px 0; text-align:right;">${tramite.id.slice(0, 8)}</td>
+                <td style="padding:5px 0;"><b>No. de trámite:</b></td>
+                <td style="padding:5px 0; text-align:right;">${tramite.id.slice(0, 8)}</td>
             </tr>
             <tr>
-                <td style="padding:4px 0 14px 20px;"><b>Placa:</b></td>
-                <td style="padding:4px 20px 14px 0; text-align:right;">${tramite.placa}</td>
+                <td style="padding:5px 0;"><b>Placa:</b></td>
+                <td style="padding:5px 0; text-align:right;">${tramite.placa}</td>
             </tr>
         </table>
-        <div style="height:1px; background:#ddd; margin:0 20px 20px 20px;"></div>
-        <div style="padding:0 20px 20px 20px; color:#555; font-size:13px; text-align:center;">
-            <b>Este recibo certifica el trámite realizado.<br>
-            Para soporte o información adicional comuníquese con RH Asesorías.</b>
+        <div style="width:92%; color:#444; font-size:13px; text-align:center; margin-bottom:20px;">
+            <b>Este recibo certifica el trámite realizado.</b><br>
+            Para soporte o información adicional comuníquese con RH Asesorías.
         </div>
-        <div style="border-top: 1px solid #eee; text-align:center; color:#888; font-size:11px; padding:6px 0 0 0;">
+        <div style="width:100%; border-top:1px solid #eee; text-align:center; color:#888; font-size:11px; padding:6px 0;">
             Gracias por confiar en RH Asesorías.<br>
             Documento generado electrónicamente el ${new Date().toLocaleDateString('es-CO')}
         </div>
     </div>
 `;
 
-// Opciones html2pdf recomendadas para que salga grande y centrado:
+// Opciones recomendadas para centrar el recibo y hacerlo más grande:
 const options = {
-    margin: 10, // mm, para centrarlo bonito en la hoja
-    filename: `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    margin:       [40, 0, 0, 0], // top, right, bottom, left (mm)
+    filename:     `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
 };
 
         html2pdf().from(reciboHTML).set(options).save();
