@@ -1241,10 +1241,10 @@ async function descargarReciboTramite(tramiteId) {
 
 async function descargarTodosRecibos() {
     // Filtra solo los trámites que están terminados y pagados
-    const tramitesPagados = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
+   const tramitesTerminados = tramites.filter(t => t.estado === 'terminado');
 
     if (tramitesPagados.length === 0) {
-        mostrarNotificacion('No hay recibos pagados para descargar.', 'info');
+        mostrarNotificacion('No hay recibos para descargar.', 'info');
         return;
     }
 
