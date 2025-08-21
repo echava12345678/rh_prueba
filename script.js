@@ -1208,6 +1208,7 @@ async function descargarReciboTramite(tramiteId) {
                             <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
                         </tr>
                     </tbody>
+                    </table>
                 
                 <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
                     <span style="font-size: 12px; color: #555;"></span>
@@ -1238,7 +1239,7 @@ async function descargarReciboTramite(tramiteId) {
                     <span style="font-size: 12px; color: #555;"></span>
                 </div>
             </div>
-            </table>
+            
         `;
 
         const options = {
