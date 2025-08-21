@@ -1183,10 +1183,9 @@ async function descargarReciboTramite(tramiteId) {
             return;
         }
 
-        // Crear un div temporal y añadir el contenido HTML del recibo
         const reciboDiv = document.createElement('div');
         reciboDiv.innerHTML = `
-            <div style="font-family: 'Poppins', sans-serif; padding: 24px; color: #222; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+            <div style="font-family: 'Poppins', sans-serif; padding: 24px; color: #222; max-width: 800px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
                 <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 16px; margin-bottom: 20px;">
                     <h1 style="color: #3869D4; margin: 0;">RECIBO DE TRÁMITE</h1>
                     <p style="font-size: 15px; color: #444;">RH Asesorías &middot; Gestión de Trámites</p>
@@ -1223,12 +1222,11 @@ async function descargarReciboTramite(tramiteId) {
                 </div>
             </div>
         `;
-        document.body.appendChild(reciboDiv); // Añadir al DOM para que html2canvas pueda procesarlo
+        document.body.appendChild(reciboDiv);
 
-        const canvas = await html2canvas(reciboDiv, { scale: 6 });
+        const canvas = await html2canvas(reciboDiv, { scale: 3 });
         const imgData = canvas.toDataURL('image/png');
 
-        // Usar jspdf para crear y guardar el PDF
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         const imgProps = pdf.getImageProperties(imgData);
@@ -1238,7 +1236,7 @@ async function descargarReciboTramite(tramiteId) {
         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         pdf.save(`Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`);
 
-        document.body.removeChild(reciboDiv); // Limpiar el elemento temporal del DOM
+        document.body.removeChild(reciboDiv);
 
     } catch (err) {
         console.error("Error generando PDF:", err);
