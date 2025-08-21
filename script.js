@@ -1230,7 +1230,9 @@ async function descargarReciboTramite(tramiteId) {
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // Usa html2pdf con el string HTML
+        // Pausar brevemente para permitir la renderización completa del HTML en memoria
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         await html2pdf().from(reciboHTML).set(options).save();
 
     } catch (err) {
