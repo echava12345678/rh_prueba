@@ -1177,52 +1177,47 @@ async function descargarReciboTramite(tramiteId) {
 
         // Contenido del recibo (puedes personalizar el estilo)
 const reciboHTML = `
-    <div style="font-family: 'Poppins', sans-serif; padding: 15px; color: #222; max-width: 550px; margin: 0 auto; border: 1px solid #ddd; border-radius: 10px;">
-        <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 12px; margin-bottom: 14px;">
-            <h1 style="color: #3869D4; margin: 0; font-size: 26px;">RECIBO DE TRÁMITE</h1>
-            <p style="font-size: 13px; color: #444;">RH Asesorías · Gestión de Trámites</p>
+    <div style="font-family:'Poppins',Arial,sans-serif; color:#222; width:340px; margin:0 auto; border:1.5px solid #3869D4; border-radius:12px; background:#fff; display:flex; flex-direction:column; align-items:center;">
+        <div style="text-align:center; border-bottom:2px solid #3869D4; width:100%; padding:18px 0 8px 0;">
+            <h1 style="color:#3869D4; margin:0; font-size:26px; letter-spacing:1px;">RECIBO DE TRÁMITE</h1>
+            <div style="font-size:15px; color:#555; margin-bottom:2px;">RH Asesorías · Gestión de Trámites</div>
         </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px;">
-            <div>
-                <p><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
-                <p><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
-            </div>
-            <div style="text-align: right;">
-                <p><strong>Nombre:</strong> ${tramite.cliente}</p>
-                <p><strong>Placa:</strong> ${tramite.placa}</p>
-            </div>
-        </div>
-        <h2 style="font-size: 15px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 4px; margin-bottom: 7px;">Detalle del Trámite</h2>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 13px;">
-            <thead>
-                <tr style="background-color: #f2f2f2;">
-                    <th style="padding: 5px; border: 1px solid #ddd;">Fecha</th>
-                    <th style="padding: 5px; border: 1px solid #ddd;">Estado</th>
-                    <th style="padding: 5px; border: 1px solid #ddd;">Estado de Pago</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="padding: 5px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
-                    <td style="padding: 5px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
-                    <td style="padding: 5px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
-                </tr>
-            </tbody>
+        <table style="width:92%; font-size:15px; margin:18px 0 8px 0; border-collapse:collapse;">
+            <tr>
+                <td style="padding:5px 0;"><b>Fecha de emisión:</b></td>
+                <td style="padding:5px 0; text-align:right;">${new Date().toLocaleDateString('es-CO')}</td>
+            </tr>
+            <tr>
+                <td style="padding:5px 0;"><b>Nombre:</b></td>
+                <td style="padding:5px 0; text-align:right;">${tramite.cliente}</td>
+            </tr>
+            <tr>
+                <td style="padding:5px 0;"><b>No. de trámite:</b></td>
+                <td style="padding:5px 0; text-align:right;">${tramite.id.slice(0, 8)}</td>
+            </tr>
+            <tr>
+                <td style="padding:5px 0;"><b>Placa:</b></td>
+                <td style="padding:5px 0; text-align:right;">${tramite.placa}</td>
+            </tr>
         </table>
-      
-        <div style="margin-top: 14px; text-align: center; border-top: 1px solid #ddd; padding-top: 10px;">
-            <p style="font-size: 10px; color: #aaa;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
+        <div style="width:92%; color:#444; font-size:13px; text-align:center; margin-bottom:20px;">
+            <b>Este recibo certifica el trámite realizado.</b><br>
+            Para soporte o información adicional comuníquese con RH Asesorías.
+        </div>
+        <div style="width:100%; border-top:1px solid #eee; text-align:center; color:#888; font-size:11px; padding:6px 0;">
+            Gracias por confiar en RH Asesorías.<br>
+            Documento generado electrónicamente el ${new Date().toLocaleDateString('es-CO')}
         </div>
     </div>
 `;
 
-// Opciones html2pdf recomendadas
+// Opciones recomendadas para centrar el recibo y hacerlo más grande:
 const options = {
-    margin: 2, // o 0
-    filename: ...,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    margin:       [40, 0, 0, 0], // top, right, bottom, left (mm)
+    filename:     `Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
 };
     } catch (err) {
         console.error("Error generando PDF:", err);
