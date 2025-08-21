@@ -1225,7 +1225,7 @@ async function descargarReciboTramite(tramiteId) {
         `;
         document.body.appendChild(reciboDiv); // Añadir al DOM para que html2canvas pueda procesarlo
 
-        const canvas = await html2canvas(reciboDiv, { scale: 2 });
+        const canvas = await html2canvas(reciboDiv, { scale: 6 });
         const imgData = canvas.toDataURL('image/png');
 
         // Usar jspdf para crear y guardar el PDF
