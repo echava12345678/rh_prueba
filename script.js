@@ -1166,7 +1166,7 @@ function calcularDiasVencimiento(fecha) {
     return Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
 }
 
-// NUEVA FUNCIÓN AÑADIDA PARA CORREGIR EL PROBLEMA DE LA FECHA
+
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -1184,7 +1184,7 @@ async function descargarReciboTramite(tramiteId) {
             return;
         }
 
-      // Contenido del recibo (puedes personalizar el estilo)
+        // Contenido del recibo (limpiado y con campos de concepto/precio)
         const reciboHTML = `
             <div style="font-family: 'Poppins', sans-serif; padding: 24px; color: #222; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
                 <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 16px; margin-bottom: 20px;">
@@ -1193,62 +1193,35 @@ async function descargarReciboTramite(tramiteId) {
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 18px;">
                     <div>
-                        <p><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
-                        <p><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
+                        <p style="margin: 0;"><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
+                        <p style="margin: 0; margin-top: 4px;"><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
                     </div>
                     <div style="text-align: right;">
-                        <p><strong>Nombre:</strong> ${tramite.cliente}</p>
-                        <p><strong>Placa:</strong> ${tramite.placa}</p>
+                        <p style="margin: 0;"><strong>Nombre:</strong> ${tramite.cliente}</p>
+                        <p style="margin: 0; margin-top: 4px;"><strong>Placa:</strong> ${tramite.placa}</p>
                     </div>
                 </div>
                 <h2 style="font-size: 13px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 2px; margin-bottom: 4px;">Detalle del Trámite</h2>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 12px;">
                     <thead>
                         <tr style="background-color: #f2f2f2;">
-                            <th style="padding: 4px; border: 1px solid #ddd;">Fecha</th>
-                            <th style="padding: 4px; border: 1px solid #ddd;">Estado</th>
-                            <th style="padding: 4px; border: 1px solid #ddd;">Estado de Pago</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">Fecha</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">Estado</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">Estado de Pago</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="padding: 4px; border: 1px solid #ddd;">${formatDate(tramite.fecha)}</td>
-                            <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
-                            <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
                         </tr>
                     </tbody>
-                    </table>
-                
-                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
-                    <span style="font-size: 12px; color: #555;"></span>
-                </div>
-                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
-                    <span style="font-size: 12px; color: #555;"></span>
-                </div>
-                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
-                    <span style="font-size: 12px; color: #555;"></span>
-                </div>
-                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
-                    <span style="font-size: 12px; color: #555;"></span>
-                </div>
-                
-                <div style="margin-top: 10px; text-align: center; border-top: 1px solid #ddd; padding-top: 6px;">
-                    <p style="font-size: 9px; color: #aaa;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${formatDate(new Date().toISOString().split('T')[0])}</p>
-                </div>
-
-                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
-                    <span style="font-size: 12px; color: #555;"></span>
-                </div>
-
-                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
-                    <span style="font-size: 12px; color: #555;"></span>
-                </div>
-
-                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
-                    <span style="font-size: 12px; color: #555;"></span>
+                </table>
+                <div style="margin-top: 20px; text-align: center; border-top: 1px solid #ddd; padding-top: 10px;">
+                    <p style="font-size: 9px; color: #aaa; margin: 0;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
                 </div>
             </div>
-            
         `;
 
         const options = {
@@ -1264,6 +1237,27 @@ async function descargarReciboTramite(tramiteId) {
         console.error("Error generando PDF:", err);
         mostrarNotificacion('Error al generar el recibo', 'error');
     }
+}
+
+async function descargarTodosRecibos() {
+    // Filtra solo los trámites que están terminados y pagados
+    const tramitesPagados = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
+
+    if (tramitesPagados.length === 0) {
+        mostrarNotificacion('No hay recibos pagados para descargar.', 'info');
+        return;
+    }
+
+    mostrarNotificacion(`Iniciando la descarga de ${tramitesPagados.length} recibos... Esto puede tomar un momento.`, 'info');
+
+    // Bucle asíncrono para descargar un recibo a la vez con un retraso
+    for (const tramite of tramitesPagados) {
+        // Asegúrate de usar la versión corregida de descargarReciboTramite
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Retraso de 1 segundo
+        await descargarReciboTramite(tramite.id);
+    }
+    
+    mostrarNotificacion('Descarga de todos los recibos completada.', 'success');
 }
 
 
