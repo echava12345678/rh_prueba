@@ -1192,28 +1192,28 @@ async function descargarReciboTramite(tramiteId) {
                         <p><strong>Placa:</strong> ${tramite.placa}</p>
                     </div>
                 </div>
-                <h2 style="font-size: 17px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 7px; margin-bottom: 12px;">Detalle del Trámite</h2>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                <h2 style="font-size: 13px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 2px; margin-bottom: 4px;">Detalle del Trámite</h2>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 12px;">
                     <thead>
                         <tr style="background-color: #f2f2f2;">
-                            <th style="padding: 8px; border: 1px solid #ddd;">Fecha</th>
-                            <th style="padding: 8px; border: 1px solid #ddd;">Estado</th>
-                            <th style="padding: 8px; border: 1px solid #ddd;">Estado de Pago</th>
+                            <th style="padding: 4px; border: 1px solid #ddd;">Fecha</th>
+                            <th style="padding: 4px; border: 1px solid #ddd;">Estado</th>
+                            <th style="padding: 4px; border: 1px solid #ddd;">Estado de Pago</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
+                            <td style="padding: 4px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
+                            <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
+                            <td style="padding: 4px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
                         </tr>
                     </tbody>
                 </table>
-                <div style="background-color: #eaf3ff; padding: 12px; border-radius: 8px; margin-top: 12px; text-align: right;">
-                    <span style="font-size: 15px; color: #555;">Firma profesional: ________________________</span>
+                <div style="background-color: #eaf3ff; padding: 6px; border-radius: 8px; margin-top: 8px; text-align: right; ">
+                    <span style="font-size: 12px; color: #555;">Firma profesional: ________________________</span>
                 </div>
-                <div style="margin-top: 24px; text-align: center; border-top: 1px solid #ddd; padding-top: 18px;">
-                    <p style="font-size: 11px; color: #aaa;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
+                <div style="margin-top: 10px; text-align: center; border-top: 1px solid #ddd; padding-top: 6px;">
+                    <p style="font-size: 9px; color: #aaa;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
                 </div>
             </div>
         `;
