@@ -1,451 +1,409 @@
+// script.js
+// Importa las funciones necesarias del SDK de Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
+import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, writeBatch, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+// Variables globales para almacenar datos
+let tramites = [];
+let registrosContables = [];
+let clientesCRM = [];
+let placas = [];
+
+// Tu configuración de Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyDEpK5nihXlRYhelf10c_AZmDl0EiffiWI",
+    authDomain: "rhasesorias-47ec0.firebaseapp.com",
+    projectId: "rhasesorias-47ec0",
+    storageBucket: "rhasesorias-47ec0.firebasestorage.app",
+    messagingSenderId: "428666997954",
+    appId: "1:428666997954:web:2bacad995bf0ae999eff5b",
+    measurementId: "G-TJW55F5KKY"
+};
+
+// **INICIALIZA FIREBASE UNA SOLA VEZ DE FORMA GLOBAL**
+// Estas variables (app, db, auth) estarán disponibles para todas las funciones.
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// Espera a que la página se cargue
 document.addEventListener('DOMContentLoaded', function() {
-    // script.js
-    // Importa las funciones necesarias del SDK de Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
-    import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, writeBatch, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    
+    // Configura los formularios y botones
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) loginForm.addEventListener('submit', (e) => handleLogin(e, auth));
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) logoutBtn.addEventListener('click', () => handleLogout(auth));
 
-    // Variables globales para almacenar datos
-    let tramites = [];
-    let registrosContables = [];
-    let clientesCRM = [];
-    let placas = [];
-
-    // Tu configuración de Firebase
-    const firebaseConfig = {
-        apiKey: "AIzaSyDEpK5nihXlRYhelf10c_AZmDl0EiffiWI",
-        authDomain: "rhasesorias-47ec0.firebaseapp.com",
-        projectId: "rhasesorias-47ec0",
-        storageBucket: "rhasesorias-47ec0.firebasestorage.app",
-        messagingSenderId: "428666997954",
-        appId: "1:428666997954:web:2bacad995bf0ae999eff5b",
-        measurementId: "G-TJW55F..."
-    };
-
-    // Inicializa Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    // Referencias a colecciones
-    const tramitesCol = collection(db, "tramites");
-    const contabilidadCol = collection(db, "contabilidad");
-    const crmCol = collection(db, "clientes_crm");
-    const placasCol = collection(db, "placas");
-
-    // Referencias a elementos del DOM
-    const tramiteForm = document.getElementById('tramiteForm');
-    const tramiteClienteInput = document.getElementById('tramiteCliente');
-    const tramitesProcesoDiv = document.getElementById('tramitesProceso');
-    const tramitesTerminadosDiv = document.getElementById('tramitesTerminados');
-    const tramitesPorCobrarDiv = document.getElementById('tramitesPorCobrar');
-    const tramitesRechazadosDiv = document.getElementById('tramitesRechazados');
-    const valorTramiteDiv = document.getElementById('valorTramiteDiv');
-    const tramitePagoSelect = document.getElementById('tramitePago');
-    const tramiteEstadoSelect = document.getElementById('tramiteEstado');
-    const contabilidadForm = document.getElementById('contabilidadForm');
-    const crmForm = document.getElementById('crmForm');
-    const placasForm = document.getElementById('placasForm');
-    const tablaPlacasDiv = document.getElementById('tablaPlacas');
-
-    // Notificaciones
-    function mostrarNotificacion(mensaje, tipo = 'success') {
-        const notificacion = document.getElementById('notificacion');
-        notificacion.textContent = mensaje;
-        notificacion.className = 'notificacion ' + tipo;
-        notificacion.style.display = 'block';
-        notificacion.style.opacity = '1';
-
-        setTimeout(() => {
-            notificacion.style.opacity = '0';
-            setTimeout(() => notificacion.style.display = 'none', 500);
-        }, 3000);
-    }
-
-    // Modal
-    const editModal = document.getElementById('editModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBody = document.getElementById('modalBody');
-    const closeModal = document.querySelector('.close');
-
-    closeModal.onclick = function() {
-        editModal.style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        if (event.target == editModal) {
-            editModal.style.display = 'none';
-        }
-    }
-
-    // Funciones de navegación
-    function showSection(sectionId) {
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(section => {
-            section.classList.remove('active');
-        });
-        const activeSection = document.getElementById(sectionId);
-        if (activeSection) {
-            activeSection.classList.add('active');
-        }
-
-        const navButtons = document.querySelectorAll('.nav-btn');
-        navButtons.forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`btn${capitalizeFirstLetter(sectionId)}`).classList.add('active');
-    }
-
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
+    // **NUEVO: Asigna oyentes de eventos a los botones de navegación**
     document.getElementById('btnTramites').addEventListener('click', () => showSection('tramites'));
     document.getElementById('btnContabilidad').addEventListener('click', () => showSection('contabilidad'));
     document.getElementById('btnCRM').addEventListener('click', () => showSection('crm'));
     document.getElementById('btnPlacas').addEventListener('click', () => showSection('placas'));
-    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
 
-    // Lógica de autenticación
-    function setupPageContent() {
-        showSection('tramites');
-        setupRealtimeListeners();
-    }
-
+    // Ocultar/mostrar la interfaz de la aplicación según el estado de autenticación
     onAuthStateChanged(auth, (user) => {
         const loginPanel = document.getElementById('loginPanel');
         const appContainer = document.getElementById('appContainer');
 
         if (user) {
-            loginPanel.classList.remove('active');
-            appContainer.classList.remove('hidden');
-            setupPageContent();
-        } else {
-            loginPanel.classList.add('active');
-            appContainer.classList.add('hidden');
-        }
-    });
+            // El usuario ha iniciado sesión
+            loginPanel.style.display = 'none';
+            appContainer.style.display = 'block';
 
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('emailInput').value;
-        const password = document.getElementById('passwordInput').value;
-
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            mostrarNotificacion('¡Inicio de sesión exitoso!', 'success');
-        } catch (error) {
-            console.error(error);
-            mostrarNotificacion('Error en el inicio de sesión. Credenciales incorrectas.', 'error');
-        }
-    });
-
-    function handleLogout() {
-        signOut(auth).then(() => {
-            mostrarNotificacion('Has cerrado sesión.', 'info');
-        }).catch(error => {
-            console.error("Error al cerrar sesión: ", error);
-        });
-    }
-
-    // Sección de Trámites
-    tramitePagoSelect.addEventListener('change', (e) => {
-        if (e.target.value === 'pagado') {
-            valorTramiteDiv.style.display = 'block';
-        } else {
-            valorTramiteDiv.style.display = 'none';
-        }
-    });
-
-    tramiteForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const nuevoTramite = {
-            fecha: tramiteForm.tramiteFecha.value,
-            cliente: tramiteForm.tramiteCliente.value,
-            placa: tramiteForm.tramitePlaca.value,
-            nit: tramiteForm.tramiteNit.value,
-            tipo: tramiteForm.tramiteTipo.value,
-            transito: tramiteForm.tramiteTransito.value,
-            estado: tramiteForm.tramiteEstado.value,
-            pago: tramiteForm.tramitePago.value,
-            valor: tramiteForm.tramitePago.value === 'pagado' ? Number(tramiteForm.tramiteValor.value) : 0,
-            observaciones: ""
-        };
-
-        try {
-            await addDoc(tramitesCol, nuevoTramite);
-            mostrarNotificacion('Trámite agregado con éxito.', 'success');
-            tramiteForm.reset();
-        } catch (err) {
-            console.error("Error al agregar documento: ", err);
-            mostrarNotificacion('Error al agregar el trámite.', 'error');
-        }
-    });
-
-    function renderTramites(data) {
-        tramitesProcesoDiv.innerHTML = '';
-        tramitesTerminadosDiv.innerHTML = '';
-        tramitesPorCobrarDiv.innerHTML = '';
-        tramitesRechazadosDiv.innerHTML = '';
-
-        data.forEach(tramite => {
-            const tramiteCard = document.createElement('div');
-            tramiteCard.className = 'tramite-card';
-            tramiteCard.innerHTML = `
-                <h4>${tramite.cliente} - ${tramite.placa}</h4>
-                <p><strong>Trámite:</strong> ${tramite.tipo}</p>
-                <p><strong>Fecha:</strong> ${tramite.fecha}</p>
-                <p><strong>Tránsito:</strong> ${tramite.transito}</p>
-                <p><strong>Estado:</strong> <span class="estado-${tramite.estado}">${capitalizeFirstLetter(tramite.estado)}</span></p>
-                <p><strong>Pago:</strong> <span class="pago-${tramite.pago}">${capitalizeFirstLetter(tramite.pago)}</span></p>
-                ${tramite.valor > 0 ? `<p><strong>Valor:</strong> $${tramite.valor.toLocaleString()}</p>` : ''}
-                ${tramite.nit ? `<p><strong>NIT:</strong> ${tramite.nit}</p>` : ''}
-                ${tramite.observaciones ? `<p><strong>Observaciones:</strong> ${tramite.observaciones}</p>` : ''}
-                <div class="card-actions">
-                    <button class="btn-secondary" onclick="editarTramite('${tramite.id}')">Editar</button>
-                    <button class="btn-whatsapp" onclick="notificarWhatsApp('${tramite.id}')"><i class="fab fa-whatsapp"></i></button>
-                    <button class="btn-secondary" onclick="descargarReciboTramite('${tramite.id}')">Descargar Recibo</button>
-                    <button class="btn-secondary" onclick="eliminarTramite('${tramite.id}')">Eliminar</button>
-                </div>
-            `;
-
-            switch (tramite.estado) {
-                case 'proceso':
-                    tramitesProcesoDiv.appendChild(tramiteCard);
-                    break;
-                case 'terminado':
-                    tramitesTerminadosDiv.appendChild(tramiteCard);
-                    break;
-                case 'rechazado':
-                    tramitesRechazadosDiv.appendChild(tramiteCard);
-                    break;
-            }
-            if (tramite.pago === 'pendiente' && tramite.estado !== 'rechazado') {
-                tramitesPorCobrarDiv.appendChild(tramiteCard);
-            }
-        });
-    }
-
-    async function descargarReciboTramite(tramiteId) {
-        try {
-            const docRef = doc(db, "tramites", tramiteId);
-            const tramiteDoc = await getDoc(docRef);
-            if (!tramiteDoc.exists()) {
-                throw new Error("No se encontró el trámite");
-            }
-            const tramite = tramiteDoc.data();
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            const element = document.createElement('div');
-            element.innerHTML = `
-                <div style="padding: 20px; font-family: 'Poppins', sans-serif;">
-                    <h2 style="text-align: center; color: #f50d05;">RH Asesorías</h2>
-                    <h3 style="text-align: center;">Recibo de Trámite</h3>
-                    <hr style="border: 1px solid #f57c00; margin-top: 10px; margin-bottom: 20px;">
-                    <p><strong>Fecha:</strong> ${tramite.fecha}</p>
-                    <p><strong>Cliente:</strong> ${tramite.cliente}</p>
-                    <p><strong>Placa:</strong> ${tramite.placa}</p>
-                    <p><strong>NIT:</strong> ${tramite.nit || 'N/A'}</p>
-                    <p><strong>Tipo de Trámite:</strong> ${tramite.tipo}</p>
-                    <p><strong>Tránsito:</strong> ${tramite.transito}</p>
-                    <p><strong>Estado de Pago:</strong> ${capitalizeFirstLetter(tramite.pago)}</p>
-                    <p><strong>Valor:</strong> $${tramite.valor.toLocaleString()}</p>
-                    <p><strong>Observaciones:</strong> ${tramite.observaciones || 'Sin observaciones'}</p>
-                    <div style="margin-top: 50px; text-align: center;">
-                        <p style="font-style: italic; color: #777;">Gracias por preferir nuestros servicios.</p>
-                        <p style="font-size: 12px; color: #555;">Documento generado automáticamente.</p>
-                    </div>
-                </div>
-            `;
-            
-            await html2canvas(element, { scale: 2 }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const imgWidth = 210;
-                const pageHeight = 297;
-                const imgHeight = canvas.height * imgWidth / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
-                
-                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-                
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    doc.addPage();
-                    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-                
-                doc.save(`Recibo_${tramite.cliente}_${tramite.placa}.pdf`);
-                mostrarNotificacion('Recibo generado con éxito.', 'success');
+            // Cargar datos de Firestore en tiempo real usando onSnapshot
+            onSnapshot(collection(db, 'tramites'), (snapshot) => {
+                tramites = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                actualizarTramites();
             });
 
-        } catch (error) {
-            console.error("Error al generar el recibo:", error);
-            mostrarNotificacion('Error al generar el recibo.', 'error');
-        }
-    }
+            onSnapshot(collection(db, 'registrosContables'), (snapshot) => {
+                registrosContables = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                actualizarRegistrosContables();
+            });
 
-    async function eliminarTramite(id) {
-        if (!confirm('¿Estás seguro de que quieres eliminar este trámite?')) return;
-        try {
-            await deleteDoc(doc(db, "tramites", id));
-            mostrarNotificacion('Trámite eliminado con éxito.', 'success');
-        } catch (error) {
-            console.error("Error al eliminar documento: ", error);
-            mostrarNotificacion('Error al eliminar el trámite.', 'error');
-        }
-    }
+            onSnapshot(collection(db, 'clientesCRM'), (snapshot) => {
+                clientesCRM = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                actualizarTablaCRM();
+            });
 
-    function editarTramite(id) {
-        const tramite = tramites.find(t => t.id === id);
-        if (!tramite) return;
+            onSnapshot(collection(db, 'placas'), (snapshot) => {
+                placas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                actualizarTablaPlacas();
+            });
 
-        modalTitle.textContent = `Editar Trámite de ${tramite.cliente}`;
-        modalBody.innerHTML = `
-            <form id="editTramiteForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="editTramiteFecha">Fecha</label>
-                        <input type="date" id="editTramiteFecha" value="${tramite.fecha}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editTramiteCliente">Cliente</label>
-                        <input type="text" id="editTramiteCliente" value="${tramite.cliente}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editTramitePlaca">Placa</label>
-                        <input type="text" id="editTramitePlaca" value="${tramite.placa}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editTramiteNit">NIT</label>
-                        <input type="text" id="editTramiteNit" value="${tramite.nit || ''}">
-                    </div>
-                    <div class="form-group">
-                        <label for="editTramiteTipo">Tipo de Trámite</label>
-                        <input type="text" id="editTramiteTipo" value="${tramite.tipo}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editTramiteTransito">Tránsito</label>
-                        <input type="text" id="editTramiteTransito" value="${tramite.transito}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editTramiteEstado">Estado</label>
-                        <select id="editTramiteEstado" required>
-                            <option value="proceso" ${tramite.estado === 'proceso' ? 'selected' : ''}>En Proceso</option>
-                            <option value="terminado" ${tramite.estado === 'terminado' ? 'selected' : ''}>Terminado</option>
-                            <option value="rechazado" ${tramite.estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="editTramitePago">Estado de Pago</label>
-                        <select id="editTramitePago" required>
-                            <option value="pendiente" ${tramite.pago === 'pendiente' ? 'selected' : ''}>Por Cobrar</option>
-                            <option value="pagado" ${tramite.pago === 'pagado' ? 'selected' : ''}>Pagado</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="editValorTramiteDiv" style="${tramite.pago === 'pagado' ? 'display: block;' : 'display: none;'}">
-                        <label for="editTramiteValor">Valor</label>
-                        <input type="number" id="editTramiteValor" value="${tramite.valor || 0}" min="0">
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label for="editTramiteObservaciones">Observaciones</label>
-                        <textarea id="editTramiteObservaciones">${tramite.observaciones || ''}</textarea>
-                    </div>
-                </div>
-                <button type="submit" class="btn-primary">Guardar Cambios</button>
-            </form>
-        `;
-
-        const editValorTramiteDiv = document.getElementById('editValorTramiteDiv');
-        document.getElementById('editTramitePago').addEventListener('change', (e) => {
-            if (e.target.value === 'pagado') {
-                editValorTramiteDiv.style.display = 'block';
-            } else {
-                editValorTramiteDiv.style.display = 'none';
+            // Configura la fecha actual por defecto en los campos de fecha
+            const today = new Date().toISOString().split('T')[0];
+            const tramiteFecha = document.getElementById('tramiteFecha');
+            if (tramiteFecha) tramiteFecha.value = today;
+            const contaFecha = document.getElementById('contaFecha');
+            if (contaFecha) contaFecha.value = today;
+            const placaFechaRecepcion = document.getElementById('placaFechaRecepcion');
+            if (placaFechaRecepcion) placaFechaRecepcion.value = today;
+            const fechaConsulta = document.getElementById('fechaConsulta');
+            if (fechaConsulta) fechaConsulta.value = today;
+            
+            // Event listeners para los formularios
+            const tramiteForm = document.getElementById('tramiteForm');
+            if (tramiteForm) tramiteForm.addEventListener('submit', (e) => agregarTramite(e, db));
+            const contabilidadForm = document.getElementById('contabilidadForm');
+            if (contabilidadForm) contabilidadForm.addEventListener('submit', (e) => agregarMovimiento(e, db));
+            const crmForm = document.getElementById('crmForm');
+            if (crmForm) crmForm.addEventListener('submit', (e) => agregarClienteCRM(e, db));
+            const placasForm = document.getElementById('placasForm');
+            if (placasForm) placasForm.addEventListener('submit', (e) => registrarPlaca(e, db));
+            
+            // Configura el modal de edición
+            const modal = document.getElementById('editModal');
+            const closeBtn = document.querySelector('.close');
+            if (closeBtn) closeBtn.onclick = function() { modal.style.display = 'none'; }
+            window.onclick = function(event) {
+                if (event.target === modal) modal.style.display = 'none';
             }
-        });
+            
+            // Verificar vencimientos al cargar la página y luego cada hora
+            verificarVencimientos(db);
+            setInterval(() => verificarVencimientos(db), 3600000);
 
-        const editTramiteForm = document.getElementById('editTramiteForm');
-        editTramiteForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const tramiteRef = doc(db, "tramites", id);
-            const updatedData = {
-                fecha: editTramiteForm.editTramiteFecha.value,
-                cliente: editTramiteForm.editTramiteCliente.value,
-                placa: editTramiteForm.editTramitePlaca.value,
-                nit: editTramiteForm.editTramiteNit.value,
-                tipo: editTramiteForm.editTramiteTipo.value,
-                transito: editTramiteForm.editTramiteTransito.value,
-                estado: editTramiteForm.editTramiteEstado.value,
-                pago: editTramiteForm.editTramitePago.value,
-                valor: editTramiteForm.editTramitePago.value === 'pagado' ? Number(editTramiteForm.editTramiteValor.value) : 0,
-                observaciones: editTramiteForm.editTramiteObservaciones.value
-            };
+            // Muestra la sección inicial
+            showSection('tramites');
 
-            try {
-                await updateDoc(tramiteRef, updatedData);
-                mostrarNotificacion('Trámite actualizado con éxito.', 'success');
-                editModal.style.display = 'none';
-            } catch (error) {
-                console.error("Error al actualizar documento: ", error);
-                mostrarNotificacion('Error al actualizar el trámite.', 'error');
-            }
-        });
-
-        editModal.style.display = 'block';
-    }
-
-    function notificarWhatsApp(id) {
-        const tramite = tramites.find(t => t.id === id);
-        if (!tramite) {
-            mostrarNotificacion('Trámite no encontrado para notificar.', 'error');
-            return;
-        }
-
-        const telefono = '573132039985'; // Reemplaza con el número de teléfono
-        const mensaje = `Hola, ${tramite.cliente}. Te escribimos de RH Asesorías para informarte que tu trámite de ${tramite.tipo} para la placa ${tramite.placa} en ${tramite.transito} ha sido ${tramite.estado === 'terminado' ? 'completado' : 'rechazado'}. El estado de pago es ${tramite.pago === 'pagado' ? 'pagado' : 'por cobrar'}. Valor: $${tramite.valor.toLocaleString()}. Cualquier duda, contáctanos.`;
-        const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
-        window.open(url, '_blank');
-    }
-
-    // Sección de Contabilidad
-    contabilidadForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const nuevoMovimiento = {
-            fecha: contabilidadForm.contaFecha.value,
-            cliente: contabilidadForm.contaCliente.value,
-            banco: contabilidadForm.contaBanco.value,
-            tipo: contabilidadForm.contaTipo.value,
-            monto: Number(contabilidadForm.contaMonto.value),
-            createdAt: new Date()
-        };
-        try {
-            await addDoc(contabilidadCol, nuevoMovimiento);
-            mostrarNotificacion('Movimiento registrado con éxito.', 'success');
-            contabilidadForm.reset();
-        } catch (err) {
-            console.error("Error al registrar movimiento: ", err);
-            mostrarNotificacion('Error al registrar movimiento.', 'error');
+        } else {
+            // El usuario ha cerrado sesión o no ha iniciado sesión
+            loginPanel.style.display = 'block';
+            appContainer.style.display = 'none';
         }
     });
+});
 
-    function renderRegistrosContables(data, filtro = 'todos') {
-        const registrosContablesDiv = document.getElementById('registrosContables');
-        registrosContablesDiv.innerHTML = '';
-        
-        const filteredData = filtro === 'todos' ? data : data.filter(mov => mov.tipo === filtro);
-        
-        if (filteredData.length === 0) {
-            registrosContablesDiv.innerHTML = '<p style="text-align: center; color: #777;">No hay movimientos para mostrar.</p>';
-            return;
+// FUNCIÓN DE AUTENTICACIÓN
+async function handleLogin(e, auth) {
+    e.preventDefault();
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passwordInput').value;
+
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        mostrarNotificacion('Inicio de sesión exitoso', 'success');
+    } catch (error) {
+        console.error("Error de inicio de sesión: ", error);
+        mostrarNotificacion('Credenciales incorrectas. Por favor, inténtalo de nuevo.', 'error');
+    }
+}
+
+async function handleLogout(auth) {
+    try {
+        await signOut(auth);
+        mostrarNotificacion('Sesión cerrada correctamente', 'info');
+    } catch (error) {
+        console.error("Error al cerrar sesión: ", error);
+        mostrarNotificacion('Error al cerrar sesión', 'error');
+    }
+}
+
+// FUNCIÓN PARA CAMBIAR DE SECCIÓN
+function showSection(sectionId) {
+    const sections = document.querySelectorAll('section.section');
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+    const activeSection = document.getElementById(sectionId);
+    if (activeSection) {
+        activeSection.classList.add('active');
+    }
+
+    const navButtons = document.querySelectorAll('.nav-btn');
+    navButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('id') === `btn${capitalizeFirst(sectionId)}`) {
+            btn.classList.add('active');
         }
+    });
+}
 
-        const table = document.createElement('table');
-        table.className = 'styled-table';
-        table.innerHTML = `
+// SECCIÓN TRÁMITES
+async function agregarTramite(e, db) {
+    e.preventDefault();
+    
+    const tramite = {
+        fecha: document.getElementById('tramiteFecha').value,
+        cliente: document.getElementById('tramiteCliente').value,
+        placa: document.getElementById('tramitePlaca').value.toUpperCase(),
+        estado: document.getElementById('tramiteEstado').value,
+        pago: 'pendiente',
+        observaciones: ''
+    };
+    
+    try {
+        await addDoc(collection(db, 'tramites'), tramite);
+        document.getElementById('tramiteForm').reset();
+        document.getElementById('tramiteFecha').value = new Date().toISOString().split('T')[0];
+        mostrarNotificacion('Trámite agregado correctamente', 'success');
+    } catch (error) {
+        console.error("Error al agregar el trámite: ", error);
+        mostrarNotificacion('Error al agregar el trámite', 'error');
+    }
+}
+
+function actualizarTramites() {
+    const proceso = tramites.filter(t => t.estado === 'proceso');
+    const terminados = tramites.filter(t => t.estado === 'terminado');
+    const rechazados = tramites.filter(t => t.estado === 'rechazado');
+    
+    const tramitesProceso = document.getElementById('tramitesProceso');
+    if (tramitesProceso) tramitesProceso.innerHTML = proceso.map(t => generarTramiteHTML(t)).join('');
+    const tramitesTerminados = document.getElementById('tramitesTerminados');
+    if (tramitesTerminados) tramitesTerminados.innerHTML = terminados.map(t => generarTramiteHTML(t)).join('');
+    const tramitesRechazados = document.getElementById('tramitesRechazados');
+    if (tramitesRechazados) tramitesRechazados.innerHTML = rechazados.map(t => generarTramiteHTML(t)).join('');
+}
+
+function generarTramiteHTML(tramite) {
+    let estadoPagoHTML = '';
+    let observacionesHTML = '';
+    let reciboBtnHTML = '';
+    
+    if (tramite.estado === 'proceso' || tramite.estado === 'terminado') {
+        estadoPagoHTML = `
+            <div class="estado-pago">
+                <label>Estado de Pago:</label>
+                <select onchange="cambiarEstadoPago('${tramite.id}', this.value)">
+                    <option value="pendiente" ${tramite.pago === 'pendiente' ? 'selected' : ''}>Por Cobrar</option>
+                    <option value="pagado" ${tramite.pago === 'pagado' ? 'selected' : ''}>Pagado</option>
+                </select>
+            </div>
+        `;
+    }
+    
+    if (tramite.estado === 'rechazado') {
+        observacionesHTML = `
+            <div class="estado-pago">
+                <label>Observaciones:</label>
+                <textarea class="observaciones-input" placeholder="Motivo del rechazo..." 
+                    onblur="actualizarObservaciones('${tramite.id}', this.value)">${tramite.observaciones || ''}</textarea>
+            </div>
+        `;
+    }
+     // Botón para descargar recibo solo si está terminado y tiene pago
+    if (tramite.estado === 'terminado' && (tramite.pago === 'pendiente' || tramite.pago === 'pagado')) {
+        reciboBtnHTML = `
+            <button class="btn-download" onclick="descargarReciboTramite('${tramite.id}')"><i class="fas fa-file-download"></i>Descargar Recibo</button>
+        `;
+    }
+    
+    return `
+        <div class="tramite-item ${tramite.estado}">
+            <div class="tramite-info">
+                <strong>Cliente:</strong> ${tramite.cliente}<br>
+                <strong>Placa:</strong> ${tramite.placa}<br>
+                <strong>Fecha:</strong> ${formatDate(tramite.fecha)}<br>
+                <strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}
+                ${tramite.pago && tramite.pago !== 'pendiente' ? `<br><strong>Pago:</strong> ${capitalizeFirst(tramite.pago)}` : ''}
+            </div>
+            ${estadoPagoHTML}
+            ${observacionesHTML}
+            <div class="tramite-actions" style="margin-top: 10px;">
+                <select onchange="cambiarEstadoTramite('${tramite.id}', this.value)" style="margin-right: 10px;">
+                    <option value="">Cambiar Estado</option>
+                    <option value="proceso" ${tramite.estado === 'proceso' ? 'disabled' : ''}>En Proceso</option>
+                    <option value="terminado" ${tramite.estado === 'terminado' ? 'disabled' : ''}>Terminado</option>
+                    <option value="rechazado" ${tramite.estado === 'rechazado' ? 'disabled' : ''}>Rechazado</option>
+                </select>
+                <button class="btn-edit" onclick="editarTramite('${tramite.id}')">Editar</button>
+                <button class="btn-delete" onclick="eliminarTramite('${tramite.id}')">Eliminar</button>
+                 ${reciboBtnHTML}
+            </div>
+        </div>
+    `;
+}
+
+async function cambiarEstadoTramite(id, nuevoEstado) {
+    if (!nuevoEstado) return;
+    try {
+        await updateDoc(doc(db, 'tramites', id), { estado: nuevoEstado });
+        mostrarNotificacion('Estado del trámite actualizado', 'success');
+    } catch (error) {
+        console.error("Error al actualizar el estado: ", error);
+        mostrarNotificacion('Error al actualizar el estado del trámite', 'error');
+    }
+}
+
+async function cambiarEstadoPago(id, nuevoPago) {
+    try {
+        await updateDoc(doc(db, 'tramites', id), { pago: nuevoPago });
+        mostrarNotificacion('Estado de pago actualizado', 'success');
+    } catch (error) {
+        console.error("Error al actualizar el pago: ", error);
+        mostrarNotificacion('Error al actualizar el estado de pago', 'error');
+    }
+}
+
+async function actualizarObservaciones(id, observaciones) {
+    try {
+        await updateDoc(doc(db, 'tramites', id), { observaciones: observaciones });
+    } catch (error) {
+        console.error("Error al actualizar las observaciones: ", error);
+    }
+}
+
+async function editarTramite(id) {
+    const docRef = doc(db, 'tramites', id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return;
+    const tramite = docSnap.data();
+    
+    const modalBody = `
+        <form id="editTramiteForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="editTramiteFecha" value="${tramite.fecha}" required>
+                </div>
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <input type="text" id="editTramiteCliente" value="${tramite.cliente}" required>
+                </div>
+                <div class="form-group">
+                    <label>Placa</label>
+                    <input type="text" id="editTramitePlaca" value="${tramite.placa}" required>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select id="editTramiteEstado" required>
+                        <option value="proceso" ${tramite.estado === 'proceso' ? 'selected' : ''}>En Proceso</option>
+                        <option value="terminado" ${tramite.estado === 'terminado' ? 'selected' : ''}>Terminado</option>
+                        <option value="rechazado" ${tramite.estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
+                    </select>
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <button type="submit" class="btn-primary">Guardar Cambios</button>
+                <button type="button" class="btn-secondary" onclick="document.getElementById('editModal').style.display='none'">Cancelar</button>
+            </div>
+        </form>
+    `;
+    
+    document.getElementById('modalTitle').textContent = 'Editar Trámite';
+    document.getElementById('modalBody').innerHTML = modalBody;
+    document.getElementById('editModal').style.display = 'block';
+    
+    document.getElementById('editTramiteForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const updatedTramite = {
+            fecha: document.getElementById('editTramiteFecha').value,
+            cliente: document.getElementById('editTramiteCliente').value,
+            placa: document.getElementById('editTramitePlaca').value.toUpperCase(),
+            estado: document.getElementById('editTramiteEstado').value
+        };
+        try {
+            await updateDoc(docRef, updatedTramite);
+            document.getElementById('editModal').style.display = 'none';
+            mostrarNotificacion('Trámite actualizado correctamente', 'success');
+        } catch (error) {
+            console.error("Error al actualizar el trámite: ", error);
+            mostrarNotificacion('Error al actualizar el trámite', 'error');
+        }
+    });
+}
+
+async function eliminarTramite(id) {
+    if (window.confirm('¿Está seguro de eliminar este trámite?')) {
+        try {
+            await deleteDoc(doc(db, 'tramites', id));
+            mostrarNotificacion('Trámite eliminado', 'success');
+        } catch (error) {
+            console.error("Error al eliminar el trámite: ", error);
+            mostrarNotificacion('Error al eliminar el trámite', 'error');
+        }
+    }
+}
+
+// SECCIÓN CONTABILIDAD
+async function agregarMovimiento(e, db) {
+    e.preventDefault();
+    
+    const montoInput = document.getElementById('contaMonto').value;
+    const monto = parseFloat(montoInput.replace(/\./g, ''));
+
+    const movimiento = {
+        fecha: document.getElementById('contaFecha').value,
+        cliente: document.getElementById('contaCliente').value,
+        banco: document.getElementById('contaBanco').value,
+        tipo: document.getElementById('contaTipo').value,
+        monto: monto
+    };
+    
+    try {
+        await addDoc(collection(db, 'registrosContables'), movimiento);
+        document.getElementById('contabilidadForm').reset();
+        document.getElementById('contaFecha').value = new Date().toISOString().split('T')[0];
+        mostrarNotificacion('Movimiento registrado correctamente', 'success');
+    } catch (error) {
+        console.error("Error al agregar el movimiento: ", error);
+        mostrarNotificacion('Error al registrar el movimiento', 'error');
+    }
+}
+
+function actualizarRegistrosContables() {
+    const container = document.getElementById('registrosContables');
+    if (!container) return;
+    const filtroTipo = document.getElementById('filtroMovimiento').value;
+
+    let registrosFiltrados = registrosContables;
+    if (filtroTipo !== 'todos') {
+        registrosFiltrados = registrosContables.filter(reg => reg.tipo === filtroTipo);
+    }
+    
+    if (registrosFiltrados.length === 0) {
+        container.innerHTML = '<p>No hay registros contables para el filtro seleccionado.</p>';
+        return;
+    }
+    
+    const tabla = `
+        <table>
             <thead>
                 <tr>
                     <th>Fecha</th>
@@ -457,493 +415,875 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>
             </thead>
             <tbody>
-                ${filteredData.map(mov => `
+                ${registrosFiltrados.map(reg => `
                     <tr>
-                        <td>${mov.fecha}</td>
-                        <td>${mov.cliente}</td>
-                        <td>${capitalizeFirstLetter(mov.banco)}</td>
-                        <td><span class="${mov.tipo === 'ingreso' ? 'pago-pagado' : 'estado-rechazado'}">${capitalizeFirstLetter(mov.tipo)}</span></td>
-                        <td>$${mov.monto.toLocaleString()}</td>
-                        <td class="table-actions">
-                            <button onclick="editarMovimiento('${mov.id}')">Editar</button>
-                            <button class="btn-delete" onclick="eliminarMovimiento('${mov.id}')">Eliminar</button>
+                        <td>${formatDate(reg.fecha)}</td>
+                        <td>${reg.cliente}</td>
+                        <td>${capitalizeFirst(reg.banco.replace('_', ' '))}</td>
+                        <td><span class="badge ${reg.tipo}">${capitalizeFirst(reg.tipo)}</span></td>
+                        <td>${reg.monto.toLocaleString()}</td>
+                        <td>
+                            <button class="btn-edit" onclick="editarMovimiento('${reg.id}')">Editar</button>
+                            <button class="btn-delete" onclick="eliminarMovimiento('${reg.id}')">Eliminar</button>
                         </td>
                     </tr>
                 `).join('')}
             </tbody>
-        `;
-        registrosContablesDiv.appendChild(table);
+        </table>
+    `;
+    container.innerHTML = tabla;
+}
+
+function consultarUtilidades() {
+    const fecha = document.getElementById('fechaConsulta').value;
+    const persona = document.getElementById('personaConsulta').value;
+    
+    if (!fecha) {
+        mostrarNotificacion('Seleccione una fecha para consultar', 'error');
+        return;
     }
-
-    function actualizarRegistrosContables() {
-        const filtro = document.getElementById('filtroMovimiento').value;
-        renderRegistrosContables(registrosContables, filtro);
+    
+    let movimientos = registrosContables.filter(reg => reg.fecha === fecha);
+    
+    if (persona) {
+        movimientos = movimientos.filter(reg => 
+            (persona === 'victor' && reg.banco === 'victor') ||
+            (persona === 'maira' && reg.banco === 'maira') ||
+            (persona === 'efectivo' && reg.banco === 'efectivo')
+        );
     }
+    
+    const ingresos = movimientos.filter(m => m.tipo === 'ingreso').reduce((sum, m) => sum + m.monto, 0);
+    const egresos = movimientos.filter(m => m.tipo === 'egreso').reduce((sum, m) => sum + m.monto, 0);
+    const utilidad = ingresos - egresos;
+    const porcentaje = ingresos > 0 ? ((utilidad / ingresos) * 100).toFixed(2) : 0;
+    
+    const victorIngresos = movimientos.filter(m => m.tipo === 'ingreso' && m.banco === 'victor').reduce((sum, m) => sum + m.monto, 0);
+    const victorEgresos = movimientos.filter(m => m.tipo === 'egreso' && m.banco === 'victor').reduce((sum, m) => sum + m.monto, 0);
+    const mairaIngresos = movimientos.filter(m => m.tipo === 'ingreso' && m.banco === 'maira').reduce((sum, m) => sum + m.monto, 0);
+    const mairaEgresos = movimientos.filter(m => m.tipo === 'egreso' && m.banco === 'maira').reduce((sum, m) => sum + m.monto, 0);
+    const efectivoIngresos = movimientos.filter(m => m.tipo === 'ingreso' && m.banco === 'efectivo').reduce((sum, m) => sum + m.monto, 0);
+    const efectivoEgresos = movimientos.filter(m => m.tipo === 'egreso' && m.banco === 'efectivo').reduce((sum, m) => sum + m.monto, 0);
+    
+    const resultadosUtilidad = document.getElementById('resultadosUtilidad');
+    if (!resultadosUtilidad) return;
 
-    async function eliminarMovimiento(id) {
-        if (!confirm('¿Estás seguro de que quieres eliminar este movimiento?')) return;
-        try {
-            await deleteDoc(doc(db, "contabilidad", id));
-            mostrarNotificacion('Movimiento eliminado con éxito.', 'success');
-        } catch (error) {
-            console.error("Error al eliminar movimiento: ", error);
-            mostrarNotificacion('Error al eliminar movimiento.', 'error');
-        }
-    }
-
-    async function consultarUtilidades() {
-        const fecha = document.getElementById('fechaConsulta').value;
-        const persona = document.getElementById('personaConsulta').value;
-        const resultadosDiv = document.getElementById('resultadosUtilidad');
-        resultadosDiv.innerHTML = '<p>Calculando...</p>';
-
-        if (!fecha) {
-            mostrarNotificacion('Por favor, selecciona una fecha.', 'error');
-            resultadosDiv.innerHTML = '';
-            return;
-        }
-
-        try {
-            const movimientosRef = collection(db, "contabilidad");
-            const snapshot = await getDocs(movimientosRef);
-            
-            let ingresos = 0;
-            let egresos = 0;
-
-            snapshot.forEach(doc => {
-                const mov = doc.data();
-                if (mov.fecha === fecha && (persona === '' || mov.banco === persona)) {
-                    if (mov.tipo === 'ingreso') {
-                        ingresos += mov.monto;
-                    } else if (mov.tipo === 'egreso') {
-                        egresos += mov.monto;
-                    }
-                }
-            });
-
-            const utilidad = ingresos - egresos;
-            resultadosDiv.innerHTML = `
-                <p><strong>Fecha:</strong> ${fecha}</p>
-                <p><strong>Ingresos:</strong> <span style="color: green;">$${ingresos.toLocaleString()}</span></p>
-                <p><strong>Egresos:</strong> <span style="color: red;">$${egresos.toLocaleString()}</span></p>
-                <p><strong>Utilidad Neta:</strong> <span style="color: ${utilidad >= 0 ? 'green' : 'red'};">$${utilidad.toLocaleString()}</span></p>
-            `;
-        } catch (error) {
-            console.error("Error al consultar utilidades: ", error);
-            mostrarNotificacion('Error al consultar utilidades.', 'error');
-            resultadosDiv.innerHTML = '<p>Error al cargar los datos.</p>';
-        }
-    }
-
-    function editarMovimiento(id) {
-        const movimiento = registrosContables.find(m => m.id === id);
-        if (!movimiento) return;
-
-        modalTitle.textContent = 'Editar Movimiento';
-        modalBody.innerHTML = `
-            <form id="editMovimientoForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="editContaFecha">Fecha:</label>
-                        <input type="date" id="editContaFecha" value="${movimiento.fecha}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editContaCliente">Cliente:</label>
-                        <input type="text" id="editContaCliente" value="${movimiento.cliente}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editContaBanco">Banco / Efectivo:</label>
-                        <select id="editContaBanco" required>
-                            <option value="victor" ${movimiento.banco === 'victor' ? 'selected' : ''}>Banco de Víctor</option>
-                            <option value="maira" ${movimiento.banco === 'maira' ? 'selected' : ''}>Banco de Maira</option>
-                            <option value="efectivo" ${movimiento.banco === 'efectivo' ? 'selected' : ''}>Efectivo</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="editContaTipo">Tipo:</label>
-                        <select id="editContaTipo" required>
-                            <option value="ingreso" ${movimiento.tipo === 'ingreso' ? 'selected' : ''}>Ingreso</option>
-                            <option value="egreso" ${movimiento.tipo === 'egreso' ? 'selected' : ''}>Egreso</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="editContaMonto">Monto:</label>
-                        <input type="number" id="editContaMonto" value="${movimiento.monto}" required>
-                    </div>
+    const resultadosHTML = `
+        <div class="utilidad-card">
+            <h4>Resumen del ${formatDate(fecha)} ${persona ? '- ' + capitalizeFirst(persona) : ''}</h4>
+            <div class="utilidad-detalle">
+                <div class="utilidad-item">
+                    <strong>Total Ingresos</strong><br>
+                    ${ingresos.toLocaleString()}
                 </div>
+                <div class="utilidad-item">
+                    <strong>Total Egresos</strong><br>
+                    ${egresos.toLocaleString()}
+                </div>
+                <div class="utilidad-item">
+                    <strong>Utilidad</strong><br>
+                    ${utilidad.toLocaleString()}
+                </div>
+                <div class="utilidad-item">
+                    <strong>Margen</strong><br>
+                    ${porcentaje}%
+                </div>
+            </div>
+        </div>
+        
+        <div class="utilidad-card">
+            <h5>Desglose por Cuenta</h5>
+            <div class="utilidad-detalle">
+                <div class="utilidad-item">
+                    <strong>Víctor</strong><br>
+                    Ingresos: ${victorIngresos.toLocaleString()}<br>
+                    Egresos: ${victorEgresos.toLocaleString()}<br>
+                    Neto: ${(victorIngresos - victorEgresos).toLocaleString()}
+                </div>
+                <div class="utilidad-item">
+                    <strong>Maira</strong><br>
+                    Ingresos: ${mairaIngresos.toLocaleString()}<br>
+                    Egresos: ${mairaEgresos.toLocaleString()}<br>
+                    Neto: ${(mairaIngresos - mairaEgresos).toLocaleString()}
+                </div>
+                <div class="utilidad-item">
+                    <strong>Efectivo</strong><br>
+                    Ingresos: ${efectivoIngresos.toLocaleString()}<br>
+                    Egresos: ${efectivoEgresos.toLocaleString()}<br>
+                    Neto: ${(efectivoIngresos - efectivoEgresos).toLocaleString()}
+                </div>
+            </div>
+        </div>
+        
+        ${movimientos.length > 0 ? `
+            <div style="margin-top: 20px;">
+                <h6>Detalle de Movimientos:</h6>
+                <table style="width: 100%; margin-top: 10px;">
+                    <thead>
+                        <tr style="background: rgba(255,255,255,0.1);">
+                            <th>Cliente</th>
+                            <th>Cuenta</th>
+                            <th>Tipo</th>
+                            <th>Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${movimientos.map(m => `
+                            <tr>
+                                <td>${m.cliente}</td>
+                                <td>${capitalizeFirst(m.banco)}</td>
+                                <td>${capitalizeFirst(m.tipo)}</td>
+                                <td>${m.monto.toLocaleString()}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        ` : '<p style="margin-top: 15px;">No hay movimientos para esta fecha.</p>'}
+    `;
+    
+    resultadosUtilidad.innerHTML = resultadosHTML;
+}
+
+async function editarMovimiento(id) {
+    const docRef = doc(db, 'registrosContables', id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return;
+    const movimiento = docSnap.data();
+    
+    const modalBody = `
+        <form id="editMovimientoForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="editContaFecha" value="${movimiento.fecha}" required>
+                </div>
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <input type="text" id="editContaCliente" value="${movimiento.cliente}" required>
+                </div>
+                <div class="form-group">
+                    <label>Banco</label>
+                    <select id="editContaBanco" required>
+                        <option value="victor" ${movimiento.banco === 'victor' ? 'selected' : ''}>Banco de Víctor</option>
+                        <option value="maira" ${movimiento.banco === 'maira' ? 'selected' : ''}>Banco de Maira</option>
+                        <option value="efectivo" ${movimiento.banco === 'efectivo' ? 'selected' : ''}>Efectivo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select id="editContaTipo" required>
+                        <option value="ingreso" ${movimiento.tipo === 'ingreso' ? 'selected' : ''}>Ingreso</option>
+                        <option value="egreso" ${movimiento.tipo === 'egreso' ? 'selected' : ''}>Egreso</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Monto</label>
+                    <input type="text" id="editContaMonto" value="${movimiento.monto.toLocaleString()}" required>
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
                 <button type="submit" class="btn-primary">Guardar Cambios</button>
-            </form>
-        `;
-
-        const editMovimientoForm = document.getElementById('editMovimientoForm');
-        editMovimientoForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const movimientoRef = doc(db, "contabilidad", id);
-            const updatedData = {
-                fecha: editMovimientoForm.editContaFecha.value,
-                cliente: editMovimientoForm.editContaCliente.value,
-                banco: editMovimientoForm.editContaBanco.value,
-                tipo: editMovimientoForm.editContaTipo.value,
-                monto: Number(editMovimientoForm.editContaMonto.value),
-            };
-
-            try {
-                await updateDoc(movimientoRef, updatedData);
-                mostrarNotificacion('Movimiento actualizado con éxito.', 'success');
-                editModal.style.display = 'none';
-            } catch (error) {
-                console.error("Error al actualizar movimiento: ", error);
-                mostrarNotificacion('Error al actualizar el movimiento.', 'error');
-            }
-        });
-
-        editModal.style.display = 'block';
-    }
-
-    // Sección de CRM
-    crmForm.addEventListener('submit', async (e) => {
+                <button type="button" class="btn-secondary" onclick="document.getElementById('editModal').style.display='none'">Cancelar</button>
+            </div>
+        </form>
+    `;
+    
+    document.getElementById('modalTitle').textContent = 'Editar Movimiento';
+    document.getElementById('modalBody').innerHTML = modalBody;
+    document.getElementById('editModal').style.display = 'block';
+    
+    document.getElementById('editMovimientoForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const nuevoCliente = {
-            cliente: crmForm.crmCliente.value,
-            placa: crmForm.crmPlaca.value,
-            propietario: crmForm.crmPropietario.value,
-            cedula: crmForm.crmCedula.value,
-            telefono: crmForm.crmTelefono.value,
-            correo: crmForm.crmCorreo.value,
-            venceSOAT: crmForm.crmVenceSOAT.value,
-            venceRTM: crmForm.crmVenceRTM.value,
-            createdAt: new Date()
+        const montoInput = document.getElementById('editContaMonto').value;
+        const monto = parseFloat(montoInput.replace(/\./g, ''));
+
+        const updatedMovimiento = {
+            fecha: document.getElementById('editContaFecha').value,
+            cliente: document.getElementById('editContaCliente').value,
+            banco: document.getElementById('editContaBanco').value,
+            tipo: document.getElementById('editContaTipo').value,
+            monto: monto
         };
         try {
-            await addDoc(crmCol, nuevoCliente);
-            mostrarNotificacion('Cliente agregado con éxito.', 'success');
-            crmForm.reset();
-        } catch (err) {
-            console.error("Error al agregar cliente: ", err);
-            mostrarNotificacion('Error al agregar cliente.', 'error');
+            await updateDoc(docRef, updatedMovimiento);
+            document.getElementById('editModal').style.display = 'none';
+            mostrarNotificacion('Movimiento actualizado correctamente', 'success');
+        } catch (error) {
+            console.error("Error al actualizar el movimiento: ", error);
+            mostrarNotificacion('Error al actualizar el movimiento', 'error');
         }
     });
+}
 
-    function renderClientesCRM(data) {
-        const tablaCRMDiv = document.getElementById('tablaCRM');
-        tablaCRMDiv.innerHTML = '';
-
-        if (data.length === 0) {
-            tablaCRMDiv.innerHTML = '<p style="text-align: center; color: #777;">No hay clientes para mostrar.</p>';
-            return;
+async function eliminarMovimiento(id) {
+    if (window.confirm('¿Está seguro de eliminar este movimiento contable?')) {
+        try {
+            await deleteDoc(doc(db, 'registrosContables', id));
+            mostrarNotificacion('Movimiento eliminado', 'success');
+        } catch (error) {
+            console.error("Error al eliminar el movimiento: ", error);
+            mostrarNotificacion('Error al eliminar el movimiento', 'error');
         }
+    }
+}
 
-        const table = document.createElement('table');
-        table.className = 'styled-table';
-        table.innerHTML = `
+// SECCIÓN CRM
+async function agregarClienteCRM(e, db) {
+    e.preventDefault();
+    const cliente = {
+        cliente: document.getElementById('crmCliente').value,
+        placa: document.getElementById('crmPlaca').value.toUpperCase(),
+        propietario: document.getElementById('crmPropietario').value,
+        cedula: document.getElementById('crmCedula').value,
+        telefono: document.getElementById('crmTelefono').value,
+        correo: document.getElementById('crmCorreo').value,
+        venceSOAT: document.getElementById('crmVenceSOAT').value,
+        venceRTM: document.getElementById('crmVenceRTM').value,
+        cantidadAvisos: 0
+    };
+    try {
+        await addDoc(collection(db, 'clientesCRM'), cliente);
+        document.getElementById('crmForm').reset();
+        mostrarNotificacion('Cliente agregado al CRM correctamente', 'success');
+    } catch (error) {
+        console.error("Error al agregar el cliente: ", error);
+        mostrarNotificacion('Error al agregar el cliente', 'error');
+    }
+}
+
+function actualizarTablaCRM() {
+    const container = document.getElementById('tablaCRM');
+    if (!container) return;
+    if (clientesCRM.length === 0) {
+        container.innerHTML = '<p>No hay clientes registrados en el CRM.</p>';
+        return;
+    }
+    
+    const tabla = `
+        <table>
             <thead>
                 <tr>
                     <th>Cliente</th>
                     <th>Placa</th>
                     <th>Propietario</th>
+                    <th>Cédula</th>
                     <th>Teléfono</th>
-                    <th>Vencimiento SOAT</th>
-                    <th>Vencimiento RTM</th>
+                    <th>Correo</th>
+                    <th>Vence SOAT</th>
+                    <th>Vence RTM</th>
+                    <th>Avisos</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                ${data.map(cliente => `
-                    <tr>
-                        <td>${cliente.cliente}</td>
-                        <td>${cliente.placa}</td>
-                        <td>${cliente.propietario}</td>
-                        <td>${cliente.telefono}</td>
-                        <td>${cliente.venceSOAT} <span style="font-weight: bold; color: ${checkVencimiento(cliente.venceSOAT)}">(${checkVencimiento(cliente.venceSOAT) === 'red' ? 'Vencido' : 'OK'})</span></td>
-                        <td>${cliente.venceRTM} <span style="font-weight: bold; color: ${checkVencimiento(cliente.venceRTM)}">(${checkVencimiento(cliente.venceRTM) === 'red' ? 'Vencido' : 'OK'})</span></td>
-                        <td class="table-actions">
-                            <button onclick="editarClienteCRM('${cliente.id}')">Editar</button>
-                            <button class="btn-delete" onclick="eliminarClienteCRM('${cliente.id}')">Eliminar</button>
-                        </td>
-                    </tr>
-                `).join('')}
+                ${clientesCRM.map(cliente => {
+                    const soatVencimiento = calcularDiasVencimiento(cliente.venceSOAT);
+                    const rtmVencimiento = calcularDiasVencimiento(cliente.venceRTM);
+                    return `
+                        <tr>
+                            <td>${cliente.cliente}</td>
+                            <td>${cliente.placa}</td>
+                            <td>${cliente.propietario}</td>
+                            <td>${cliente.cedula}</td>
+                            <td>${cliente.telefono}</td>
+                            <td>${cliente.correo}</td>
+                            <td>
+                                ${formatDate(cliente.venceSOAT)}
+                                ${soatVencimiento <= 30 && soatVencimiento >= 0 ? '<span class="alerta-vencimiento">¡Próximo a vencer!</span>' : ''}
+                            </td>
+                            <td>
+                                ${formatDate(cliente.venceRTM)}
+                                ${rtmVencimiento <= 30 && rtmVencimiento >= 0 ? '<span class="alerta-vencimiento">¡Próximo a vencer!</span>' : ''}
+                            </td>
+                            <td>
+                                <span class="cant-avisos cant-avisos-${Math.min(cliente.cantidadAvisos, 3)}">
+                                    ${cliente.cantidadAvisos}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn-edit" onclick="editarClienteCRM('${cliente.id}')">Editar</button>
+                                <button class="btn-delete" onclick="eliminarClienteCRM('${cliente.id}')">Eliminar</button>
+                                <button class="btn-whatsapp" onclick="notificarWhatsApp('${cliente.id}', '${cliente.telefono}', '${cliente.propietario}', '${cliente.placa}', '${cliente.venceSOAT}', '${cliente.venceRTM}')">Notificar WhatsApp</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('')}
             </tbody>
-        `;
-        tablaCRMDiv.appendChild(table);
-    }
+        </table>
+    `;
+    container.innerHTML = tabla;
+}
 
-    function checkVencimiento(fecha) {
-        const today = new Date();
-        const venceDate = new Date(fecha);
-        return venceDate < today ? 'red' : 'green';
-    }
-    
-    async function eliminarClienteCRM(id) {
-        if (!confirm('¿Estás seguro de que quieres eliminar este cliente?')) return;
-        try {
-            await deleteDoc(doc(db, "clientes_crm", id));
-            mostrarNotificacion('Cliente eliminado con éxito.', 'success');
-        } catch (error) {
-            console.error("Error al eliminar cliente: ", error);
-            mostrarNotificacion('Error al eliminar cliente.', 'error');
+async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, venceRTM) {
+    try {
+        const docRef = doc(db, 'clientesCRM', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const cliente = docSnap.data();
+            const newAvisos = (cliente.cantidadAvisos || 0) + 1;
+            await updateDoc(docRef, { cantidadAvisos: newAvisos });
         }
+        
+        const vencimientoSOAT = formatDate(venceSOAT);
+        const vencimientoRTM = formatDate(venceRTM);
+        const mensaje = `¡Hola ${propietario}! Te recordamos que el SOAT de tu vehículo con placa ${placa} vence el ${vencimientoSOAT} y la RTM vence el ${vencimientoRTM}. ¡Contáctanos para renovarlos!`;
+        const mensajeCodificado = encodeURIComponent(mensaje);
+        const url = `https://api.whatsapp.com/send?phone=${telefono}&text=${mensajeCodificado}`;
+        window.open(url, '_blank');
+    } catch (error) {
+        console.error("Error al notificar por WhatsApp: ", error);
+        mostrarNotificacion('Error al enviar la notificación', 'error');
     }
+}
 
-    function editarClienteCRM(id) {
-        const cliente = clientesCRM.find(c => c.id === id);
-        if (!cliente) return;
+async function enviarNotificacionVencimiento(cliente, documento, dias) {
+    const asuntoEmail = `Vencimiento ${documento} - Placa ${cliente.placa}`;
+    const cuerpoEmail = `Estimado/a ${cliente.propietario},\n\nSu ${documento} del vehículo con placa ${cliente.placa} vence en ${dias} día${dias > 1 ? 's' : ''}.\n\nFecha de vencimiento: ${formatDate(documento === 'SOAT' ? cliente.venceSOAT : cliente.venceRTM)}\n\nPor favor, renuévelo a tiempo para evitar inconvenientes.\n\nSaludos cordiales.`;
 
-        modalTitle.textContent = `Editar Cliente ${cliente.cliente}`;
-        modalBody.innerHTML = `
-            <form id="editCrmForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="editCrmCliente">Nombre de Cliente:</label>
-                        <input type="text" id="editCrmCliente" value="${cliente.cliente}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editCrmPlaca">Placa:</label>
-                        <input type="text" id="editCrmPlaca" value="${cliente.placa}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editCrmPropietario">Propietario:</label>
-                        <input type="text" id="editCrmPropietario" value="${cliente.propietario}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editCrmCedula">Cédula:</label>
-                        <input type="text" id="editCrmCedula" value="${cliente.cedula}" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="editCrmTelefono">Teléfono:</label>
-                        <input type="tel" id="editCrmTelefono" value="${cliente.telefono}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editCrmCorreo">Correo:</label>
-                        <input type="email" id="editCrmCorreo" value="${cliente.correo || ''}">
-                    </div>
-                    <div class="form-group">
-                        <label for="editCrmVenceSOAT">Vence SOAT:</label>
-                        <input type="date" id="editCrmVenceSOAT" value="${cliente.venceSOAT}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editCrmVenceRTM">Vence RTM:</label>
-                        <input type="date" id="editCrmVenceRTM" value="${cliente.venceRTM}" required>
-                    </div>
-                </div>
-                <button type="submit" class="btn-primary">Guardar Cambios</button>
-            </form>
-        `;
-
-        const editCrmForm = document.getElementById('editCrmForm');
-        editCrmForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const clienteRef = doc(db, "clientes_crm", id);
-            const updatedData = {
-                cliente: editCrmForm.editCrmCliente.value,
-                placa: editCrmForm.editCrmPlaca.value,
-                propietario: editCrmForm.editCrmPropietario.value,
-                cedula: editCrmForm.editCrmCedula.value,
-                telefono: editCrmForm.editCrmTelefono.value,
-                correo: editCrmForm.editCrmCorreo.value,
-                venceSOAT: editCrmForm.editCrmVenceSOAT.value,
-                venceRTM: editCrmForm.editCrmVenceRTM.value
-            };
-
-            try {
-                await updateDoc(clienteRef, updatedData);
-                mostrarNotificacion('Cliente actualizado con éxito.', 'success');
-                editModal.style.display = 'none';
-            } catch (error) {
-                console.error("Error al actualizar cliente: ", error);
-                mostrarNotificacion('Error al actualizar el cliente.', 'error');
-            }
+    try {
+        const response = await fetch('http://localhost:3000/api/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                correo: cliente.correo,
+                asunto: asuntoEmail,
+                cuerpo: cuerpoEmail
+            })
         });
 
-        editModal.style.display = 'block';
+        if (!response.ok) {
+            throw new Error('La respuesta del servidor no fue exitosa.');
+        }
+
+        const data = await response.json();
+        console.log('Respuesta del servidor:', data.message);
+        const docRef = doc(db, 'clientesCRM', cliente.id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const clienteData = docSnap.data();
+            const newAvisos = (clienteData.cantidadAvisos || 0) + 1;
+            await updateDoc(docRef, { cantidadAvisos: newAvisos });
+            console.log(`Contador de avisos actualizado a ${newAvisos} para el cliente con ID: ${cliente.id}`);
+        } else {
+            console.error(`Error: No se encontró el documento para el cliente con ID: ${cliente.id}`);
+        }
+        return true;
+
+    } catch (error) {
+        console.error('Error al enviar el email:', error);
+        mostrarNotificacion(`Error al enviar el email: ${error.message}`, 'error');
+        return false;
+    }
+}
+
+async function verificarVencimientos(db) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const hoyISO = today.toISOString().split('T')[0];
+    let avisosEnviados = 0;
+
+    const snapshot = await getDocs(collection(db, 'clientesCRM'));
+    const clientes = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    for (const cliente of clientes) {
+        if (!cliente.correo) continue;
+        const venceSOAT = new Date(cliente.venceSOAT);
+        venceSOAT.setHours(0, 0, 0, 0);
+        const venceRTM = new Date(cliente.venceRTM);
+        venceRTM.setHours(0, 0, 0, 0);
+        const diasSOAT = Math.ceil((venceSOAT - today) / (1000 * 60 * 60 * 24));
+        const diasRTM = Math.ceil((venceRTM - today) / (1000 * 60 * 60 * 24));
+        const keySOAT = `notificacion_enviada_${cliente.id}_SOAT_${hoyISO}`;
+        const keyRTM = `notificacion_enviada_${cliente.id}_RTM_${hoyISO}`;
+        
+        if (diasSOAT <= 7 && diasSOAT >= 0 && !localStorage.getItem(keySOAT)) {
+            const emailSent = await enviarNotificacionVencimiento(cliente, 'SOAT', diasSOAT);
+            if (emailSent) {
+                localStorage.setItem(keySOAT, true);
+                avisosEnviados++;
+            }
+        }
+        
+        if (diasRTM <= 7 && diasRTM >= 0 && !localStorage.getItem(keyRTM)) {
+            const emailSent = await enviarNotificacionVencimiento(cliente, 'RTM', diasRTM);
+            if (emailSent) {
+                localStorage.setItem(keyRTM, true);
+                avisosEnviados++;
+            }
+        }
     }
 
-    // Sección de Placas
-    placasForm.addEventListener('submit', async (e) => {
+    if (avisosEnviados > 0) {
+        mostrarNotificacion(`Se han enviado ${avisosEnviados} avisos de vencimiento por Email.`, 'info');
+    }
+}
+
+async function editarClienteCRM(id) {
+    const docRef = doc(db, 'clientesCRM', id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return;
+    const cliente = docSnap.data();
+    
+    const modalBody = `
+        <form id="editCrmForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <input type="text" id="editCrmCliente" value="${cliente.cliente}" required>
+                </div>
+                <div class="form-group">
+                    <label>Placa</label>
+                    <input type="text" id="editCrmPlaca" value="${cliente.placa}" required>
+                </div>
+                <div class="form-group">
+                    <label>Propietario</label>
+                    <input type="text" id="editCrmPropietario" value="${cliente.propietario}" required>
+                </div>
+                <div class="form-group">
+                    <label>Cédula</label>
+                    <input type="text" id="editCrmCedula" value="${cliente.cedula}" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" id="editCrmTelefono" value="${cliente.telefono}" required>
+                </div>
+                <div class="form-group">
+                    <label>Correo</label>
+                    <input type="email" id="editCrmCorreo" value="${cliente.correo}">
+                </div>
+                <div class="form-group">
+                    <label>Vence SOAT</label>
+                    <input type="date" id="editCrmVenceSOAT" value="${cliente.venceSOAT}" required>
+                </div>
+                <div class="form-group">
+                    <label>Vence RTM</label>
+                    <input type="date" id="editCrmVenceRTM" value="${cliente.venceRTM}" required>
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <button type="submit" class="btn-primary">Guardar Cambios</button>
+                <button type="button" class="btn-secondary" onclick="document.getElementById('editModal').style.display='none'">Cancelar</button>
+            </div>
+        </form>
+    `;
+    
+    document.getElementById('modalTitle').textContent = 'Editar Cliente CRM';
+    document.getElementById('modalBody').innerHTML = modalBody;
+    document.getElementById('editModal').style.display = 'block';
+    
+    document.getElementById('editCrmForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const nuevaPlaca = {
-            placaInicial: placasForm.placaInicial.value.toUpperCase(),
-            placaFinal: placasForm.placaFinal.value.toUpperCase(),
-            asignadaA: placasForm.placaAsignadaA.value,
-            fechaRecepcion: placasForm.placaFechaRecepcion.value,
-            fechaAsignada: placasForm.placaFechaAsignada.value,
-            fechaMatricula: placasForm.placaFechaMatricula.value,
-            observaciones: placasForm.placaObservaciones.value,
-            createdAt: new Date()
+        const updatedCliente = {
+            cliente: document.getElementById('editCrmCliente').value,
+            placa: document.getElementById('editCrmPlaca').value.toUpperCase(),
+            propietario: document.getElementById('editCrmPropietario').value,
+            cedula: document.getElementById('editCrmCedula').value,
+            telefono: document.getElementById('editCrmTelefono').value,
+            correo: document.getElementById('editCrmCorreo').value,
+            venceSOAT: document.getElementById('editCrmVenceSOAT').value,
+            venceRTM: document.getElementById('editCrmVenceRTM').value
         };
         try {
-            await addDoc(placasCol, nuevaPlaca);
-            mostrarNotificacion('Rango de placas registrado con éxito.', 'success');
-            placasForm.reset();
-        } catch (err) {
-            console.error("Error al registrar rango de placas: ", err);
-            mostrarNotificacion('Error al registrar el rango de placas.', 'error');
+            await updateDoc(docRef, updatedCliente);
+            document.getElementById('editModal').style.display = 'none';
+            mostrarNotificacion('Cliente actualizado correctamente', 'success');
+        } catch (error) {
+            console.error("Error al actualizar el cliente: ", error);
+            mostrarNotificacion('Error al actualizar el cliente', 'error');
         }
     });
+}
 
-    function renderPlacas(data) {
-        const tablaPlacasDiv = document.getElementById('tablaPlacas');
-        tablaPlacasDiv.innerHTML = '';
+async function eliminarClienteCRM(id) {
+    if (window.confirm('¿Está seguro de eliminar este cliente del CRM?')) {
+        try {
+            await deleteDoc(doc(db, 'clientesCRM', id));
+            mostrarNotificacion('Cliente eliminado', 'success');
+        } catch (error) {
+            console.error("Error al eliminar el cliente: ", error);
+            mostrarNotificacion('Error al eliminar el cliente', 'error');
+        }
+    }
+}
+// SECCIÓN PLACAS
+async function registrarPlaca(e, db) {
+    e.preventDefault();
+    
+    const placaInicialStr = document.getElementById('placaInicial').value.toUpperCase();
+    const placaFinalStr = document.getElementById('placaFinal').value.toUpperCase();
+    const asignadaA = document.getElementById('placaAsignadaA').value;
+    const fechaRecepcion = document.getElementById('placaFechaRecepcion').value;
+    const fechaAsignada = document.getElementById('placaFechaAsignada').value;
+    const fechaMatricula = document.getElementById('placaFechaMatricula').value;
+    const observaciones = document.getElementById('placaObservaciones').value;
+    
+    function parsePlaca(placa) {
+        const match = placa.match(/^([A-Z]+)(\d+)([A-Z]?)$/);
+        if (!match) {
+            mostrarNotificacion('Formato de placa inválido. Ej: JHP34G', 'error');
+            throw new Error('Formato de placa inválido');
+        }
+        return {
+            letras1: match[1],
+            numero: parseInt(match[2], 10),
+            letras2: match[3] || ''
+        };
+    }
 
-        if (data.length === 0) {
-            tablaPlacasDiv.innerHTML = '<p style="text-align: center; color: #777;">No hay placas para mostrar.</p>';
+    try {
+        const placaInicial = parsePlaca(placaInicialStr);
+        const placaFinal = parsePlaca(placaFinalStr);
+
+        if (placaInicial.letras1 !== placaFinal.letras1 || placaInicial.letras2 !== placaFinal.letras2 || placaInicial.numero > placaFinal.numero) {
+            mostrarNotificacion('El rango de placas no es válido. Las letras deben coincidir y la placa final debe ser mayor que la inicial.', 'error');
             return;
         }
 
-        const table = document.createElement('table');
-        table.className = 'styled-table';
-        table.innerHTML = `
+        const padding = placaInicialStr.match(/\d+/)[0].length;
+        const batch = writeBatch(db);
+
+        for (let i = placaInicial.numero; i <= placaFinal.numero; i++) {
+            const numeroFormateado = String(i).padStart(padding, '0');
+            const nuevaPlaca = `${placaInicial.letras1}${numeroFormateado}${placaInicial.letras2}`;
+
+            const placaData = {
+                placa: nuevaPlaca,
+                asignadaA,
+                fechaRecepcion,
+                fechaAsignada,
+                fechaMatricula,
+                observaciones,
+                estado: obtenerEstadoPlaca(fechaAsignada, fechaMatricula, asignadaA)
+            };
+            const docRef = doc(collection(db, 'placas'));
+            batch.set(docRef, placaData);
+        }
+        await batch.commit();
+
+        document.getElementById('placasForm').reset();
+        document.getElementById('placaFechaRecepcion').value = new Date().toISOString().split('T')[0];
+        mostrarNotificacion(`Rango de placas de ${placaInicialStr} a ${placaFinalStr} registrado correctamente`, 'success');
+
+    } catch (e) {
+        console.error(e);
+        mostrarNotificacion('Error al registrar las placas', 'error');
+    }
+}
+
+function actualizarTablaPlacas() {
+    const container = document.getElementById('tablaPlacas');
+    if (!container) return;
+    if (!placas || placas.length === 0) {
+        container.innerHTML = '<p>No hay placas registradas.</p>';
+        return;
+    }
+    // Ordena las placas de menor a mayor
+    const placasOrdenadas = [...placas].sort((a, b) => {
+        // Extrae letras y números para comparación adecuada
+        const placaRegex = /^([A-Z]+)(\d+)([A-Z]?)$/;
+        const matchA = a.placa.match(placaRegex);
+        const matchB = b.placa.match(placaRegex);
+
+        if (matchA && matchB) {
+            // Compara letras1 (alfabético)
+            if (matchA[1] !== matchB[1]) return matchA[1].localeCompare(matchB[1]);
+            // Compara número (numérico)
+            if (parseInt(matchA[2]) !== parseInt(matchB[2])) return parseInt(matchA[2]) - parseInt(matchB[2]);
+            // Compara letras2 (alfabético)
+            return matchA[3].localeCompare(matchB[3]);
+        }
+        return a.placa.localeCompare(b.placa);
+    });
+
+    const tabla = `
+        <table>
             <thead>
                 <tr>
-                    <th>Placa Inicial</th>
-                    <th>Placa Final</th>
+                    <th>Placa</th>
                     <th>Asignada a</th>
-                    <th>Fecha Recepción</th>
-                    <th>Fecha Asignada</th>
-                    <th>Fecha Matrícula</th>
+                    <th>F. Recepción</th>
+                    <th>F. Asignada</th>
+                    <th>F. Matrícula</th>
                     <th>Observaciones</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                ${data.map(placa => `
+                ${placasOrdenadas.map(p => {
+                    const estado = obtenerEstadoPlaca(p.fechaAsignada, p.fechaMatricula, p.asignadaA);
+                    return `
                     <tr>
-                        <td>${placa.placaInicial}</td>
-                        <td>${placa.placaFinal}</td>
-                        <td>${placa.asignadaA}</td>
-                        <td>${placa.fechaRecepcion}</td>
-                        <td>${placa.fechaAsignada || 'N/A'}</td>
-                        <td>${placa.fechaMatricula || 'N/A'}</td>
-                        <td>${placa.observaciones || 'N/A'}</td>
-                        <td class="table-actions">
-                            <button onclick="editarPlaca('${placa.id}')">Editar</button>
-                            <button class="btn-delete" onclick="eliminarPlaca('${placa.id}')">Eliminar</button>
+                        <td>${p.placa}</td>
+                        <td>${p.asignadaA || 'N/A'}</td>
+                        <td>${formatDate(p.fechaRecepcion)}</td>
+                        <td>${formatDate(p.fechaAsignada)}</td>
+                        <td>${formatDate(p.fechaMatricula)}</td>
+                        <td>${p.observaciones || 'N/A'}</td>
+                        <td><span class="badge badge-${estado.toLowerCase().replace(' ', '-')}">${estado}</span></td>
+                        <td>
+                            <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
+                            <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
                         </td>
                     </tr>
-                `).join('')}
+                `;
+                }).join('')}
             </tbody>
-        `;
-        tablaPlacasDiv.appendChild(table);
-    }
+        </table>
+    `;
+    container.innerHTML = tabla;
+}
 
-    async function eliminarPlaca(id) {
-        if (!confirm('¿Estás seguro de que quieres eliminar este registro de placa?')) return;
+function obtenerEstadoPlaca(fechaAsignada, fechaMatricula, asignadaA) {
+    if (fechaMatricula && fechaMatricula.length > 0) {
+        return 'Matriculada';
+    } else if (fechaAsignada && fechaAsignada.length > 0) {
+        return 'Asignada';
+    } else if (asignadaA && asignadaA.length > 0) {
+        return 'Recibida';
+    } else {
+        return 'En Trámite';
+    }
+}
+
+async function editarPlaca(id) {
+    const docRef = doc(db, 'placas', id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return;
+    const placa = docSnap.data();
+    
+    const modalBody = `
+        <form id="editPlacaForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Placa</label>
+                    <input type="text" id="editPlaca" value="${placa.placa}" required>
+                </div>
+                <div class="form-group">
+                    <label>Asignada a</label>
+                    <input type="text" id="editPlacaAsignadaA" value="${placa.asignadaA || ''}" required>
+                </div>
+                <div class="form-group">
+                    <label>Fecha Recepción</label>
+                    <input type="date" id="editPlacaFechaRecepcion" value="${placa.fechaRecepcion}" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fecha Asignada</label>
+                    <input type="date" id="editPlacaFechaAsignada" value="${placa.fechaAsignada}">
+                </div>
+                <div class="form-group">
+                    <label>Fecha Matrícula</label>
+                    <input type="date" id="editPlacaFechaMatricula" value="${placa.fechaMatricula}">
+                </div>
+                <div class="form-group">
+                    <label>Observaciones</label>
+                    <textarea id="editPlacaObservaciones" placeholder="Observaciones adicionales">${placa.observaciones || ''}</textarea>
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <button type="submit" class="btn-primary">Guardar Cambios</button>
+                <button type="button" class="btn-secondary" onclick="document.getElementById('editModal').style.display='none'">Cancelar</button>
+            </div>
+        </form>
+    `;
+    
+    document.getElementById('modalTitle').textContent = 'Editar Registro de Placa';
+    document.getElementById('modalBody').innerHTML = modalBody;
+    document.getElementById('editModal').style.display = 'block';
+    
+    document.getElementById('editPlacaForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const nuevaPlaca = document.getElementById('editPlaca').value.toUpperCase();
+        const nuevaAsignadaA = document.getElementById('editPlacaAsignadaA').value;
+        const nuevaFechaRecepcion = document.getElementById('editPlacaFechaRecepcion').value;
+        const nuevaFechaAsignada = document.getElementById('editPlacaFechaAsignada').value;
+        const nuevaFechaMatricula = document.getElementById('editPlacaFechaMatricula').value;
+        const nuevasObservaciones = document.getElementById('editPlacaObservaciones').value;
+
+        const updatedPlaca = {
+            placa: nuevaPlaca,
+            asignadaA: nuevaAsignadaA,
+            fechaRecepcion: nuevaFechaRecepcion,
+            fechaAsignada: nuevaFechaAsignada,
+            fechaMatricula: nuevaFechaMatricula,
+            observaciones: nuevasObservaciones,
+            estado: obtenerEstadoPlaca(nuevaFechaAsignada, nuevaFechaMatricula, nuevaAsignadaA)
+        };
         try {
-            await deleteDoc(doc(db, "placas", id));
-            mostrarNotificacion('Registro de placa eliminado con éxito.', 'success');
+            await updateDoc(docRef, updatedPlaca);
+            document.getElementById('editModal').style.display = 'none';
+            mostrarNotificacion('Placa actualizada correctamente', 'success');
         } catch (error) {
-            console.error("Error al eliminar placa: ", error);
-            mostrarNotificacion('Error al eliminar el registro de placa.', 'error');
+            console.error("Error al actualizar la placa: ", error);
+            mostrarNotificacion('Error al actualizar la placa', 'error');
+        }
+    });
+}
+
+async function eliminarPlaca(id) {
+    if (window.confirm('¿Está seguro de eliminar esta placa?')) {
+        try {
+            await deleteDoc(doc(db, 'placas', id));
+            mostrarNotificacion('Placa eliminada', 'success');
+        } catch (error) {
+            console.error("Error al eliminar la placa: ", error);
+            mostrarNotificacion('Error al eliminar la placa', 'error');
         }
     }
+}
 
-    function editarPlaca(id) {
-        const placa = placas.find(p => p.id === id);
-        if (!placa) return;
+// FUNCIONES DE UTILIDAD
+function capitalizeFirst(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
-        modalTitle.textContent = `Editar Placa ${placa.placaInicial}`;
-        modalBody.innerHTML = `
-            <form id="editPlacaForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="editPlacaInicial">Placa Inicial:</label>
-                        <input type="text" id="editPlacaInicial" value="${placa.placaInicial}" required>
+function mostrarNotificacion(mensaje, tipo) {
+    const notificacion = document.getElementById('notificacion');
+    if (notificacion) {
+        notificacion.textContent = mensaje;
+        notificacion.className = `notificacion ${tipo}`;
+        notificacion.style.display = 'block';
+        setTimeout(() => {
+            notificacion.style.display = 'none';
+        }, 5000);
+    } else {
+        console.log(mensaje);
+    }
+}
+
+function calcularDiasVencimiento(fecha) {
+    const hoy = new Date();
+    const fechaVencimiento = new Date(fecha);
+    const diferenciaMs = fechaVencimiento - hoy;
+    return Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
+}
+
+
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    // Agrega un pequeño ajuste de 12 horas para evitar la transición de medianoche en la zona horaria.
+    date.setHours(date.getHours() + 12);
+    return date.toLocaleDateString();
+}
+
+async function descargarReciboTramite(tramiteId) {
+    try {
+        const tramite = tramites.find(t => t.id === tramiteId);
+        if (!tramite) {
+            mostrarNotificacion('No se encontró el trámite', 'error');
+            return;
+        }
+
+        const reciboDiv = document.createElement('div');
+        reciboDiv.innerHTML = `
+            <div style="font-family: 'Poppins', sans-serif; padding: 5%; color: #222; width: 100%; height: 100%; box-sizing: border-box;">
+                <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 35px; margin-bottom: 50px;">
+                    <h1 style="color: #3869D4; margin: 0; font-size: 32px;">RECIBO DE TRÁMITE</h1>
+                    <p style="font-size: 20px; color: #444;">RH Asesorías &middot; Gestión de Trámites</p>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+                    <div>
+                        <p style="margin: 0; font-size: 18px;"><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
+                        <p style="margin: 0; margin-top: 10px; font-size: 18px;"><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
                     </div>
-                    <div class="form-group">
-                        <label for="editPlacaFinal">Placa Final:</label>
-                        <input type="text" id="editPlacaFinal" value="${placa.placaFinal}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editPlacaAsignadaA">Asignada a:</label>
-                        <input type="text" id="editPlacaAsignadaA" value="${placa.asignadaA || ''}">
-                    </div>
-                    <div class="form-group">
-                        <label for="editPlacaFechaRecepcion">Fecha de Recepción:</label>
-                        <input type="date" id="editPlacaFechaRecepcion" value="${placa.fechaRecepcion}" required>
+                    <div style="text-align: right;">
+                        <p style="margin: 0; font-size: 18px;"><strong>Nombre:</strong> ${tramite.cliente}</p>
+                        <p style="margin: 0; margin-top: 10px; font-size: 18px;"><strong>Placa:</strong> ${tramite.placa}</p>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="editPlacaFechaAsignada">Fecha Asignada:</label>
-                        <input type="date" id="editPlacaFechaAsignada" value="${placa.fechaAsignada || ''}">
-                    </div>
-                    <div class="form-group">
-                        <label for="editPlacaFechaMatricula">Fecha Matrícula:</label>
-                        <input type="date" id="editPlacaFechaMatricula" value="${placa.fechaMatricula || ''}">
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label for="editPlacaObservaciones">Observaciones:</label>
-                        <textarea id="editPlacaObservaciones">${placa.observaciones || ''}</textarea>
-                    </div>
+                <h2 style="font-size: 22px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 15px;">Detalle del Trámite</h2>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 18px;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="padding: 15px; border: 1px solid #ddd;">Fecha</th>
+                            <th style="padding: 15px; border: 1px solid #ddd;">Estado</th>
+                            <th style="padding: 15px; border: 1px solid #ddd;">Estado de Pago</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 15px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
+                            <td style="padding: 15px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
+                            <td style="padding: 15px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="height: 250px;"></div>
+                <div style="margin-top: 40px; text-align: center; border-top: 1px solid #ddd; padding-top: 20px;">
+                    <p style="font-size: 14px; color: #aaa; margin: 0;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
                 </div>
-                <button type="submit" class="btn-primary">Guardar Cambios</button>
-            </form>
+            </div>
         `;
+        document.body.appendChild(reciboDiv);
 
-        const editPlacaForm = document.getElementById('editPlacaForm');
-        editPlacaForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const placaRef = doc(db, "placas", id);
-            const updatedData = {
-                placaInicial: editPlacaForm.editPlacaInicial.value.toUpperCase(),
-                placaFinal: editPlacaForm.editPlacaFinal.value.toUpperCase(),
-                asignadaA: editPlacaForm.editPlacaAsignadaA.value,
-                fechaRecepcion: editPlacaForm.editPlacaFechaRecepcion.value,
-                fechaAsignada: editPlacaForm.editPlacaFechaAsignada.value,
-                fechaMatricula: editPlacaForm.editPlacaFechaMatricula.value,
-                observaciones: editPlacaForm.editPlacaObservaciones.value
-            };
+        const canvas = await html2canvas(reciboDiv, { scale: 5 });
+        const imgData = canvas.toDataURL('image/png');
 
-            try {
-                await updateDoc(placaRef, updatedData);
-                mostrarNotificacion('Placa actualizada con éxito.', 'success');
-                editModal.style.display = 'none';
-            } catch (error) {
-                console.error("Error al actualizar placa: ", error);
-                mostrarNotificacion('Error al actualizar el registro de placa.', 'error');
-            }
-        });
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-        editModal.style.display = 'block';
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`);
+
+        document.body.removeChild(reciboDiv);
+
+    } catch (err) {
+        console.error("Error generando PDF:", err);
+        mostrarNotificacion('Error al generar el recibo', 'error');
+    }
+}
+
+async function descargarTodosRecibos() {
+    // Filtra solo los trámites que están terminados y pagados
+   const tramitesTerminados = tramites.filter(t => t.estado === 'terminado');
+
+    if (tramitesTerminados.length === 0) {
+        mostrarNotificacion('No hay recibos para descargar.', 'info');
+        return;
     }
 
+    mostrarNotificacion(`Iniciando la descarga de ${tramitesTerminados.length} recibos... Esto puede tomar un momento.`, 'info');
 
-    // Escucha en tiempo real de la base de datos
-    function setupRealtimeListeners() {
-        onSnapshot(tramitesCol, (snapshot) => {
-            tramites = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderTramites(tramites);
-        });
-
-        onSnapshot(contabilidadCol, (snapshot) => {
-            registrosContables = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            actualizarRegistrosContables();
-        });
-
-        onSnapshot(crmCol, (snapshot) => {
-            clientesCRM = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderClientesCRM(clientesCRM);
-        });
-
-        onSnapshot(placasCol, (snapshot) => {
-            placas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderPlacas(placas);
-        });
+    // Bucle asíncrono para descargar un recibo a la vez con un retraso
+    for (const tramite of tramitesTerminados) {
+        // Asegúrate de usar la versión corregida de descargarReciboTramite
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Retraso de 1 segundo
+        await descargarReciboTramite(tramite.id);
     }
+    
+    mostrarNotificacion('Descarga de todos los recibos completada.', 'success');
+}
 
-    // Expone las funciones a la ventana global para que el HTML pueda acceder a ellas.
-    window.descargarReciboTramite = descargarReciboTramite;
-    window.showSection = showSection;
-    window.editarTramite = editarTramite;
-    window.eliminarTramite = eliminarTramite;
-    window.notificarWhatsApp = notificarWhatsApp;
-    window.consultarUtilidades = consultarUtilidades;
-    window.editarMovimiento = editarMovimiento;
-    window.eliminarMovimiento = eliminarMovimiento;
-    window.editarClienteCRM = editarClienteCRM;
-    window.eliminarClienteCRM = eliminarClienteCRM;
-    window.editarPlaca = editarPlaca;
-    window.eliminarPlaca = eliminarPlaca;
-    window.actualizarRegistrosContables = actualizarRegistrosContables;
-});
+
+// Expone las funciones a la ventana global para que el HTML pueda acceder a ellas.
+window.descargarReciboTramite = descargarReciboTramite;
+window.descargarTodosRecibos = descargarTodosRecibos;
+window.showSection = showSection;
+window.cambiarEstadoTramite = cambiarEstadoTramite;
+window.cambiarEstadoPago = cambiarEstadoPago;
+window.actualizarObservaciones = actualizarObservaciones;
+window.editarTramite = editarTramite;
+window.eliminarTramite = eliminarTramite;
+window.consultarUtilidades = consultarUtilidades;
+window.editarMovimiento = editarMovimiento;
+window.eliminarMovimiento = eliminarMovimiento;
+window.editarClienteCRM = editarClienteCRM;
+window.eliminarClienteCRM = eliminarClienteCRM;
+window.notificarWhatsApp = notificarWhatsApp;
+window.verificarVencimientos = verificarVencimientos;
+window.editarPlaca = editarPlaca;
+window.eliminarPlaca = eliminarPlaca;
+window.actualizarRegistrosContables = actualizarRegistrosContables;
+
