@@ -171,10 +171,14 @@ async function agregarTramite(e, db) {
     const tramite = {
         fecha: document.getElementById('tramiteFecha').value,
         cliente: document.getElementById('tramiteCliente').value,
+        nit: document.getElementById('tramiteNIT').value,
         placa: document.getElementById('tramitePlaca').value.toUpperCase(),
+        tipo: document.getElementById('tramiteTipo').value,
+        transito: document.getElementById('tramiteTransito').value,
         estado: document.getElementById('tramiteEstado').value,
         pago: 'pendiente',
-        observaciones: ''
+        observaciones: '',
+        valor: 0
     };
     
     try {
@@ -189,10 +193,13 @@ async function agregarTramite(e, db) {
 }
 
 function actualizarTramites() {
-    const proceso = tramites.filter(t => t.estado === 'proceso');
-    const terminados = tramites.filter(t => t.estado === 'terminado');
+   const porCobrar = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pendiente');
+    const proceso = tramites.filter(t => t.estado === 'proceso' || t.pago === 'pagado');
+    const terminados = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
     const rechazados = tramites.filter(t => t.estado === 'rechazado');
     
+    const tramitesPorCobrar = document.getElementById('tramitesPorCobrar');
+    if (tramitesPorCobrar) tramitesPorCobrar.innerHTML = porCobrar.map(t => generarTramiteHTML(t)).join('');
     const tramitesProceso = document.getElementById('tramitesProceso');
     if (tramitesProceso) tramitesProceso.innerHTML = proceso.map(t => generarTramiteHTML(t)).join('');
     const tramitesTerminados = document.getElementById('tramitesTerminados');
@@ -208,12 +215,19 @@ function generarTramiteHTML(tramite) {
     
     if (tramite.estado === 'proceso' || tramite.estado === 'terminado') {
         estadoPagoHTML = `
-            <div class="estado-pago">
+             <div class="estado-pago">
                 <label>Estado de Pago:</label>
                 <select onchange="cambiarEstadoPago('${tramite.id}', this.value)">
                     <option value="pendiente" ${tramite.pago === 'pendiente' ? 'selected' : ''}>Por Cobrar</option>
                     <option value="pagado" ${tramite.pago === 'pagado' ? 'selected' : ''}>Pagado</option>
                 </select>
+                ${tramite.pago === 'pagado' ? `
+                <div class="form-group" style="margin-top: 10px;">
+                    <label>Valor:</label>
+                    <input type="number" class="valor-input" value="${tramite.valor || 0}"
+                           onblur="actualizarValorTramite('${tramite.id}', this.value)">
+                </div>
+                ` : ''}
             </div>
         `;
     }
@@ -235,13 +249,17 @@ function generarTramiteHTML(tramite) {
     }
     
     return `
-        <div class="tramite-item ${tramite.estado}">
+         <div class="tramite-card ${tramite.estado}">
             <div class="tramite-info">
-                <strong>Cliente:</strong> ${tramite.cliente}<br>
-                <strong>Placa:</strong> ${tramite.placa}<br>
                 <strong>Fecha:</strong> ${formatDate(tramite.fecha)}<br>
+                <strong>Cliente:</strong> ${tramite.cliente}<br>
+                <strong>NIT:</strong> ${tramite.nit}<br>
+                <strong>Placa:</strong> ${tramite.placa}<br>
+                <strong>Trámite:</strong> ${tramite.tipo}<br>
+                <strong>Tránsito:</strong> ${tramite.transito}<br>
                 <strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}
-                ${tramite.pago && tramite.pago !== 'pendiente' ? `<br><strong>Pago:</strong> ${capitalizeFirst(tramite.pago)}` : ''}
+                ${tramite.pago ? `<br><strong>Pago:</strong> ${capitalizeFirst(tramite.pago)}` : ''}
+                ${tramite.valor ? `<br><strong>Valor:</strong> ${tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP'})}` : ''}
             </div>
             ${estadoPagoHTML}
             ${observacionesHTML}
@@ -296,7 +314,7 @@ async function editarTramite(id) {
     const tramite = docSnap.data();
     
     const modalBody = `
-        <form id="editTramiteForm">
+         <form id="editTramiteForm">
             <div class="form-row">
                 <div class="form-group">
                     <label>Fecha</label>
@@ -306,9 +324,21 @@ async function editarTramite(id) {
                     <label>Cliente</label>
                     <input type="text" id="editTramiteCliente" value="${tramite.cliente}" required>
                 </div>
+                 <div class="form-group">
+                    <label>NIT</label>
+                    <input type="text" id="editTramiteNIT" value="${tramite.nit || ''}" required>
+                </div>
                 <div class="form-group">
                     <label>Placa</label>
                     <input type="text" id="editTramitePlaca" value="${tramite.placa}" required>
+                </div>
+                 <div class="form-group">
+                    <label>Tipo de Trámite</label>
+                    <input type="text" id="editTramiteTipo" value="${tramite.tipo || ''}" required>
+                </div>
+                <div class="form-group">
+                    <label>Tránsito</label>
+                    <input type="text" id="editTramiteTransito" value="${tramite.transito || ''}" required>
                 </div>
                 <div class="form-group">
                     <label>Estado</label>
@@ -317,6 +347,21 @@ async function editarTramite(id) {
                         <option value="terminado" ${tramite.estado === 'terminado' ? 'selected' : ''}>Terminado</option>
                         <option value="rechazado" ${tramite.estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
                     </select>
+                </div>
+                 <div class="form-group">
+                    <label>Estado de Pago</label>
+                    <select id="editTramitePago" required>
+                        <option value="pendiente" ${tramite.pago === 'pendiente' ? 'selected' : ''}>Por Cobrar</option>
+                        <option value="pagado" ${tramite.pago === 'pagado' ? 'selected' : ''}>Pagado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Valor</label>
+                    <input type="number" id="editTramiteValor" value="${tramite.valor || 0}" required>
+                </div>
+                 <div class="form-group" style="grid-column: span 2;">
+                    <label>Observaciones</label>
+                    <textarea id="editTramiteObservaciones" placeholder="Observaciones">${tramite.observaciones || ''}</textarea>
                 </div>
             </div>
             <div style="margin-top: 20px;">
@@ -333,10 +378,16 @@ async function editarTramite(id) {
     document.getElementById('editTramiteForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const updatedTramite = {
-            fecha: document.getElementById('editTramiteFecha').value,
+           fecha: document.getElementById('editTramiteFecha').value,
             cliente: document.getElementById('editTramiteCliente').value,
+            nit: document.getElementById('editTramiteNIT').value,
             placa: document.getElementById('editTramitePlaca').value.toUpperCase(),
-            estado: document.getElementById('editTramiteEstado').value
+            tipo: document.getElementById('editTramiteTipo').value,
+            transito: document.getElementById('editTramiteTransito').value,
+            estado: document.getElementById('editTramiteEstado').value,
+            pago: document.getElementById('editTramitePago').value,
+            valor: parseFloat(document.getElementById('editTramiteValor').value),
+            observaciones: document.getElementById('editTramiteObservaciones').value
         };
         try {
             await updateDoc(docRef, updatedTramite);
@@ -1183,46 +1234,31 @@ async function descargarReciboTramite(tramiteId) {
             return;
         }
 
-        const reciboDiv = document.createElement('div');
-        reciboDiv.innerHTML = `
-            <div style="font-family: 'Poppins', sans-serif; padding: 5%; color: #222; width: 100%; height: 100%; box-sizing: border-box;">
-                <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 35px; margin-bottom: 50px;">
-                    <h1 style="color: #3869D4; margin: 0; font-size: 32px;">RECIBO DE TRÁMITE</h1>
-                    <p style="font-size: 20px; color: #444;">RH Asesorías &middot; Gestión de Trámites</p>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
-                    <div>
-                        <p style="margin: 0; font-size: 18px;"><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
-                        <p style="margin: 0; margin-top: 10px; font-size: 18px;"><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <p style="margin: 0; font-size: 18px;"><strong>Nombre:</strong> ${tramite.cliente}</p>
-                        <p style="margin: 0; margin-top: 10px; font-size: 18px;"><strong>Placa:</strong> ${tramite.placa}</p>
-                    </div>
-                </div>
-                <h2 style="font-size: 22px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 15px;">Detalle del Trámite</h2>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 18px;">
-                    <thead>
-                        <tr style="background-color: #f2f2f2;">
-                            <th style="padding: 15px; border: 1px solid #ddd;">Fecha</th>
-                            <th style="padding: 15px; border: 1px solid #ddd;">Estado</th>
-                            <th style="padding: 15px; border: 1px solid #ddd;">Estado de Pago</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="padding: 15px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
-                            <td style="padding: 15px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
-                            <td style="padding: 15px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div style="height: 250px;"></div>
-                <div style="margin-top: 40px; text-align: center; border-top: 1px solid #ddd; padding-top: 20px;">
-                    <p style="font-size: 14px; color: #aaa; margin: 0;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
+       const valorFormateado = tramite.valor ? tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP'}) : 'N/A';
+    const nit = tramite.nit || 'N/A';
+    const tipoTramite = tramite.tipo || 'N/A';
+    const transito = tramite.transito || 'N/A';
+
+    const reciboHTML = `
+        <div class="recibo-container">
+            <h2 class="recibo-titulo">RECIBO DE TRÁMITE</h2>
+            <div class="recibo-info">
+                <p><strong>Fecha:</strong> ${formatDate(tramite.fecha)}</p>
+                <p><strong>Cliente:</strong> ${tramite.cliente}</p>
+                <p><strong>NIT:</strong> ${nit}</p>
+                <p><strong>Placa:</strong> ${tramite.placa}</p>
+                <p><strong>Tipo de Trámite:</strong> ${tipoTramite}</p>
+                <p><strong>Tránsito:</strong> ${transito}</p>
+                <hr>
+                <div class="recibo-detalle">
+                    <p><strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}</p>
+                    <p><strong>Estado de Pago:</strong> ${capitalizeFirst(tramite.pago)}</p>
+                    <p><strong>Valor:</strong> ${valorFormateado}</p>
                 </div>
             </div>
-        `;
+            <p class="recibo-gracias">¡Gracias por su confianza!</p>
+        </div>
+    `;
         document.body.appendChild(reciboDiv);
 
         const canvas = await html2canvas(reciboDiv, { scale: 5 });
