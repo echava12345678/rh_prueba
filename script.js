@@ -247,6 +247,10 @@ function generarTramiteHTML(tramite) {
             <button class="btn-download" onclick="descargarReciboTramite('${tramite.id}')"><i class="fas fa-file-download"></i>Descargar Recibo</button>
         `;
     }
+
+     // Formats the value to always display two decimal places
+    const formattedValor = tramite.valor ? tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 2, maximumFractionDigits: 2}) : 'N/A';
+
     
     return `
          <div class="tramite-card ${tramite.estado}">
