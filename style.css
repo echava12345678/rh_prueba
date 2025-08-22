@@ -26,7 +26,7 @@ body {
 
 /* Header y Navegación */
 .header {
-    background: linear-gradient(135deg, #f57c00 0%, #f57c00 100%);
+    background: linear-gradient(135deg, #f57c00 0%, #f50d05 100%);
     color: white;
     padding: 20px;
     border-radius: 10px;
@@ -178,7 +178,7 @@ body {
     box-shadow: 0 4px 15px rgba(168, 237, 234, 0.4);
 }
 
-.btn-edit, .btn-delete, .btn-whatsapp {
+.btn-edit, .btn-delete, .btn-whatsapp, .btn-download {
     padding: 6px 12px;
     border: none;
     border-radius: 4px;
@@ -215,6 +215,15 @@ body {
     background: #128c7e;
 }
 
+.btn-download {
+    background: #007bff;
+    color: white;
+}
+
+.btn-download:hover {
+    background: #0069d9;
+}
+
 /* Subsecciones de Trámites */
 .tramites-sections {
     display: grid;
@@ -237,187 +246,206 @@ body {
     border-bottom: 2px solid #f8f9fa;
 }
 
-.tramite-item {
+.tramite-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.tramite-card {
     background: #f8f9fa;
     padding: 15px;
-    margin-bottom: 10px;
     border-radius: 8px;
-    border-left: 4px solid #667eea;
-    transition: transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border-left: 5px solid;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.tramite-item:hover {
-    transform: translateX(5px);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+.tramite-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.tramite-item.proceso { border-left-color: #ffc107; }
-.tramite-item.terminado { border-left-color: #28a745; }
-.tramite-item.rechazado { border-left-color: #dc3545; }
+.tramite-card.proceso {
+    border-color: #ffc107; /* Amarillo para En Proceso */
+}
 
-/* Estados de pago */
+.tramite-card.terminado {
+    border-color: #28a745; /* Verde para Terminado */
+}
+
+.tramite-card.rechazado {
+    border-color: #dc3545; /* Rojo para Rechazado */
+}
+
+.tramite-info {
+    margin-bottom: 10px;
+    line-height: 1.8;
+}
+
+.tramite-info strong {
+    color: #495057;
+}
+
 .estado-pago {
-    margin-top: 10px;
-    padding: 8px;
-    background: white;
-    border-radius: 5px;
-    border: 1px solid #dee2e6;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
 }
 
 .estado-pago select {
-    width: 100%;
-    padding: 5px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-}
-
-.observaciones-input {
-    width: 100%;
+    margin-top: 5px;
     padding: 8px;
     border: 1px solid #ced4da;
     border-radius: 4px;
-    margin-top: 10px;
-    min-height: 60px;
 }
 
-/* Contabilidad */
-.utilidades-container {
-    background: #f8f9fa;
-    padding: 25px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    border-left: 4px solid #28a745;
+.tramite-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
 }
 
-.utilidades-container h3 {
-    color: #28a745;
-    margin-bottom: 20px;
-}
-
-#resultadosUtilidad {
-    margin-top: 20px;
-    padding: 20px;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-}
-
-.utilidad-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* Notificaciones */
+.notificacion {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #5cb85c;
     color: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-}
-
-.utilidad-detalle {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.utilidad-item {
-    background: rgba(255,255,255,0.1);
-    padding: 10px;
+    padding: 15px 25px;
     border-radius: 5px;
-    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.notificacion.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.notificacion.success {
+    background-color: #28a745;
+}
+
+.notificacion.error {
+    background-color: #dc3545;
+}
+
+.notificacion.info {
+    background-color: #17a2b8;
 }
 
 /* Tablas */
 .table-container {
-    overflow-x: auto;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
 }
 
 .table-container h3 {
-    padding: 20px;
-    margin: 0;
-    background: #f8f9fa;
+    margin-bottom: 15px;
     color: #667eea;
-    border-bottom: 1px solid #dee2e6;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background-color: #667eea;
+    color: white;
 }
 
 th, td {
-    padding: 12px;
+    padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #dee2e6;
     font-size: 14px;
 }
 
-th {
-    background: #f8f9fa;
-    font-weight: 600;
-    color: #555;
-    position: sticky;
-    top: 0;
+tr:nth-child(even) {
+    background-color: #f8f9fa;
 }
 
 tr:hover {
-    background: #f8f9fa;
+    background-color: #e9ecef;
 }
 
-/* Estados de Placas */
 .badge {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.badge-matriculada {
-    background: #d4edda;
-    color: #155724;
-}
-
-.badge-asignada {
-    background: #d1ecf1;
-    color: #0c5460;
-}
-
-.badge-recibida {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.badge-en-trámite {
-    background: #e2e3e5;
-    color: #383d41;
-}
-
-/* Alertas de vencimiento */
-.alerta-vencimiento {
-    background: #f8d7da;
-    color: #721c24;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.cant-avisos {
-    display: inline-block;
-    padding: 4px 8px;
+    padding: 5px 10px;
     border-radius: 50px;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: bold;
     color: white;
-    min-width: 25px;
-    text-align: center;
 }
 
-.cant-avisos-0 { background: #3498db; }
-.cant-avisos-1 { background: #ffc107; }
-.cant-avisos-2 { background: #fd7e14; }
-.cant-avisos-3 { background: #dc3545; }
+.badge.ingreso {
+    background-color: #28a745;
+}
+
+.badge.egreso {
+    background-color: #dc3545;
+}
+
+.badge.vigente {
+    background-color: #28a745;
+}
+
+.badge.pronto-a-vencer {
+    background-color: #ffc107;
+}
+
+.badge.vencido {
+    background-color: #dc3545;
+}
+
+/* Estilos de recibo */
+.recibo-container {
+    padding: 30px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    max-width: 500px;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+}
+
+.recibo-titulo {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 10px;
+}
+
+.recibo-info p {
+    margin: 5px 0;
+}
+
+.recibo-info strong {
+    color: #555;
+}
+
+.recibo-detalle {
+    margin-top: 15px;
+    border-top: 1px solid #e9ecef;
+    padding-top: 15px;
+}
+
+.recibo-gracias {
+    text-align: center;
+    margin-top: 25px;
+    font-style: italic;
+    color: #777;
+}
 
 /* Modal */
 .modal {
@@ -482,38 +510,7 @@ tr:hover {
         grid-template-columns: 1fr;
     }
     
-    .tramites-sections {
-        grid-template-columns: 1fr;
-    }
-    
-    .utilidad-detalle {
-        grid-template-columns: 1fr;
-    }
-    
-    table {
-        font-size: 12px;
-    }
-    
     th, td {
-        padding: 8px 4px;
+        padding: 8px;
     }
-}
-
-/* Scroll personalizado */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #667eea;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #764ba2;
 }
