@@ -199,17 +199,17 @@ async function agregarTramite(e, db) {
 
 function actualizarTramites(listaATrabajar = tramites) {
     const tramitesFiltrados = listaATrabajar;
-    // 1. "Por Cobrar" son los terminados pero pendientes de pago.
-    const porCobrar = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pendiente');
+     // 1. "Por Cobrar" son los terminados pero pendientes de pago.
+    const porCobrar = tramitesFiltrados.filter(t => t.estado === 'terminado' && t.pago === 'pendiente');
     
     // 2. "En Proceso" son solo aquellos con estado "proceso", independientemente del pago.
-    const proceso = tramites.filter(t => t.estado === 'proceso');
+    const proceso = tramitesFiltrados.filter(t => t.estado === 'proceso');
     
     // 3. "Terminados" son los que tienen el estado terminado Y pago pagado.
-    const terminados = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
+    const terminados = tramitesFiltrados.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
     
     // 4. "Rechazados" son solo aquellos con estado "rechazado".
-    const rechazados = tramites.filter(t => t.estado === 'rechazado');
+    const rechazados = tramitesFiltrados.filter(t => t.estado === 'rechazado');
 
     // Ahora, actualiza las secciones del HTML con los trámites filtrados
     const tramitesPorCobrar = document.getElementById('tramitesPorCobrar');
