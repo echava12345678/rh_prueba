@@ -499,7 +499,7 @@ function actualizarRegistrosContables() {
                 <tr>
                     <th>Fecha</th>
                     <th>Cliente</th>
-                    <th>Banco/Efectivo</th>
+                    <th>Concepto</th> <th>Banco/Efectivo</th>
                     <th>Tipo</th>
                     <th>Monto</th>
                     <th>Acciones</th>
@@ -510,7 +510,7 @@ function actualizarRegistrosContables() {
                     <tr>
                         <td>${formatDate(reg.fecha)}</td>
                         <td>${reg.cliente}</td>
-                        <td>${capitalizeFirst(reg.banco.replace('_', ' '))}</td>
+                        <td>${reg.concepto}</td>  <td>${capitalizeFirst(reg.banco.replace('_', ' '))}</td>
                         <td><span class="badge ${reg.tipo}">${capitalizeFirst(reg.tipo)}</span></td>
                         <td>${reg.monto.toLocaleString()}</td>
                         <td>
@@ -692,6 +692,7 @@ async function editarMovimiento(id) {
         const updatedMovimiento = {
             fecha: document.getElementById('editContaFecha').value,
             cliente: document.getElementById('editContaCliente').value,
+            concepto: document.getElementById('editContaConcepto').value,
             banco: document.getElementById('editContaBanco').value,
             tipo: document.getElementById('editContaTipo').value,
             monto: monto
