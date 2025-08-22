@@ -31,6 +31,7 @@ const auth = getAuth(app);
 
 // Espera a que la página se cargue
 document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('tramiteSearchInput').addEventListener('input', buscarTramitePorPlaca);
     
     // Configura los formularios y botones
     const loginForm = document.getElementById('loginForm');
@@ -478,7 +479,8 @@ async function agregarMovimiento(e, db) {
     }
 }
 
-function actualizarRegistrosContables() {
+function actualizarRegistrosContables(listaATrabajar = tramites) {
+    const tramitesFiltrados = listaATrabajar;
     const container = document.getElementById('registrosContables');
     if (!container) return;
     const filtroTipo = document.getElementById('filtroMovimiento').value;
@@ -523,6 +525,21 @@ function actualizarRegistrosContables() {
         </table>
     `;
     container.innerHTML = tabla;
+}
+
+function buscarTramitePorPlaca() {
+    const searchTerm = document.getElementById('tramiteSearchInput').value.toLowerCase();
+    
+    // Si el campo de búsqueda está vacío, volvemos a mostrar todos los trámites
+    if (searchTerm === '') {
+        actualizarTramites(tramites);
+        return;
+    }
+    
+    const resultadosFiltrados = tramites.filter(t => t.placa.toLowerCase().includes(searchTerm));
+    
+    // Llama a la función de actualización con la lista filtrada
+    actualizarTramites(resultadosFiltrados);
 }
 
 function consultarUtilidades() {
