@@ -178,7 +178,7 @@ async function agregarTramite(e, db) {
         estado: document.getElementById('tramiteEstado').value,
         pago: 'pendiente',
         observaciones: '',
-        valor: 0
+        valor: parseFloat(document.getElementById('valorInput').value) || 0,
     };
     
     try {
