@@ -226,6 +226,7 @@ function generarTramiteHTML(tramite) {
                     <label>Valor:</label>
                     <input type="number" class="valor-input" value="${tramite.valor || 0}"
                            onblur="actualizarValorTramite('${tramite.id}', this.value)">
+                           <button class="btn-edit" onclick="actualizarValorConBoton('${tramite.id}')"><i class="fas fa-save"></i> Guardar</button>
                 </div>
                 ` : ''}
             </div>
@@ -276,6 +277,23 @@ function generarTramiteHTML(tramite) {
             </div>
         </div>
     `;
+}
+async function actualizarValorConBoton(tramiteId) {
+    try {
+        const input = document.getElementById(`valorInput_${tramiteId}`);
+        const valorNumerico = parseFloat(input.value);
+
+        if (isNaN(valorNumerico)) {
+            mostrarNotificacion('Por favor, ingresa un valor numérico válido.', 'error');
+            return;
+        }
+
+        await updateDoc(doc(db, 'tramites', tramiteId), { valor: valorNumerico });
+        mostrarNotificacion('Valor del trámite actualizado', 'success');
+    } catch (error) {
+        console.error("Error al actualizar el valor: ", error);
+        mostrarNotificacion('Error al actualizar el valor del trámite', 'error');
+    }
 }
 
 async function cambiarEstadoTramite(id, nuevoEstado) {
@@ -1329,4 +1347,5 @@ window.verificarVencimientos = verificarVencimientos;
 window.editarPlaca = editarPlaca;
 window.eliminarPlaca = eliminarPlaca;
 window.actualizarRegistrosContables = actualizarRegistrosContables;
+window.actualizarValorConBoton = actualizarValorConBoton;
 
