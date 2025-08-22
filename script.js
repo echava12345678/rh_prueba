@@ -197,7 +197,8 @@ async function agregarTramite(e, db) {
     }
 }
 
-function actualizarTramites() {
+function actualizarTramites(listaATrabajar = tramites) {
+    const tramitesFiltrados = listaATrabajar;
     // 1. "Por Cobrar" son los terminados pero pendientes de pago.
     const porCobrar = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pendiente');
     
@@ -223,7 +224,20 @@ function actualizarTramites() {
     const tramitesRechazados = document.getElementById('tramitesRechazados');
     if (tramitesRechazados) tramitesRechazados.innerHTML = rechazados.map(t => generarTramiteHTML(t)).join('');
 }
-
+function buscarTramitePorPlaca() {
+    const searchTerm = document.getElementById('tramiteSearchInput').value.toLowerCase();
+    
+    // Si el campo de búsqueda está vacío, volvemos a mostrar todos los trámites
+    if (searchTerm === '') {
+        actualizarTramites(tramites);
+        return;
+    }
+    
+    const resultadosFiltrados = tramites.filter(t => t.placa.toLowerCase().includes(searchTerm));
+    
+    // Llama a la función de actualización con la lista filtrada
+    actualizarTramites(resultadosFiltrados);
+}
 function generarTramiteHTML(tramite) {
     let estadoPagoHTML = '';
     let observacionesHTML = '';
