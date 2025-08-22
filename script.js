@@ -1227,62 +1227,66 @@ function formatDate(dateString) {
 }
 
 
-async function descargarReciboTramite(id) {
-    const tramite = tramites.find(t => t.id === id);
-    if (!tramite) {
-        mostrarNotificacion('Trámite no encontrado.', 'error');
-        return;
-    }
-
-    const valorFormateado = tramite.valor ? tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP'}) : 'N/A';
-    const nit = tramite.nit || 'N/A';
-    const tipoTramite = tramite.tipo || 'N/A';
-    const transito = tramite.transito || 'N/A';
-
-    const reciboHTML = `
-        <div class="recibo-container">
-            <h2 class="recibo-titulo">RECIBO DE TRÁMITE</h2>
-            <div class="recibo-info">
-                <p><strong>Fecha:</strong> ${formatDate(tramite.fecha)}</p>
-                <p><strong>Cliente:</strong> ${tramite.cliente}</p>
-                <p><strong>NIT:</strong> ${nit}</p>
-                <p><strong>Placa:</strong> ${tramite.placa}</p>
-                <p><strong>Tipo de Trámite:</strong> ${tipoTramite}</p>
-                <p><strong>Tránsito:</strong> ${transito}</p>
-                <hr>
-                <div class="recibo-detalle">
-                    <p><strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}</p>
-                    <p><strong>Estado de Pago:</strong> ${capitalizeFirst(tramite.pago)}</p>
-                    <p><strong>Valor:</strong> ${valorFormateado}</p>
-                </div>
-            </div>
-            <p class="recibo-gracias">¡Gracias por su confianza!</p>
-        </div>
-    `;
-
-    const opt = {
-        margin: 10,
-        filename: `Recibo_${tramite.cliente}_${tramite.placa}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
-    };
-    
-    // Crear un div temporal para el recibo y luego convertirlo a PDF
-    const content = document.createElement('div');
-    content.innerHTML = reciboHTML;
-    document.body.appendChild(content);
-
+async function descargarReciboTramite(tramiteId) {
     try {
-        await html2pdf().from(content).set(opt).save();
-    } catch (error) {
-        console.error('Error al generar el PDF:', error);
-        mostrarNotificacion('Error al generar el recibo.', 'error');
-    } finally {
-        document.body.removeChild(content);
+        const tramite = tramites.find(t => t.id === tramiteId);
+        if (!tramite) {
+            mostrarNotificacion('No se encontró el trámite', 'error');
+            return;
+        }
+
+       const valorFormateado = tramite.valor ? tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP'}) : 'N/A';
+       const nit = tramite.nit || 'N/A';
+       const tipoTramite = tramite.tipo || 'N/A';
+       const transito = tramite.transito || 'N/A';
+
+       const reciboHTML = `
+           <div class="recibo-container">
+               <h2 class="recibo-titulo">RECIBO DE TRÁMITE</h2>
+               <div class="recibo-info">
+                   <p><strong>Fecha:</strong> ${formatDate(tramite.fecha)}</p>
+                   <p><strong>Cliente:</strong> ${tramite.cliente}</p>
+                   <p><strong>NIT:</strong> ${nit}</p>
+                   <p><strong>Placa:</strong> ${tramite.placa}</p>
+                   <p><strong>Tipo de Trámite:</strong> ${tipoTramite}</p>
+                   <p><strong>Tránsito:</strong> ${transito}</p>
+                   <hr>
+                   <div class="recibo-detalle">
+                       <p><strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}</p>
+                       <p><strong>Estado de Pago:</strong> ${capitalizeFirst(tramite.pago)}</p>
+                       <p><strong>Valor:</strong> ${valorFormateado}</p>
+                   </div>
+               </div>
+               <p class="recibo-gracias">¡Gracias por su confianza!</p>
+           </div>
+       `;
+       const reciboDiv = document.createElement('div');
+       reciboDiv.innerHTML = reciboHTML;
+       reciboDiv.style.position = 'absolute';
+       reciboDiv.style.left = '-9999px';
+       document.body.appendChild(reciboDiv);
+
+        const canvas = await html2canvas(reciboDiv, { scale: 5 });
+        const imgData = canvas.toDataURL('image/png');
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`);
+
+        document.body.removeChild(reciboDiv);
         mostrarNotificacion('Recibo descargado correctamente.', 'success');
+
+    } catch (err) {
+        console.error("Error generando PDF:", err);
+        mostrarNotificacion('Error al generar el recibo', 'error');
     }
 }
+
 
 async function descargarTodosRecibos() {
     // Filtra solo los trámites que están terminados y pagados
