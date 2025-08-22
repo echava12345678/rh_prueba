@@ -31,7 +31,6 @@ const auth = getAuth(app);
 
 // Espera a que la página se cargue
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('tramiteSearchInput').addEventListener('input', buscarTramitePorPlaca);
     
     // Configura los formularios y botones
     const loginForm = document.getElementById('loginForm');
@@ -197,19 +196,18 @@ async function agregarTramite(e, db) {
     }
 }
 
-function actualizarTramites(listaATrabajar = tramites) {
-    const tramitesFiltrados = listaATrabajar;
-     // 1. "Por Cobrar" son los terminados pero pendientes de pago.
-    const porCobrar = tramitesFiltrados.filter(t => t.estado === 'terminado' && t.pago === 'pendiente');
+function actualizarTramites() {
+    // 1. "Por Cobrar" son los terminados pero pendientes de pago.
+    const porCobrar = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pendiente');
     
     // 2. "En Proceso" son solo aquellos con estado "proceso", independientemente del pago.
-    const proceso = tramitesFiltrados.filter(t => t.estado === 'proceso');
+    const proceso = tramites.filter(t => t.estado === 'proceso');
     
     // 3. "Terminados" son los que tienen el estado terminado Y pago pagado.
-    const terminados = tramitesFiltrados.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
+    const terminados = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
     
     // 4. "Rechazados" son solo aquellos con estado "rechazado".
-    const rechazados = tramitesFiltrados.filter(t => t.estado === 'rechazado');
+    const rechazados = tramites.filter(t => t.estado === 'rechazado');
 
     // Ahora, actualiza las secciones del HTML con los trámites filtrados
     const tramitesPorCobrar = document.getElementById('tramitesPorCobrar');
@@ -224,20 +222,7 @@ function actualizarTramites(listaATrabajar = tramites) {
     const tramitesRechazados = document.getElementById('tramitesRechazados');
     if (tramitesRechazados) tramitesRechazados.innerHTML = rechazados.map(t => generarTramiteHTML(t)).join('');
 }
-function buscarTramitePorPlaca() {
-    const searchTerm = document.getElementById('tramiteSearchInput').value.toLowerCase();
-    
-    // Si el campo de búsqueda está vacío, volvemos a mostrar todos los trámites
-    if (searchTerm === '') {
-        actualizarTramites(tramites);
-        return;
-    }
-    
-    const resultadosFiltrados = tramites.filter(t => t.placa.toLowerCase().includes(searchTerm));
-    
-    // Llama a la función de actualización con la lista filtrada
-    actualizarTramites(resultadosFiltrados);
-}
+
 function generarTramiteHTML(tramite) {
     let estadoPagoHTML = '';
     let observacionesHTML = '';
@@ -493,8 +478,7 @@ async function agregarMovimiento(e, db) {
     }
 }
 
-function actualizarRegistrosContables(listaATrabajar = tramites) {
-    const tramitesFiltrados = listaATrabajar;
+function actualizarRegistrosContables() {
     const container = document.getElementById('registrosContables');
     if (!container) return;
     const filtroTipo = document.getElementById('filtroMovimiento').value;
@@ -539,21 +523,6 @@ function actualizarRegistrosContables(listaATrabajar = tramites) {
         </table>
     `;
     container.innerHTML = tabla;
-}
-
-function buscarTramitePorPlaca() {
-    const searchTerm = document.getElementById('tramiteSearchInput').value.toLowerCase();
-    
-    // Si el campo de búsqueda está vacío, volvemos a mostrar todos los trámites
-    if (searchTerm === '') {
-        actualizarTramites(tramites);
-        return;
-    }
-    
-    const resultadosFiltrados = tramites.filter(t => t.placa.toLowerCase().includes(searchTerm));
-    
-    // Llama a la función de actualización con la lista filtrada
-    actualizarTramites(resultadosFiltrados);
 }
 
 function consultarUtilidades() {
