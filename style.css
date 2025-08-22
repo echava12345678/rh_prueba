@@ -408,43 +408,42 @@ tr:hover {
 }
 
 /* Estilos de recibo */
+
 .recibo-container {
-    padding: 30px;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    max-width: 500px;
+    width: 100%;
+    max-width: 400px; /* Tamaño máximo del recibo */
     margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
 }
 
 .recibo-titulo {
     text-align: center;
     color: #333;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #667eea;
+    font-size: 1.5rem; /* Tamaño de letra más pequeño */
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f57c00;
     padding-bottom: 10px;
 }
 
-.recibo-info p {
-    margin: 5px 0;
+.recibo-info {
+    font-size: 0.9rem; /* Tamaño de letra más pequeño */
+    line-height: 1.8;
 }
 
 .recibo-info strong {
     color: #555;
 }
 
-.recibo-detalle {
-    margin-top: 15px;
-    border-top: 1px solid #e9ecef;
-    padding-top: 15px;
-}
-
 .recibo-gracias {
     text-align: center;
-    margin-top: 25px;
+    margin-top: 20px;
     font-style: italic;
-    color: #777;
+    color: #888;
 }
 
 /* Modal */
