@@ -197,17 +197,28 @@ async function agregarTramite(e, db) {
 }
 
 function actualizarTramites() {
-   const porCobrar = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pendiente');
-    const proceso = tramites.filter(t => t.estado === 'proceso');
-    const terminados = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
-    const rechazados = tramites.filter(t => t.estado === 'rechazado');
+    // 1. "Por Cobrar" son los terminados pero pendientes de pago.
+    const porCobrar = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pendiente');
     
+    // 2. "En Proceso" son solo aquellos con estado "proceso", independientemente del pago.
+    const proceso = tramites.filter(t => t.estado === 'proceso');
+    
+    // 3. "Terminados" son los que tienen el estado terminado Y pago pagado.
+    const terminados = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
+    
+    // 4. "Rechazados" son solo aquellos con estado "rechazado".
+    const rechazados = tramites.filter(t => t.estado === 'rechazado');
+
+    // Ahora, actualiza las secciones del HTML con los trámites filtrados
     const tramitesPorCobrar = document.getElementById('tramitesPorCobrar');
     if (tramitesPorCobrar) tramitesPorCobrar.innerHTML = porCobrar.map(t => generarTramiteHTML(t)).join('');
+    
     const tramitesProceso = document.getElementById('tramitesProceso');
     if (tramitesProceso) tramitesProceso.innerHTML = proceso.map(t => generarTramiteHTML(t)).join('');
+    
     const tramitesTerminados = document.getElementById('tramitesTerminados');
     if (tramitesTerminados) tramitesTerminados.innerHTML = terminados.map(t => generarTramiteHTML(t)).join('');
+    
     const tramitesRechazados = document.getElementById('tramitesRechazados');
     if (tramitesRechazados) tramitesRechazados.innerHTML = rechazados.map(t => generarTramiteHTML(t)).join('');
 }
