@@ -461,6 +461,7 @@ async function agregarMovimiento(e, db) {
     const movimiento = {
         fecha: document.getElementById('contaFecha').value,
         cliente: document.getElementById('contaCliente').value,
+        concepto: document.getElementById('contaConcepto').value,
         banco: document.getElementById('contaBanco').value,
         tipo: document.getElementById('contaTipo').value,
         monto: monto
