@@ -224,8 +224,7 @@ function generarTramiteHTML(tramite) {
                 ${tramite.pago === 'pagado' ? `
                 <div class="form-group" style="margin-top: 10px;">
                     <label>Valor:</label>
-                    <input type="number" class="valor-input" value="${tramite.valor || 0}"
-                           onblur="actualizarValorTramite('${tramite.id}', this.value)">
+                   <input type="number" id="valorInput_${tramite.id}" class="valor-input" value="${tramite.valor || 0}">
                            <button class="btn-edit" onclick="actualizarValorConBoton('${tramite.id}')"><i class="fas fa-save"></i> Guardar</button>
                 </div>
                 ` : ''}
