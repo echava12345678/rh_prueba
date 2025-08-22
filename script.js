@@ -168,9 +168,6 @@ function showSection(sectionId) {
 async function agregarTramite(e, db) {
     e.preventDefault();
 
-      // Obtén el valor del input y elimina todos los puntos (.)
-    const valorInput = document.getElementById('valorInput').value;
-    const valorSinPuntos = valorInput.replace(/\./g, '');
     
     const tramite = {
         fecha: document.getElementById('tramiteFecha').value,
@@ -382,7 +379,7 @@ async function editarTramite(id) {
                 </div>
                 <div class="form-group">
                     <label>Valor</label>
-                    <input type="number" id="editTramiteValor" value="${tramite.valor || 0}" required>
+                    <input type="text" id="editTramiteValor" value="${tramite.valor ? tramite.valor.toLocaleString() : '0'}" required>
                 </div>
                  <div class="form-group" style="grid-column: span 2;">
                     <label>Observaciones</label>
