@@ -116,8 +116,69 @@ document.addEventListener('DOMContentLoaded', function() {
             loginPanel.style.display = 'block';
             appContainer.style.display = 'none';
         }
+        // --- Nuevos event listeners para los buscadores ---
+        const tramitesSearchInput = document.getElementById('tramiteSearchInput');
+        if (tramitesSearchInput) {
+            tramitesSearchInput.addEventListener('keyup', (e) => filtrarTramites(e.target.value));
+        }
+
+        const contaSearchInput = document.getElementById('contaSearchInput');
+        if (contaSearchInput) {
+            contaSearchInput.addEventListener('keyup', (e) => filtrarRegistros(e.target.value));
+        }
+        
+        const crmSearchInput = document.getElementById('crmSearchInput');
+        if (crmSearchInput) {
+            crmSearchInput.addEventListener('keyup', (e) => filtrarClientes(e.target.value));
+        }
+        
+        const placaSearchInput = document.getElementById('placaSearchInput');
+        if (placaSearchInput) {
+            placaSearchInput.addEventListener('keyup', (e) => filtrarPlacas(e.target.value));
+        }
     });
 });
+// --- FUNCIONES DE BÚSQUEDA ---
+function filtrarTramites(searchTerm) {
+    const term = searchTerm.toLowerCase();
+    const resultados = tramites.filter(t => 
+        (t.cliente && t.cliente.toLowerCase().includes(term)) ||
+        (t.placa && t.placa.toLowerCase().includes(term)) ||
+        (t.nit && t.nit.toLowerCase().includes(term)) ||
+        (t.tipo && t.tipo.toLowerCase().includes(term))
+    );
+    // Asume que las funciones de renderizado ya existen o las creas a continuación
+    renderTramites(resultados);
+}
+
+function filtrarRegistros(searchTerm) {
+    const term = searchTerm.toLowerCase();
+    const resultados = registrosContables.filter(r => 
+        (r.cliente && r.cliente.toLowerCase().includes(term)) ||
+        (r.concepto && r.concepto.toLowerCase().includes(term)) ||
+        (r.banco && r.banco.toLowerCase().includes(term))
+    );
+    renderRegistrosContables(resultados);
+}
+
+function filtrarClientes(searchTerm) {
+    const term = searchTerm.toLowerCase();
+    const resultados = clientesCRM.filter(c => 
+        (c.nombre && c.nombre.toLowerCase().includes(term)) ||
+        (c.empresa && c.empresa.toLowerCase().includes(term)) ||
+        (c.documento && c.documento.toLowerCase().includes(term))
+    );
+    renderClientesCRM(resultados);
+}
+
+function filtrarPlacas(searchTerm) {
+    const term = searchTerm.toLowerCase();
+    const resultados = placas.filter(p => 
+        (p.placa && p.placa.toLowerCase().includes(term)) ||
+        (p.cliente && p.cliente.toLowerCase().includes(term))
+    );
+    renderPlacas(resultados);
+}
 
 // FUNCIÓN DE AUTENTICACIÓN
 async function handleLogin(e, auth) {
