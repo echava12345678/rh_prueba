@@ -198,7 +198,7 @@ async function agregarTramite(e, db) {
 
 function actualizarTramites() {
    const porCobrar = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pendiente');
-    const proceso = tramites.filter(t => t.estado === 'proceso' || t.pago === 'pagado');
+    const proceso = tramites.filter(t => t.estado === 'proceso');
     const terminados = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
     const rechazados = tramites.filter(t => t.estado === 'rechazado');
     
