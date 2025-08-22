@@ -165,101 +165,279 @@ function showSection(sectionId) {
 }
 
 // SECCIÓN TRÁMITES
-async function agregarTramite(e, db) {
+// Variable que almacenará la lista de trámites
+let tramites = [];
+
+// Referencias a elementos del DOM (nuevos campos)
+const tramiteNitInput = document.getElementById('tramiteNit');
+const tramiteTipoInput = document.getElementById('tramiteTipo');
+const tramiteTransitoInput = document.getElementById('tramiteTransito');
+const tramitePagoInput = document.getElementById('tramitePago');
+const tramiteValorInput = document.getElementById('tramiteValor');
+const valorTramiteDiv = document.getElementById('valorTramiteDiv');
+
+// Muestra/oculta el campo de valor según el estado de pago
+tramitePagoInput.addEventListener('change', (e) => {
+    if (e.target.value === 'pagado') {
+        valorTramiteDiv.style.display = 'block';
+    } else {
+        valorTramiteDiv.style.display = 'none';
+        tramiteValorInput.value = '';
+    }
+});
+
+// Evento para agregar un nuevo trámite
+tramiteForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
-    const tramite = {
-        fecha: document.getElementById('tramiteFecha').value,
-        cliente: document.getElementById('tramiteCliente').value,
-        placa: document.getElementById('tramitePlaca').value.toUpperCase(),
-        estado: document.getElementById('tramiteEstado').value,
-        pago: 'pendiente',
-        observaciones: ''
+
+    const nuevoTramite = {
+        fecha: tramiteFechaInput.value,
+        cliente: tramiteClienteInput.value,
+        placa: tramitePlacaInput.value,
+        nit: tramiteNitInput.value || '',
+        tipo: tramiteTipoInput.value,
+        transito: tramiteTransitoInput.value,
+        estado: tramiteEstadoInput.value,
+        pago: tramitePagoInput.value,
+        valor: tramiteValorInput.value ? parseFloat(tramiteValorInput.value) : null,
+        observaciones: '',
+        fechaFin: ''
     };
-    
+
     try {
-        await addDoc(collection(db, 'tramites'), tramite);
+        await addDoc(collection(db, 'tramites'), nuevoTramite);
         document.getElementById('tramiteForm').reset();
-        document.getElementById('tramiteFecha').value = new Date().toISOString().split('T')[0];
         mostrarNotificacion('Trámite agregado correctamente', 'success');
     } catch (error) {
         console.error("Error al agregar el trámite: ", error);
         mostrarNotificacion('Error al agregar el trámite', 'error');
     }
+});
+
+// Función para mostrar los trámites en las diferentes secciones
+function mostrarTramites() {
+    const tramitesProceso = tramites.filter(t => t.estado === 'proceso');
+    const tramitesTerminadosPagados = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
+    const tramitesPorCobrar = tramites.filter(t => t.estado === 'terminado' && t.pago === 'pendiente');
+    const tramitesRechazados = tramites.filter(t => t.estado === 'rechazado');
+
+    const tramitesProcesoDiv = document.getElementById('tramitesProceso');
+    const tramitesPorCobrarDiv = document.getElementById('tramitesPorCobrar');
+    const tramitesTerminadosDiv = document.getElementById('tramitesTerminados');
+    const tramitesRechazadosDiv = document.getElementById('tramitesRechazados');
+
+    tramitesProcesoDiv.innerHTML = '';
+    tramitesPorCobrarDiv.innerHTML = '';
+    tramitesTerminadosDiv.innerHTML = '';
+    tramitesRechazadosDiv.innerHTML = '';
+
+    tramitesProceso.forEach(tramite => tramitesProcesoDiv.appendChild(crearTarjetaTramite(tramite)));
+    tramitesPorCobrar.forEach(tramite => tramitesPorCobrarDiv.appendChild(crearTarjetaTramite(tramite)));
+    tramitesTerminadosPagados.forEach(tramite => tramitesTerminadosDiv.appendChild(crearTarjetaTramite(tramite)));
+    tramitesRechazados.forEach(tramite => tramitesRechazadosDiv.appendChild(crearTarjetaTramite(tramite)));
 }
 
-function actualizarTramites() {
-    const proceso = tramites.filter(t => t.estado === 'proceso');
-    const terminados = tramites.filter(t => t.estado === 'terminado');
-    const rechazados = tramites.filter(t => t.estado === 'rechazado');
+// Nueva función para crear tarjetas de trámite
+function crearTarjetaTramite(tramite) {
+    const card = document.createElement('div');
+    card.className = 'tramite-card';
+    card.id = `tramite-${tramite.id}`;
     
-    const tramitesProceso = document.getElementById('tramitesProceso');
-    if (tramitesProceso) tramitesProceso.innerHTML = proceso.map(t => generarTramiteHTML(t)).join('');
-    const tramitesTerminados = document.getElementById('tramitesTerminados');
-    if (tramitesTerminados) tramitesTerminados.innerHTML = terminados.map(t => generarTramiteHTML(t)).join('');
-    const tramitesRechazados = document.getElementById('tramitesRechazados');
-    if (tramitesRechazados) tramitesRechazados.innerHTML = rechazados.map(t => generarTramiteHTML(t)).join('');
-}
+    // Formatear el valor del trámite como moneda
+    const valorFormateado = tramite.valor ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(tramite.valor) : 'N/A';
 
-function generarTramiteHTML(tramite) {
-    let estadoPagoHTML = '';
-    let observacionesHTML = '';
-    let reciboBtnHTML = '';
-    
-    if (tramite.estado === 'proceso' || tramite.estado === 'terminado') {
-        estadoPagoHTML = `
-            <div class="estado-pago">
-                <label>Estado de Pago:</label>
-                <select onchange="cambiarEstadoPago('${tramite.id}', this.value)">
-                    <option value="pendiente" ${tramite.pago === 'pendiente' ? 'selected' : ''}>Por Cobrar</option>
-                    <option value="pagado" ${tramite.pago === 'pagado' ? 'selected' : ''}>Pagado</option>
-                </select>
-            </div>
-        `;
-    }
-    
-    if (tramite.estado === 'rechazado') {
-        observacionesHTML = `
-            <div class="estado-pago">
-                <label>Observaciones:</label>
-                <textarea class="observaciones-input" placeholder="Motivo del rechazo..." 
-                    onblur="actualizarObservaciones('${tramite.id}', this.value)">${tramite.observaciones || ''}</textarea>
-            </div>
-        `;
-    }
-     // Botón para descargar recibo solo si está terminado y tiene pago
-    if (tramite.estado === 'terminado' && (tramite.pago === 'pendiente' || tramite.pago === 'pagado')) {
-        reciboBtnHTML = `
-            <button class="btn-download" onclick="descargarReciboTramite('${tramite.id}')"><i class="fas fa-file-download"></i>Descargar Recibo</button>
-        `;
-    }
-    
-    return `
-        <div class="tramite-item ${tramite.estado}">
-            <div class="tramite-info">
-                <strong>Cliente:</strong> ${tramite.cliente}<br>
-                <strong>Placa:</strong> ${tramite.placa}<br>
-                <strong>Fecha:</strong> ${formatDate(tramite.fecha)}<br>
-                <strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}
-                ${tramite.pago && tramite.pago !== 'pendiente' ? `<br><strong>Pago:</strong> ${capitalizeFirst(tramite.pago)}` : ''}
-            </div>
-            ${estadoPagoHTML}
-            ${observacionesHTML}
-            <div class="tramite-actions" style="margin-top: 10px;">
-                <select onchange="cambiarEstadoTramite('${tramite.id}', this.value)" style="margin-right: 10px;">
-                    <option value="">Cambiar Estado</option>
-                    <option value="proceso" ${tramite.estado === 'proceso' ? 'disabled' : ''}>En Proceso</option>
-                    <option value="terminado" ${tramite.estado === 'terminado' ? 'disabled' : ''}>Terminado</option>
-                    <option value="rechazado" ${tramite.estado === 'rechazado' ? 'disabled' : ''}>Rechazado</option>
-                </select>
-                <button class="btn-edit" onclick="editarTramite('${tramite.id}')">Editar</button>
-                <button class="btn-delete" onclick="eliminarTramite('${tramite.id}')">Eliminar</button>
-                 ${reciboBtnHTML}
-            </div>
+    card.innerHTML = `
+        <div class="card-header">
+            <h3>${tramite.cliente} - ${tramite.placa}</h3>
+            <span class="estado-badge ${tramite.estado}">${capitalizeFirst(tramite.estado)}</span>
+        </div>
+        <div class="card-body">
+            <p><strong>Tipo de Trámite:</strong> ${tramite.tipo}</p>
+            <p><strong>Tránsito:</strong> ${tramite.transito}</p>
+            <p><strong>Fecha:</strong> ${new Date(tramite.fecha).toLocaleDateString('es-CO')}</p>
+            <p><strong>Estado de Pago:</strong> ${capitalizeFirst(tramite.pago)}</p>
+            <p><strong>Valor:</strong> ${valorFormateado}</p>
+            <p><strong>NIT:</strong> ${tramite.nit || 'N/A'}</p>
+            ${tramite.observaciones ? `<p><strong>Observaciones:</strong> ${tramite.observaciones}</p>` : ''}
+        </div>
+        <div class="card-actions">
+            <button class="btn-secondary" onclick="descargarReciboTramite('${tramite.id}')">Descargar Recibo</button>
+            <button class="btn-tertiary" onclick="editarTramite('${tramite.id}')">Editar</button>
         </div>
     `;
+    return card;
 }
 
+// Función para descargar el recibo de un trámite en PDF
+async function descargarReciboTramite(tramiteId) {
+    try {
+        const tramite = tramites.find(t => t.id === tramiteId);
+        if (!tramite) {
+            mostrarNotificacion('No se encontró el trámite', 'error');
+            return;
+        }
+
+        const reciboDiv = document.createElement('div');
+        
+        // Formatea el valor del trámite
+        const valorFormateado = tramite.valor ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(tramite.valor) : 'N/A';
+
+        reciboDiv.innerHTML = `
+            <div style="font-family: 'Poppins', sans-serif; padding: 40px; color: #222; max-width: 800px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+                <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 24px; margin-bottom: 30px;">
+                    <h1 style="color: #3869D4; margin: 0; font-size: 28px;">RECIBO DE TRÁMITE</h1>
+                    <p style="font-size: 18px; color: #444;">RH Asesorías &middot; Gestión de Trámites</p>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
+                    <div>
+                        <p style="margin: 0; font-size: 16px;"><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
+                        <p style="margin: 0; margin-top: 8px; font-size: 16px;"><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="margin: 0; font-size: 16px;"><strong>Nombre:</strong> ${tramite.cliente}</p>
+                        <p style="margin: 0; margin-top: 8px; font-size: 16px;"><strong>Placa:</strong> ${tramite.placa}</p>
+                    </div>
+                </div>
+                
+                <h2 style="font-size: 18px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 4px; margin-bottom: 8px;">Detalles del Trámite</h2>
+                <p style="margin-top: 10px; font-size: 16px;"><strong>NIT:</strong> ${tramite.nit || 'N/A'}</p>
+                <p style="margin-top: 5px; font-size: 16px;"><strong>Tipo de Trámite:</strong> ${tramite.tipo}</p>
+                <p style="margin-top: 5px; font-size: 16px;"><strong>Tránsito:</strong> ${tramite.transito}</p>
+                
+                <h2 style="font-size: 18px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 4px; margin-top: 20px; margin-bottom: 8px;">Resumen de Pago</h2>
+                <p style="margin-top: 10px; font-size: 16px;"><strong>Estado de Pago:</strong> ${capitalizeFirst(tramite.pago)}</p>
+                <p style="margin-top: 5px; font-size: 16px;"><strong>Valor:</strong> ${valorFormateado}</p>
+
+                <div style="height: 100px;"></div>
+
+                <div style="margin-top: 30px; text-align: center; border-top: 1px solid #ddd; padding-top: 15px;">
+                    <p style="font-size: 12px; color: #aaa; margin: 0;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(reciboDiv);
+
+        const canvas = await html2canvas(reciboDiv, { scale: 3 });
+        const imgData = canvas.toDataURL('image/png');
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`);
+
+        document.body.removeChild(reciboDiv);
+
+    } catch (err) {
+        console.error("Error generando PDF:", err);
+        mostrarNotificacion('Error al generar el recibo', 'error');
+    }
+}
+
+// Función para editar un trámite (actualizada)
+async function editarTramite(id) {
+    const docRef = doc(db, 'tramites', id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return;
+    const tramite = docSnap.data();
+
+    const modalBody = `
+        <form id="editTramiteForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="editTramiteFecha" value="${tramite.fecha}" required>
+                </div>
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <input type="text" id="editTramiteCliente" value="${tramite.cliente}" required>
+                </div>
+                <div class="form-group">
+                    <label>Placa</label>
+                    <input type="text" id="editTramitePlaca" value="${tramite.placa}" required>
+                </div>
+                <div class="form-group">
+                    <label>NIT</label>
+                    <input type="text" id="editTramiteNit" value="${tramite.nit || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Trámite</label>
+                    <input type="text" id="editTramiteTipo" value="${tramite.tipo}" required>
+                </div>
+                <div class="form-group">
+                    <label>Tránsito</label>
+                    <input type="text" id="editTramiteTransito" value="${tramite.transito}" required>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select id="editTramiteEstado" required>
+                        <option value="proceso" ${tramite.estado === 'proceso' ? 'selected' : ''}>En Proceso</option>
+                        <option value="terminado" ${tramite.estado === 'terminado' ? 'selected' : ''}>Terminado</option>
+                        <option value="rechazado" ${tramite.estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Estado de Pago</label>
+                    <select id="editTramitePago" required>
+                        <option value="pendiente" ${tramite.pago === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                        <option value="pagado" ${tramite.pago === 'pagado' ? 'selected' : ''}>Pagado</option>
+                    </select>
+                </div>
+                <div class="form-group" id="editValorTramiteDiv" style="display: ${tramite.pago === 'pagado' ? 'block' : 'none'};">
+                    <label>Valor</label>
+                    <input type="number" id="editTramiteValor" value="${tramite.valor || ''}" min="0">
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <button type="submit" class="btn-primary">Guardar Cambios</button>
+                <button type="button" class="btn-secondary" onclick="document.getElementById('editModal').style.display='none'">Cancelar</button>
+            </div>
+        </form>
+    `;
+
+    document.getElementById('modalTitle').textContent = 'Editar Trámite';
+    document.getElementById('modalBody').innerHTML = modalBody;
+    document.getElementById('editModal').style.display = 'block';
+
+    const editTramitePagoSelect = document.getElementById('editTramitePago');
+    const editValorTramiteDiv = document.getElementById('editValorTramiteDiv');
+
+    editTramitePagoSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'pagado') {
+            editValorTramiteDiv.style.display = 'block';
+        } else {
+            editValorTramiteDiv.style.display = 'none';
+        }
+    });
+
+    document.getElementById('editTramiteForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const updatedTramite = {
+            fecha: document.getElementById('editTramiteFecha').value,
+            cliente: document.getElementById('editTramiteCliente').value,
+            placa: document.getElementById('editTramitePlaca').value.toUpperCase(),
+            nit: document.getElementById('editTramiteNit').value,
+            tipo: document.getElementById('editTramiteTipo').value,
+            transito: document.getElementById('editTramiteTransito').value,
+            estado: document.getElementById('editTramiteEstado').value,
+            pago: document.getElementById('editTramitePago').value,
+            valor: parseFloat(document.getElementById('editTramiteValor').value)
+        };
+        try {
+            await updateDoc(docRef, updatedTramite);
+            document.getElementById('editModal').style.display = 'none';
+            mostrarNotificacion('Trámite actualizado correctamente', 'success');
+        } catch (error) {
+            console.error("Error al actualizar el trámite: ", error);
+            mostrarNotificacion('Error al actualizar el trámite', 'error');
+        }
+    });
+}
+
+// Funciones para cambiar estado y eliminar
 async function cambiarEstadoTramite(id, nuevoEstado) {
     if (!nuevoEstado) return;
     try {
@@ -287,66 +465,6 @@ async function actualizarObservaciones(id, observaciones) {
     } catch (error) {
         console.error("Error al actualizar las observaciones: ", error);
     }
-}
-
-async function editarTramite(id) {
-    const docRef = doc(db, 'tramites', id);
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) return;
-    const tramite = docSnap.data();
-    
-    const modalBody = `
-        <form id="editTramiteForm">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Fecha</label>
-                    <input type="date" id="editTramiteFecha" value="${tramite.fecha}" required>
-                </div>
-                <div class="form-group">
-                    <label>Cliente</label>
-                    <input type="text" id="editTramiteCliente" value="${tramite.cliente}" required>
-                </div>
-                <div class="form-group">
-                    <label>Placa</label>
-                    <input type="text" id="editTramitePlaca" value="${tramite.placa}" required>
-                </div>
-                <div class="form-group">
-                    <label>Estado</label>
-                    <select id="editTramiteEstado" required>
-                        <option value="proceso" ${tramite.estado === 'proceso' ? 'selected' : ''}>En Proceso</option>
-                        <option value="terminado" ${tramite.estado === 'terminado' ? 'selected' : ''}>Terminado</option>
-                        <option value="rechazado" ${tramite.estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
-                    </select>
-                </div>
-            </div>
-            <div style="margin-top: 20px;">
-                <button type="submit" class="btn-primary">Guardar Cambios</button>
-                <button type="button" class="btn-secondary" onclick="document.getElementById('editModal').style.display='none'">Cancelar</button>
-            </div>
-        </form>
-    `;
-    
-    document.getElementById('modalTitle').textContent = 'Editar Trámite';
-    document.getElementById('modalBody').innerHTML = modalBody;
-    document.getElementById('editModal').style.display = 'block';
-    
-    document.getElementById('editTramiteForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const updatedTramite = {
-            fecha: document.getElementById('editTramiteFecha').value,
-            cliente: document.getElementById('editTramiteCliente').value,
-            placa: document.getElementById('editTramitePlaca').value.toUpperCase(),
-            estado: document.getElementById('editTramiteEstado').value
-        };
-        try {
-            await updateDoc(docRef, updatedTramite);
-            document.getElementById('editModal').style.display = 'none';
-            mostrarNotificacion('Trámite actualizado correctamente', 'success');
-        } catch (error) {
-            console.error("Error al actualizar el trámite: ", error);
-            mostrarNotificacion('Error al actualizar el trámite', 'error');
-        }
-    });
 }
 
 async function eliminarTramite(id) {
@@ -1184,48 +1302,45 @@ async function descargarReciboTramite(tramiteId) {
         }
 
         const reciboDiv = document.createElement('div');
+        // Formatea el valor del trámite
+        const valorFormateado = tramite.valor ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(tramite.valor) : 'N/A';
+
         reciboDiv.innerHTML = `
-            <div style="font-family: 'Poppins', sans-serif; padding: 5%; color: #222; width: 100%; height: 100%; box-sizing: border-box;">
-                <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 35px; margin-bottom: 50px;">
-                    <h1 style="color: #3869D4; margin: 0; font-size: 32px;">RECIBO DE TRÁMITE</h1>
-                    <p style="font-size: 20px; color: #444;">RH Asesorías &middot; Gestión de Trámites</p>
+            <div style="font-family: 'Poppins', sans-serif; padding: 40px; color: #222; max-width: 800px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+                <div style="text-align: center; border-bottom: 2px solid #3869D4; padding-bottom: 24px; margin-bottom: 30px;">
+                    <h1 style="color: #3869D4; margin: 0; font-size: 28px;">RECIBO DE TRÁMITE</h1>
+                    <p style="font-size: 18px; color: #444;">RH Asesorías &middot; Gestión de Trámites</p>
                 </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
                     <div>
-                        <p style="margin: 0; font-size: 18px;"><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
-                        <p style="margin: 0; margin-top: 10px; font-size: 18px;"><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
+                        <p style="margin: 0; font-size: 16px;"><strong>Fecha de Emisión:</strong> ${new Date().toLocaleDateString('es-CO')}</p>
+                        <p style="margin: 0; margin-top: 8px; font-size: 16px;"><strong>No. de Trámite:</strong> ${tramite.id.slice(0, 8)}</p>
                     </div>
                     <div style="text-align: right;">
-                        <p style="margin: 0; font-size: 18px;"><strong>Nombre:</strong> ${tramite.cliente}</p>
-                        <p style="margin: 0; margin-top: 10px; font-size: 18px;"><strong>Placa:</strong> ${tramite.placa}</p>
+                        <p style="margin: 0; font-size: 16px;"><strong>Nombre:</strong> ${tramite.cliente}</p>
+                        <p style="margin: 0; margin-top: 8px; font-size: 16px;"><strong>Placa:</strong> ${tramite.placa}</p>
                     </div>
                 </div>
-                <h2 style="font-size: 22px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 15px;">Detalle del Trámite</h2>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 18px;">
-                    <thead>
-                        <tr style="background-color: #f2f2f2;">
-                            <th style="padding: 15px; border: 1px solid #ddd;">Fecha</th>
-                            <th style="padding: 15px; border: 1px solid #ddd;">Estado</th>
-                            <th style="padding: 15px; border: 1px solid #ddd;">Estado de Pago</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="padding: 15px; border: 1px solid #ddd;">${new Date(tramite.fecha).toLocaleDateString('es-CO')}</td>
-                            <td style="padding: 15px; border: 1px solid #ddd;">${capitalizeFirst(tramite.estado)}</td>
-                            <td style="padding: 15px; border: 1px solid #ddd;">${capitalizeFirst(tramite.pago)}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div style="height: 250px;"></div>
-                <div style="margin-top: 40px; text-align: center; border-top: 1px solid #ddd; padding-top: 20px;">
-                    <p style="font-size: 14px; color: #aaa; margin: 0;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
+                
+                <h2 style="font-size: 18px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 4px; margin-bottom: 8px;">Detalles del Trámite</h2>
+                <p style="margin-top: 10px; font-size: 16px;"><strong>NIT:</strong> ${tramite.nit || 'N/A'}</p>
+                <p style="margin-top: 5px; font-size: 16px;"><strong>Tipo de Trámite:</strong> ${tramite.tipo}</p>
+                <p style="margin-top: 5px; font-size: 16px;"><strong>Tránsito:</strong> ${tramite.transito}</p>
+                
+                <h2 style="font-size: 18px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 4px; margin-top: 20px; margin-bottom: 8px;">Resumen de Pago</h2>
+                <p style="margin-top: 10px; font-size: 16px;"><strong>Estado de Pago:</strong> ${capitalizeFirst(tramite.pago)}</p>
+                <p style="margin-top: 5px; font-size: 16px;"><strong>Valor:</strong> ${valorFormateado}</p>
+
+                <div style="height: 100px;"></div>
+
+                <div style="margin-top: 30px; text-align: center; border-top: 1px solid #ddd; padding-top: 15px;">
+                    <p style="font-size: 12px; color: #aaa; margin: 0;">Gracias por confiar en RH Asesorías. Generado por el sistema el ${new Date().toLocaleDateString('es-CO')}</p>
                 </div>
             </div>
         `;
         document.body.appendChild(reciboDiv);
 
-        const canvas = await html2canvas(reciboDiv, { scale: 5 });
+        const canvas = await html2canvas(reciboDiv, { scale: 3 });
         const imgData = canvas.toDataURL('image/png');
 
         const { jsPDF } = window.jspdf;
