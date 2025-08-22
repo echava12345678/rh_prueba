@@ -55,26 +55,49 @@
                         <form id="tramiteForm">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="tramiteFecha">Fecha:</label>
-                                    <input type="date" id="tramiteFecha" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="tramiteCliente">Cliente:</label>
-                                    <input type="text" id="tramiteCliente" placeholder="Nombre del Cliente" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="tramitePlaca">Placa:</label>
-                                    <input type="text" id="tramitePlaca" placeholder="Placa" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="tramiteEstado">Estado Inicial:</label>
-                                    <select id="tramiteEstado" required>
-                                        <option value="proceso">En Proceso</option>
-                                        <option value="terminado">Terminado</option>
-                                        <option value="rechazado">Rechazado</option>
-                                    </select>
-                                </div>
-                            </div>
+                    <label for="tramiteFecha">Fecha:</label>
+                    <input type="date" id="tramiteFecha" required>
+                </div>
+                <div class="form-group">
+                    <label for="tramiteCliente">Cliente:</label>
+                    <input type="text" id="tramiteCliente" placeholder="Nombre del Cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="tramitePlaca">Placa:</label>
+                    <input type="text" id="tramitePlaca" placeholder="Placa" required>
+                </div>
+                <div class="form-group">
+                    <label for="tramiteNit">NIT:</label>
+                    <input type="text" id="tramiteNit" placeholder="NIT del Cliente">
+                </div>
+                <div class="form-group">
+                    <label for="tramiteTipo">Tipo de Trámite:</label>
+                    <input type="text" id="tramiteTipo" placeholder="Ej: Traspaso, Renovación..." required>
+                </div>
+                <div class="form-group">
+                    <label for="tramiteTransito">Tránsito:</label>
+                    <input type="text" id="tramiteTransito" placeholder="Ej: Envigado, Itagüí..." required>
+                </div>
+                <div class="form-group">
+                    <label for="tramiteEstado">Estado Inicial:</label>
+                    <select id="tramiteEstado" required>
+                        <option value="proceso">En Proceso</option>
+                        <option value="terminado">Terminado</option>
+                        <option value="rechazado">Rechazado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tramitePago">Estado de Pago:</label>
+                    <select id="tramitePago" required>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="pagado">Pagado</option>
+                    </select>
+                </div>
+                <div class="form-group" id="valorTramiteDiv" style="display: none;">
+                    <label for="tramiteValor">Valor del Trámite:</label>
+                    <input type="number" id="tramiteValor" placeholder="Valor" min="0">
+                </div>
+            </div>
                             <button type="submit" class="btn-primary">Agregar Trámite</button>
                         </form>
                     </div>
@@ -87,6 +110,10 @@
                             <h3>Trámites en Proceso</h3>
                             <div id="tramitesProceso" class="tramites-list"></div>
                         </div>
+                         <div class="tramite-subsection">
+        <h3>Trámites Terminados - Por Cobrar</h3>
+        <div id="tramitesPorCobrar" class="tramites-list"></div>
+    </div>
                         <div class="tramite-subsection">
                             <h3>Trámites Terminados</h3>
                             <div id="tramitesTerminados" class="tramites-list"></div>
