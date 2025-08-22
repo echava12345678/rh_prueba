@@ -168,6 +168,9 @@ function showSection(sectionId) {
 async function agregarTramite(e, db) {
     e.preventDefault();
 
+    const valorInput = document.getElementById('valorInput').value;
+const valorNumerico = parseFloat(valorInput.replace(/\./g, ''));
+
     
     const tramite = {
         fecha: document.getElementById('tramiteFecha').value,
@@ -179,7 +182,7 @@ async function agregarTramite(e, db) {
         estado: document.getElementById('tramiteEstado').value,
         pago: 'pendiente',
         observaciones: '',
-        valor: parseFloat(valorSinPuntos) || 0,
+        valor: valorNumerico,
     };
     
     try {
@@ -285,7 +288,7 @@ function generarTramiteHTML(tramite) {
 async function actualizarValorConBoton(tramiteId) {
     try {
         const input = document.getElementById(`valorInput_${tramiteId}`);
-        const valorNumerico = parseFloat(input.value);
+        const valorNumerico =  parseFloat(input.value.replace(/\./g, ''));
 
         if (isNaN(valorNumerico)) {
             mostrarNotificacion('Por favor, ingresa un valor numérico válido.', 'error');
@@ -379,7 +382,7 @@ async function editarTramite(id) {
                 </div>
                 <div class="form-group">
                     <label>Valor</label>
-                    <input type="text" id="editTramiteValor" value="${tramite.valor ? tramite.valor.toLocaleString() : '0'}" required>
+                   <input type="text" id="editTramiteValor" value="${tramite.valor ? tramite.valor.toLocaleString('es-CO') : '0'}" required>
                 </div>
                  <div class="form-group" style="grid-column: span 2;">
                     <label>Observaciones</label>
@@ -399,6 +402,9 @@ async function editarTramite(id) {
     
     document.getElementById('editTramiteForm').addEventListener('submit', async function(e) {
         e.preventDefault();
+
+        const valorInput = document.getElementById('editTramiteValor').value;
+    const valorNumerico = parseFloat(valorInput.replace(/\./g, ''));
         const updatedTramite = {
            fecha: document.getElementById('editTramiteFecha').value,
             cliente: document.getElementById('editTramiteCliente').value,
@@ -408,7 +414,7 @@ async function editarTramite(id) {
             transito: document.getElementById('editTramiteTransito').value,
             estado: document.getElementById('editTramiteEstado').value,
             pago: document.getElementById('editTramitePago').value,
-            valor: parseFloat(document.getElementById('editTramiteValor').value),
+            valor: valorNumerico,
             observaciones: document.getElementById('editTramiteObservaciones').value
         };
         try {
