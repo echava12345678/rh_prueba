@@ -46,40 +46,40 @@
 
             <main>
                 <!-- Sección de Trámites -->
-                <section id="tramites" class="section active">
-                    <div class="section-header">
-                        <h2>Gestión de Trámites</h2>
-                    </div>
-                    <div class="form-container">
-                        <h3>Registrar Nuevo Trámite</h3>
-                        <form id="tramiteForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                    <label for="tramiteFecha">Fecha:</label>
+                <div id="tramites" class="section">
+    <div class="section-header">
+        <h2>Gestión de Trámites</h2>
+    </div>
+
+    <div class="form-container">
+        <form id="tramiteForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tramiteFecha">Fecha</label>
                     <input type="date" id="tramiteFecha" required>
                 </div>
                 <div class="form-group">
-                    <label for="tramiteCliente">Cliente:</label>
-                    <input type="text" id="tramiteCliente" placeholder="Nombre del Cliente" required>
+                    <label for="tramiteCliente">Cliente</label>
+                    <input type="text" id="tramiteCliente" required>
                 </div>
                 <div class="form-group">
-                    <label for="tramitePlaca">Placa:</label>
-                    <input type="text" id="tramitePlaca" placeholder="Placa" required>
+                    <label for="tramitePlaca">Placa</label>
+                    <input type="text" id="tramitePlaca" required>
                 </div>
                 <div class="form-group">
-                    <label for="tramiteNit">NIT:</label>
-                    <input type="text" id="tramiteNit" placeholder="NIT del Cliente">
+                    <label for="tramiteNit">NIT</label>
+                    <input type="text" id="tramiteNit">
                 </div>
                 <div class="form-group">
-                    <label for="tramiteTipo">Tipo de Trámite:</label>
-                    <input type="text" id="tramiteTipo" placeholder="Ej: Traspaso, Renovación..." required>
+                    <label for="tramiteTipo">Tipo de Trámite</label>
+                    <input type="text" id="tramiteTipo" required>
                 </div>
                 <div class="form-group">
-                    <label for="tramiteTransito">Tránsito:</label>
-                    <input type="text" id="tramiteTransito" placeholder="Ej: Envigado, Itagüí..." required>
+                    <label for="tramiteTransito">Tránsito</label>
+                    <input type="text" id="tramiteTransito" required>
                 </div>
                 <div class="form-group">
-                    <label for="tramiteEstado">Estado Inicial:</label>
+                    <label for="tramiteEstado">Estado</label>
                     <select id="tramiteEstado" required>
                         <option value="proceso">En Proceso</option>
                         <option value="terminado">Terminado</option>
@@ -87,42 +87,40 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="tramitePago">Estado de Pago:</label>
+                    <label for="tramitePago">Estado de Pago</label>
                     <select id="tramitePago" required>
-                        <option value="pendiente">Pendiente</option>
+                        <option value="pendiente">Por Cobrar</option>
                         <option value="pagado">Pagado</option>
                     </select>
                 </div>
                 <div class="form-group" id="valorTramiteDiv" style="display: none;">
-                    <label for="tramiteValor">Valor del Trámite:</label>
-                    <input type="number" id="tramiteValor" placeholder="Valor" min="0">
+                    <label for="tramiteValor">Valor</label>
+                    <input type="number" id="tramiteValor" min="0">
                 </div>
             </div>
-                            <button type="submit" class="btn-primary">Agregar Trámite</button>
-                        </form>
-                    </div>
-                     <div style="text-align: right; margin: 15px 0;">
-       <button class="btn-primary" onclick="descargarTodosRecibos()">Descargar Todos los Recibos</button>
+            <button type="submit" class="btn-primary">Agregar Trámite</button>
+        </form>
     </div>
 
-                    <div class="tramites-sections">
-                        <div class="tramite-subsection">
-                            <h3>Trámites en Proceso</h3>
-                            <div id="tramitesProceso" class="tramites-list"></div>
-                        </div>
-                         <div class="tramite-subsection">
-        <h3>Trámites Terminados - Por Cobrar</h3>
-        <div id="tramitesPorCobrar" class="tramites-list"></div>
+    <div class="tramites-sections">
+        <div class="tramite-subsection">
+            <h3>En Proceso</h3>
+            <div id="tramitesProceso"></div>
+        </div>
+        <div class="tramite-subsection">
+            <h3>Por Cobrar</h3>
+            <div id="tramitesPorCobrar"></div>
+        </div>
+        <div class="tramite-subsection">
+            <h3>Terminados</h3>
+            <div id="tramitesTerminados"></div>
+        </div>
+        <div class="tramite-subsection">
+            <h3>Rechazados</h3>
+            <div id="tramitesRechazados"></div>
+        </div>
     </div>
-                        <div class="tramite-subsection">
-                            <h3>Trámites Terminados</h3>
-                            <div id="tramitesTerminados" class="tramites-list"></div>
-                        </div>
-                        <div class="tramite-subsection">
-                            <h3>Trámites Rechazados</h3>
-                            <div id="tramitesRechazados" class="tramites-list"></div>
-                        </div>
-                    </div>
+</div>
                 </section>
 
                 <!-- Sección de Contabilidad -->
