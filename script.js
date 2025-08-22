@@ -831,7 +831,7 @@ async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, ve
 
 async function enviarNotificacionVencimiento(cliente, documento, dias) {
     const asuntoEmail = `Vencimiento ${documento} - Placa ${cliente.placa}`;
-    const cuerpoEmail = `Estimado/a ${cliente.propietario},\n\nSu ${documento} del vehículo con placa ${cliente.placa} vence en ${dias} día${dias > 1 ? 's' : ''}.\n\nFecha de vencimiento: ${formatDate(documento === 'SOAT' ? cliente.venceSOAT : cliente.venceRTM)}\n\nPor favor, renuévelo a tiempo para evitar inconvenientes.\n\nSaludos cordiales.`;
+    const cuerpoEmail = `Estimado/a ${cliente.propietario},\n\nSu ${documento} del vehículo con placa ${cliente.placa} vence en ${dias} día${dias > 1 ? 's' : ''}.\n\nFecha de vencimiento: ${formatDate(documento === 'SOAT' ? cliente.venceSOAT : cliente.venceRTM)}\n\nEn RH ASESORIAS te ofrecemos la renovación para evitar inconvenientes.\n\nSaludos cordiales.`;
 
     try {
         const response = await fetch('http://localhost:3000/api/send-email', {
