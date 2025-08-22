@@ -169,7 +169,7 @@ async function agregarTramite(e, db) {
     e.preventDefault();
 
     const valorInput = document.getElementById('valorInput').value;
-const valorNumerico = parseFloat(valorInput.replace(/\./g, ''));
+    const valorNumerico = parseFloat(valorInput.replace(/\./g, '')) || 0; // 
 
     
     const tramite = {
