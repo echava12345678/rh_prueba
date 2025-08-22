@@ -63,8 +63,20 @@
                                     <input type="text" id="tramiteCliente" placeholder="Nombre del Cliente" required>
                                 </div>
                                 <div class="form-group">
+                                    <label for="tramiteNIT">NIT del Cliente:</label>
+                                    <input type="text" id="tramiteNIT" placeholder="NIT o Cédula" required>
+                                </div>
+                                <div class="form-group">
                                     <label for="tramitePlaca">Placa:</label>
                                     <input type="text" id="tramitePlaca" placeholder="Placa" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tramiteTipo">Tipo de Trámite:</label>
+                                    <input type="text" id="tramiteTipo" placeholder="Ej: Traspaso, Matrícula" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tramiteTransito">Tránsito:</label>
+                                    <input type="text" id="tramiteTransito" placeholder="Ej: Envigado, Itagüí" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="tramiteEstado">Estado Inicial:</label>
@@ -82,6 +94,11 @@
        <button class="btn-primary" onclick="descargarTodosRecibos()">Descargar Todos los Recibos</button>
     </div>
 
+                    <div class="tramites-sections">
+                        <div class="tramite-subsection">
+                            <h3>Facturas por Cobrar</h3>
+                            <div id="tramitesPorCobrar" class="tramites-list"></div>
+                        </div>
                     <div class="tramites-sections">
                         <div class="tramite-subsection">
                             <h3>Trámites en Proceso</h3>
