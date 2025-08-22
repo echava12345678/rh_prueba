@@ -1226,15 +1226,15 @@ function formatDate(dateString) {
     return date.toLocaleDateString();
 }
 
-async function descargarReciboTramite(tramiteId) {
-    try {
-        const tramite = tramites.find(t => t.id === tramiteId);
-        if (!tramite) {
-            mostrarNotificacion('No se encontró el trámite', 'error');
-            return;
-        }
 
-       const valorFormateado = tramite.valor ? tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP'}) : 'N/A';
+async function descargarReciboTramite(id) {
+    const tramite = tramites.find(t => t.id === id);
+    if (!tramite) {
+        mostrarNotificacion('Trámite no encontrado.', 'error');
+        return;
+    }
+
+    const valorFormateado = tramite.valor ? tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP'}) : 'N/A';
     const nit = tramite.nit || 'N/A';
     const tipoTramite = tramite.tipo || 'N/A';
     const transito = tramite.transito || 'N/A';
@@ -1259,25 +1259,28 @@ async function descargarReciboTramite(tramiteId) {
             <p class="recibo-gracias">¡Gracias por su confianza!</p>
         </div>
     `;
-        document.body.appendChild(reciboDiv);
 
-        const canvas = await html2canvas(reciboDiv, { scale: 5 });
-        const imgData = canvas.toDataURL('image/png');
+    const opt = {
+        margin: 10,
+        filename: `Recibo_${tramite.cliente}_${tramite.placa}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+    };
+    
+    // Crear un div temporal para el recibo y luego convertirlo a PDF
+    const content = document.createElement('div');
+    content.innerHTML = reciboHTML;
+    document.body.appendChild(content);
 
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`);
-
-        document.body.removeChild(reciboDiv);
-
-    } catch (err) {
-        console.error("Error generando PDF:", err);
-        mostrarNotificacion('Error al generar el recibo', 'error');
+    try {
+        await html2pdf().from(content).set(opt).save();
+    } catch (error) {
+        console.error('Error al generar el PDF:', error);
+        mostrarNotificacion('Error al generar el recibo.', 'error');
+    } finally {
+        document.body.removeChild(content);
+        mostrarNotificacion('Recibo descargado correctamente.', 'success');
     }
 }
 
