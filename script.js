@@ -167,6 +167,10 @@ function showSection(sectionId) {
 // SECCIÓN TRÁMITES
 async function agregarTramite(e, db) {
     e.preventDefault();
+
+      // Obtén el valor del input y elimina todos los puntos (.)
+    const valorInput = document.getElementById('valorInput').value;
+    const valorSinPuntos = valorInput.replace(/\./g, '');
     
     const tramite = {
         fecha: document.getElementById('tramiteFecha').value,
@@ -178,7 +182,7 @@ async function agregarTramite(e, db) {
         estado: document.getElementById('tramiteEstado').value,
         pago: 'pendiente',
         observaciones: '',
-        valor: parseFloat(document.getElementById('valorInput').value) || 0,
+        valor: parseFloat(valorSinPuntos) || 0,
     };
     
     try {
