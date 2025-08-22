@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: #333;
     line-height: 1.6;
@@ -26,7 +26,7 @@ body {
 
 /* Header y Navegación */
 .header {
-    background: linear-gradient(135deg, #f57c00 0%, #f57c00 100%);
+    background: linear-gradient(135deg, #f57c00 0%, #f50d05 100%);
     color: white;
     padding: 20px;
     border-radius: 10px;
@@ -146,7 +146,7 @@ body {
 }
 
 /* Botones */
-.btn-primary, .btn-secondary {
+.btn-primary, .btn-secondary, .btn-tertiary {
     padding: 12px 30px;
     border: none;
     border-radius: 6px;
@@ -165,21 +165,30 @@ body {
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(245, 124, 0, 0.4);
 }
 
 .btn-secondary {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
 }
 
 .btn-secondary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(168, 237, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
-.btn-edit, .btn-delete, .btn-whatsapp {
-    padding: 6px 12px;
+.btn-tertiary {
+    background: #e9ecef;
+    color: #333;
+}
+
+.btn-tertiary:hover {
+    background: #d1d6db;
+}
+
+.btn-edit, .btn-delete, .btn-whatsapp, .btn-download {
+    padding: 8px 16px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -215,6 +224,15 @@ body {
     background: #128c7e;
 }
 
+.btn-download {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-download:hover {
+    background: #138496;
+}
+
 /* Subsecciones de Trámites */
 .tramites-sections {
     display: grid;
@@ -237,47 +255,62 @@ body {
     border-bottom: 2px solid #f8f9fa;
 }
 
-.tramite-item {
+/* Nuevo diseño de tarjeta de trámite */
+.tramite-card {
     background: #f8f9fa;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    border-left: 4px solid #667eea;
-    transition: transform 0.2s ease;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 5px solid #667eea;
 }
 
-.tramite-item:hover {
-    transform: translateX(5px);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+.tramite-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
 }
 
-.tramite-item.proceso { border-left-color: #ffc107; }
-.tramite-item.terminado { border-left-color: #28a745; }
-.tramite-item.rechazado { border-left-color: #dc3545; }
-
-/* Estados de pago */
-.estado-pago {
-    margin-top: 10px;
-    padding: 8px;
-    background: white;
-    border-radius: 5px;
-    border: 1px solid #dee2e6;
+.tramite-card .card-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #495057;
 }
 
-.estado-pago select {
-    width: 100%;
-    padding: 5px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
+.tramite-card .card-body p {
+    margin: 5px 0;
+    font-size: 14px;
 }
 
-.observaciones-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    margin-top: 10px;
-    min-height: 60px;
+.tramite-card .card-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Insignias de estado (badges) */
+.estado-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+}
+
+.estado-badge.proceso {
+    background-color: #ffc107;
+}
+
+.estado-badge.terminado {
+    background-color: #28a745;
+}
+
+.estado-badge.rechazado {
+    background-color: #dc3545;
 }
 
 /* Contabilidad */
@@ -463,37 +496,37 @@ tr:hover {
         margin: 10px;
         padding: 15px;
     }
-    
+
     .header h1 {
         font-size: 1.5rem;
     }
-    
+
     .nav {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .nav-btn {
         width: 200px;
         margin: 5px 0;
     }
-    
+
     .form-row {
         grid-template-columns: 1fr;
     }
-    
+
     .tramites-sections {
         grid-template-columns: 1fr;
     }
-    
+
     .utilidad-detalle {
         grid-template-columns: 1fr;
     }
-    
+
     table {
         font-size: 12px;
     }
-    
+
     th, td {
         padding: 8px 4px;
     }
