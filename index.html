@@ -6,13 +6,11 @@
     <title>RH Asesorías - Panel de Control</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Font Awesome para los íconos de WhatsApp -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div id="notificacion" class="notificacion"></div>
 
-    <!-- Panel de Inicio de Sesión -->
     <section id="loginPanel" class="section active">
         <div class="login-container form-container">
             <h2>Iniciar Sesión</h2>
@@ -30,7 +28,6 @@
         </div>
     </section>
 
-    <!-- Contenedor Principal de la Aplicación -->
     <div id="appContainer" class="hidden">
         <div class="container">
             <header class="header">
@@ -45,85 +42,82 @@
             </header>
 
             <main>
-                <!-- Sección de Trámites -->
                 <div id="tramites" class="section">
-    <div class="section-header">
-        <h2>Gestión de Trámites</h2>
-    </div>
+                    <div class="section-header">
+                        <h2>Gestión de Trámites</h2>
+                    </div>
 
-    <div class="form-container">
-        <form id="tramiteForm">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="tramiteFecha">Fecha</label>
-                    <input type="date" id="tramiteFecha" required>
-                </div>
-                <div class="form-group">
-                    <label for="tramiteCliente">Cliente</label>
-                    <input type="text" id="tramiteCliente" required>
-                </div>
-                <div class="form-group">
-                    <label for="tramitePlaca">Placa</label>
-                    <input type="text" id="tramitePlaca" required>
-                </div>
-                <div class="form-group">
-                    <label for="tramiteNit">NIT</label>
-                    <input type="text" id="tramiteNit">
-                </div>
-                <div class="form-group">
-                    <label for="tramiteTipo">Tipo de Trámite</label>
-                    <input type="text" id="tramiteTipo" required>
-                </div>
-                <div class="form-group">
-                    <label for="tramiteTransito">Tránsito</label>
-                    <input type="text" id="tramiteTransito" required>
-                </div>
-                <div class="form-group">
-                    <label for="tramiteEstado">Estado</label>
-                    <select id="tramiteEstado" required>
-                        <option value="proceso">En Proceso</option>
-                        <option value="terminado">Terminado</option>
-                        <option value="rechazado">Rechazado</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="tramitePago">Estado de Pago</label>
-                    <select id="tramitePago" required>
-                        <option value="pendiente">Por Cobrar</option>
-                        <option value="pagado">Pagado</option>
-                    </select>
-                </div>
-                <div class="form-group" id="valorTramiteDiv" style="display: none;">
-                    <label for="tramiteValor">Valor</label>
-                    <input type="number" id="tramiteValor" min="0">
-                </div>
-            </div>
-            <button type="submit" class="btn-primary">Agregar Trámite</button>
-        </form>
-    </div>
+                    <div class="form-container">
+                        <form id="tramiteForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="tramiteFecha">Fecha</label>
+                                    <input type="date" id="tramiteFecha" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tramiteCliente">Cliente</label>
+                                    <input type="text" id="tramiteCliente" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tramitePlaca">Placa</label>
+                                    <input type="text" id="tramitePlaca" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tramiteNit">NIT</label>
+                                    <input type="text" id="tramiteNit">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tramiteTipo">Tipo de Trámite</label>
+                                    <input type="text" id="tramiteTipo" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tramiteTransito">Tránsito</label>
+                                    <input type="text" id="tramiteTransito" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tramiteEstado">Estado</label>
+                                    <select id="tramiteEstado" required>
+                                        <option value="proceso">En Proceso</option>
+                                        <option value="terminado">Terminado</option>
+                                        <option value="rechazado">Rechazado</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tramitePago">Estado de Pago</label>
+                                    <select id="tramitePago" required>
+                                        <option value="pendiente">Por Cobrar</option>
+                                        <option value="pagado">Pagado</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="valorTramiteDiv" style="display: none;">
+                                    <label for="tramiteValor">Valor</label>
+                                    <input type="number" id="tramiteValor" min="0">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Agregar Trámite</button>
+                        </form>
+                    </div>
 
-    <div class="tramites-sections">
-        <div class="tramite-subsection">
-            <h3>En Proceso</h3>
-            <div id="tramitesProceso"></div>
-        </div>
-        <div class="tramite-subsection">
-            <h3>Por Cobrar</h3>
-            <div id="tramitesPorCobrar"></div>
-        </div>
-        <div class="tramite-subsection">
-            <h3>Terminados</h3>
-            <div id="tramitesTerminados"></div>
-        </div>
-        <div class="tramite-subsection">
-            <h3>Rechazados</h3>
-            <div id="tramitesRechazados"></div>
-        </div>
-    </div>
-</div>
-                </section>
+                    <div class="tramites-sections">
+                        <div class="tramite-subsection">
+                            <h3>En Proceso</h3>
+                            <div id="tramitesProceso"></div>
+                        </div>
+                        <div class="tramite-subsection">
+                            <h3>Por Cobrar</h3>
+                            <div id="tramitesPorCobrar"></div>
+                        </div>
+                        <div class="tramite-subsection">
+                            <h3>Terminados</h3>
+                            <div id="tramitesTerminados"></div>
+                        </div>
+                        <div class="tramite-subsection">
+                            <h3>Rechazados</h3>
+                            <div id="tramitesRechazados"></div>
+                        </div>
+                    </div>
+                </div>
 
-                <!-- Sección de Contabilidad -->
                 <section id="contabilidad" class="section">
                     <div class="section-header">
                         <h2>Contabilidad</h2>
@@ -199,7 +193,6 @@
                     </div>
                 </section>
                 
-                <!-- Sección de CRM -->
                 <section id="crm" class="section">
                     <div class="section-header">
                         <h2>CRM - Clientes y Vencimientos</h2>
@@ -253,7 +246,6 @@
                     </div>
                 </section>
                 
-                <!-- Sección de Placas -->
                 <section id="placas" class="section">
                     <div class="section-header">
                         <h2>Gestión de Placas</h2>
@@ -306,7 +298,6 @@
         </div>
     </div>
 
-    <!-- Modal de Edición (Oculto por defecto) -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -315,11 +306,8 @@
         </div>
     </div>
 
-    <!-- Referencia al archivo JavaScript -->
-    <script src="script.js" type="module"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="script.js" type="module"></script>
 </body>
 </html>
