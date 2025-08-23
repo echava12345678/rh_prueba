@@ -1249,9 +1249,10 @@ async function eliminarClienteCRM(id) {
     }
 }
 // SECCIÓN PLACAS
+// SECCIÓN PLACAS
 async function registrarPlaca(e, db) {
     e.preventDefault();
-    
+
     const placaInicialStr = document.getElementById('placaInicial').value.toUpperCase();
     const placaFinalStr = document.getElementById('placaFinal').value.toUpperCase();
     const asignadaA = document.getElementById('placaAsignadaA').value;
@@ -1259,7 +1260,7 @@ async function registrarPlaca(e, db) {
     const fechaAsignada = document.getElementById('placaFechaAsignada').value;
     const fechaMatricula = document.getElementById('placaFechaMatricula').value;
     const observaciones = document.getElementById('placaObservaciones').value;
-    
+
     function parsePlaca(placa) {
         const match = placa.match(/^([A-Z]+)(\d+)([A-Z]?)$/);
         if (!match) {
@@ -1317,7 +1318,8 @@ function actualizarTablaPlacas(placasAMostrar = placas) {
     const container = document.getElementById('tablaPlacas');
     if (!container) return;
     if (!placasAMostrar || placasAMostrar.length === 0) {
-        container.innerHTML = '<p>No hay placas registradas.</p>';
+        // Mensaje más descriptivo para la búsqueda
+        container.innerHTML = '<p>No hay placas que coincidan con la búsqueda.</p>';
         return;
     }
     // Ordena las placas de menor a mayor
@@ -1328,14 +1330,10 @@ function actualizarTablaPlacas(placasAMostrar = placas) {
         const matchB = b.placa.match(placaRegex);
 
         if (matchA && matchB) {
-            // Compara letras1 (alfabético)
             const letrasCompare = matchA[1].localeCompare(matchB[1]);
             if (letrasCompare !== 0) return letrasCompare;
-            // Compara número (numérico)
             const numeroCompare = parseInt(matchA[2], 10) - parseInt(matchB[2], 10);
             if (numeroCompare !== 0) return numeroCompare;
-
-            // Compara letras2 (alfabético)
             return matchA[3].localeCompare(matchB[3]);
         }
         return a.placa.localeCompare(b.placa);
@@ -1359,20 +1357,20 @@ function actualizarTablaPlacas(placasAMostrar = placas) {
                 ${placasOrdenadas.map(p => {
                     const estado = obtenerEstadoPlaca(p.fechaAsignada, p.fechaMatricula, p.asignadaA);
                     return `
-                    <tr>
-                        <td>${p.placa}</td>
-                        <td>${p.asignadaA || 'N/A'}</td>
-                        <td>${formatDate(p.fechaRecepcion)}</td>
-                        <td>${formatDate(p.fechaAsignada)}</td>
-                        <td>${formatDate(p.fechaMatricula)}</td>
-                        <td>${p.observaciones || 'N/A'}</td>
-                        <td><span class="badge badge-${estado.toLowerCase().replace(' ', '-')}">${estado}</span></td>
-                        <td>
-                            <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
-                            <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
-                        </td>
-                    </tr>
-                `;
+                        <tr>
+                            <td>${p.placa}</td>
+                            <td>${p.asignadaA || 'N/A'}</td>
+                            <td>${formatDate(p.fechaRecepcion)}</td>
+                            <td>${formatDate(p.fechaAsignada)}</td>
+                            <td>${formatDate(p.fechaMatricula)}</td>
+                            <td>${p.observaciones || 'N/A'}</td>
+                            <td><span class="badge badge-${estado.toLowerCase().replace(' ', '-')}">${estado}</span></td>
+                            <td>
+                                <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
+                                <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
                 }).join('')}
             </tbody>
         </table>
@@ -1397,7 +1395,7 @@ async function editarPlaca(id) {
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return;
     const placa = docSnap.data();
-    
+
     const modalBody = `
         <form id="editPlacaForm">
             <div class="form-row">
@@ -1434,11 +1432,11 @@ async function editarPlaca(id) {
             </div>
         </form>
     `;
-    
+
     document.getElementById('modalTitle').textContent = 'Editar Registro de Placa';
     document.getElementById('modalBody').innerHTML = modalBody;
     document.getElementById('editModal').style.display = 'block';
-    
+
     document.getElementById('editPlacaForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const nuevaPlaca = document.getElementById('editPlaca').value.toUpperCase();
