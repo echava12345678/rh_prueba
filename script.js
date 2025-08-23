@@ -1635,5 +1635,8 @@ window.verificarVencimientos = verificarVencimientos;
 window.editarPlaca = editarPlaca;
 window.eliminarPlaca = eliminarPlaca;
 window.actualizarRegistrosContables = actualizarRegistrosContables;
+window.actualizarTablaCRM = actualizarTablaCRM;
+window.actualizarTablaPlacas = actualizarTablaPlacas;
+window.filtrarTramites = filtrarTramites;
 window.actualizarValorConBoton = actualizarValorConBoton;
 
