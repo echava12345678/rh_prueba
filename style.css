@@ -793,12 +793,12 @@ tr:hover {
     transform: scale(1.05);
 }
 .btn-primary logo {
-        background-image: url('LOGO 2025 .png');
+        background-image: url('LOGO 2025 .png') !important;
         background-size: 20px; /* Tamaño del logo */
         background-repeat: no-repeat;
         background-position: 10px center; /* Posición del logo a la izquierda */
         padding-left: 40px; /* Ajusta el padding para que el texto no se superponga con el logo */
-    }
+    } 
 
 .tramites-category h4 {
     color: #FF8C00; /* Un color naranja distintivo */
