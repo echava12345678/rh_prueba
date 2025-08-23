@@ -1476,29 +1476,7 @@ async function eliminarPlaca(id) {
         }
     }
 }
-// Maneja la búsqueda de placas
-const placaSearchInput = document.getElementById('placaSearchInput');
-const placaSearchButton = document.getElementById('placaSearchButton');
 
-if (placaSearchButton) {
-    placaSearchButton.addEventListener('click', () => {
-        const searchTerm = placaSearchInput.value.trim().toUpperCase();
-        const placasFiltradas = placas.filter(p => p.placa.includes(searchTerm));
-        actualizarTablaPlacas(placasFiltradas);
-    });
-}
-
-if (placaSearchInput) {
-    placaSearchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.trim().toUpperCase();
-        if (searchTerm === '') {
-            actualizarTablaPlacas();
-        } else {
-            const placasFiltradas = placas.filter(p => p.placa.includes(searchTerm));
-            actualizarTablaPlacas(placasFiltradas);
-        }
-    });
-}
 
 // FUNCIONES DE UTILIDAD
 function capitalizeFirst(str) {
