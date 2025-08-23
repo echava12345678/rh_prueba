@@ -646,3 +646,84 @@ tr:hover {
     padding-bottom: 5px;
     margin-bottom: 10px;
 }
+
+/* --- Mejora en la visualización de los trámites --- */
+
+/* Contenedor principal para las categorías */
+.tramites-list {
+    display: flex; /* Habilita el diseño flexible */
+    flex-wrap: wrap; /* Permite que las tarjetas se envuelvan en la siguiente línea */
+    gap: 20px; /* Espacio uniforme entre las categorías */
+    justify-content: space-between; /* Distribuye el espacio entre los elementos */
+}
+
+/* Contenedor de cada categoría (Por Cobrar, En Proceso, etc.) */
+.tramites-category {
+    flex: 1 1 calc(50% - 10px); /* Ocupa la mitad del espacio en una fila, menos el espacio entre ellas */
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+    background-color: #ffffff; /* Fondo blanco */
+    border: 1px solid #e0e0e0; /* Borde suave */
+    border-radius: 12px; /* Bordes más redondeados */
+    padding: 20px; /* Más espacio interno */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Sombra sutil para un efecto 3D */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tramites-category:hover {
+    transform: translateY(-5px); /* Pequeño efecto de elevación al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el encabezado de cada categoría */
+.tramites-category h4 {
+    margin: 0 0 15px;
+    color: #444;
+    font-size: 1.2em;
+    font-weight: 600;
+    border-bottom: 2px solid #5cb85c; /* Línea de color para el título */
+    padding-bottom: 8px;
+}
+
+/* Contenedor de las tarjetas de trámites individuales */
+.tramites-list-content {
+    display: flex;
+    flex-direction: column; /* Apila las tarjetas una debajo de otra */
+    gap: 15px; /* Espacio entre cada tarjeta de trámite */
+}
+
+/* Estilo de la tarjeta individual de cada trámite */
+.tramite-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-left: 5px solid; /* Borde de color en el lado izquierdo */
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.9em;
+}
+
+.tramite-card strong {
+    color: #333; /* Color oscuro para las etiquetas de campo */
+}
+
+/* Colores de borde para cada tipo de estado */
+.tramite-card.proceso { border-left-color: #f0ad4e; /* Naranja */ }
+.tramite-card.terminado { border-left-color: #5cb85c; /* Verde */ }
+.tramite-card.rechazado { border-left-color: #d9534f; /* Rojo */ }
+
+/* Estilos para los botones dentro de la tarjeta */
+.tramite-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.tramite-actions select,
+.tramite-actions button {
+    font-size: 0.8em;
+    padding: 8px 12px;
+    border-radius: 5px;
+}
