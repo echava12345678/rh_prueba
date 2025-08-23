@@ -163,10 +163,11 @@ function filtrarRegistros(searchTerm) {
 
 function filtrarClientes(searchTerm) {
     const term = searchTerm.toLowerCase();
-    const resultados = clientesCRM.filter(c => 
-        (c.nombre && c.nombre.toLowerCase().includes(term)) ||
-        (c.empresa && c.empresa.toLowerCase().includes(term)) ||
-        (c.documento && c.documento.toLowerCase().includes(term))
+    const resultados = clientesCRM.filter(c =>
+        (c.cliente && c.cliente.toLowerCase().includes(term)) ||
+        (c.placa && c.placa.toLowerCase().includes(term)) ||
+        (c.propietario && c.propietario.toLowerCase().includes(term)) ||
+        (c.cedula && c.cedula.toLowerCase().includes(term))
     );
     renderClientesCRM(resultados);
 }
