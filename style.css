@@ -781,15 +781,14 @@ tr:hover {
 }
 
 .btn-compacto {
-    padding: 10px 20px;
-    font-size: 1rem;
-    /* Degradado de color naranja a rojo */
+    padding: 8px 16px;
+    font-size: 0.9rem;
     background: linear-gradient(45deg, #FF7E5F, #FE0944);
-    color: white; /* Asegura que el texto sea blanco para que se vea bien */
+    color: white;
     border: none;
     transition: transform 0.2s ease-in-out;
 }
 
 .btn-compacto:hover {
-    transform: scale(1.05); /* Agrega un efecto de crecimiento al pasar el cursor */
+    transform: scale(1.05);
 }
