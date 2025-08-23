@@ -1321,7 +1321,7 @@ function actualizarTablaPlacas(placasAMostrar = placas) {
         return;
     }
     // Ordena las placas de menor a mayor
-    const placasOrdenadas = [...placas].sort((a, b) => {
+    const placasOrdenadas = [...placasAMostrar].sort((a, b) => {
         // Extrae letras y números para comparación adecuada
         const placaRegex = /^([A-Z]+)(\d+)([A-Z]?)$/;
         const matchA = a.placa.match(placaRegex);
