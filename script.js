@@ -454,7 +454,7 @@ async function agregarTramite(e, db) {
         tipo: document.getElementById('tramiteTipo').value,
         transito: document.getElementById('tramiteTransito').value,
         estado: document.getElementById('tramiteEstado').value,
-        pago: 'pendiente',
+        pago: document.getElementById('tramitePago').value,
         observaciones: '',
         valor: valorNumerico,
     };
