@@ -1034,13 +1034,15 @@ function actualizarTablaCRM() {
                             </td>
                             <td>
                                 <span class="cant-avisos cant-avisos-${Math.min(cliente.cantidadAvisos, 3)}">
-                                    ${cliente.cantidadAvisos}
+                                    ${cliente.cantidadAvisos || 0}
                                 </span>
                             </td>
                             <td>
                                 <button class="btn-edit" onclick="editarClienteCRM('${cliente.id}')">Editar</button>
                                 <button class="btn-delete" onclick="eliminarClienteCRM('${cliente.id}')">Eliminar</button>
-                                <button class="btn-whatsapp" onclick="notificarWhatsApp('${cliente.id}', '${cliente.telefono}', '${cliente.propietario}', '${cliente.placa}', '${cliente.venceSOAT}', '${cliente.venceRTM}')">Notificar WhatsApp</button>
+                                <button class="btn-whatsapp" onclick="notificarWhatsApp('${cliente.id}', '${cliente.telefono}', '${cliente.propietario}', '${cliente.placa}', '${cliente.venceSOAT}', '${cliente.venceRTM}')">
+                                     <i class="fab fa-whatsapp"></i>
+                                </button>
                             </td>
                         </tr>
                     `;
