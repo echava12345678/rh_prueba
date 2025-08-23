@@ -804,7 +804,7 @@ tr:hover {
     color: #FF8C00; /* Un color naranja distintivo */
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Sombra para que el texto resalte más */
 }
-.logo {
+.btn logo {
     /* Define el logo como imagen de fondo */
     background-image: url('LOGO 2025 .png');
     /* Evita que la imagen se repita */
