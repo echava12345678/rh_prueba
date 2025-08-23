@@ -413,40 +413,22 @@ async function agregarTramite(e, db) {
     e.preventDefault();
 
     const valorInput = document.getElementById('valorInput').value;
-    const valorNumerico = parseFloat(valorInput.replace(/\./g, '')) || 0; // Se mantiene tu línea original
+    const valorNumerico = parseFloat(valorInput.replace(/\./g, '')) || 0; // 
 
-    // Se mantiene la validación de campos obligatorios para evitar problemas
-    const fecha = document.getElementById('tramiteFecha').value;
-    const cliente = document.getElementById('tramiteCliente').value;
-    const nit = document.getElementById('tramiteNIT').value;
-    const placa = document.getElementById('tramitePlaca').value.toUpperCase();
-    const tipo = document.getElementById('tramiteTipo').value;
-    const transito = document.getElementById('tramiteTransito').value;
-    const estado = document.getElementById('tramiteEstado').value;
-
-    if (!fecha || !cliente || !placa || !tipo || !transito || !estado) {
-        mostrarNotificacion('Por favor, completa todos los campos obligatorios.', 'error');
-        return;
-    }
-
+    
     const tramite = {
-        fecha,
-        cliente,
-        nit,
-        placa,
-        tipo,
-        transito,
-        estado,
+        fecha: document.getElementById('tramiteFecha').value,
+        cliente: document.getElementById('tramiteCliente').value,
+        nit: document.getElementById('tramiteNIT').value,
+        placa: document.getElementById('tramitePlaca').value.toUpperCase(),
+        tipo: document.getElementById('tramiteTipo').value,
+        transito: document.getElementById('tramiteTransito').value,
+        estado: document.getElementById('tramiteEstado').value,
         pago: 'pendiente',
         observaciones: '',
+        valor: valorNumerico,
     };
     
-    // **AQUÍ SE AGREGA LA LÓGICA CONDICIONAL**
-    // Si el valorInput no está vacío, añade el campo 'valor' al objeto 'tramite'
-    if (valorInput !== '') {
-        tramite.valor = valorNumerico;
-    }
-
     try {
         await addDoc(collection(db, 'tramites'), tramite);
         document.getElementById('tramiteForm').reset();
@@ -492,7 +474,7 @@ function generarTramiteHTML(tramite) {
     
     if (tramite.estado === 'proceso' || tramite.estado === 'terminado') {
         estadoPagoHTML = `
-            <div class="estado-pago">
+             <div class="estado-pago">
                 <label>Estado de Pago:</label>
                 <select onchange="cambiarEstadoPago('${tramite.id}', this.value)">
                     <option value="pendiente" ${tramite.pago === 'pendiente' ? 'selected' : ''}>Por Cobrar</option>
@@ -526,11 +508,11 @@ function generarTramiteHTML(tramite) {
     }
 
      // Formats the value to always display two decimal places
-    const formattedValor = (tramite.valor || tramite.valor === 0) ? tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 2, maximumFractionDigits: 2}) : 'N/A';
+    const formattedValor = tramite.valor ? tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 2, maximumFractionDigits: 2}) : 'N/A';
 
     
     return `
-        <div class="tramite-card ${tramite.estado}">
+         <div class="tramite-card ${tramite.estado}">
             <div class="tramite-info">
                 <strong>Fecha:</strong> ${formatDate(tramite.fecha)}<br>
                 <strong>Cliente:</strong> ${tramite.cliente}<br>
@@ -540,7 +522,7 @@ function generarTramiteHTML(tramite) {
                 <strong>Tránsito:</strong> ${tramite.transito}<br>
                 <strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}
                 ${tramite.pago ? `<br><strong>Pago:</strong> ${capitalizeFirst(tramite.pago)}` : ''}
-                ${(tramite.valor || tramite.valor === 0) ? `<br><strong>Valor:</strong> ${tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP'})}` : ''}
+                ${tramite.valor ? `<br><strong>Valor:</strong> ${tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP'})}` : ''}
             </div>
             ${estadoPagoHTML}
             ${observacionesHTML}
@@ -553,7 +535,7 @@ function generarTramiteHTML(tramite) {
                 </select>
                 <button class="btn-edit" onclick="editarTramite('${tramite.id}')">Editar</button>
                 <button class="btn-delete" onclick="eliminarTramite('${tramite.id}')">Eliminar</button>
-                    ${reciboBtnHTML}
+                 ${reciboBtnHTML}
             </div>
         </div>
     `;
@@ -612,7 +594,7 @@ async function editarTramite(id) {
     const tramite = docSnap.data();
     
     const modalBody = `
-        <form id="editTramiteForm">
+         <form id="editTramiteForm">
             <div class="form-row">
                 <div class="form-group">
                     <label>Fecha</label>
@@ -622,7 +604,7 @@ async function editarTramite(id) {
                     <label>Cliente</label>
                     <input type="text" id="editTramiteCliente" value="${tramite.cliente}" required>
                 </div>
-                <div class="form-group">
+                 <div class="form-group">
                     <label>NIT</label>
                     <input type="text" id="editTramiteNIT" value="${tramite.nit || ''}" required>
                 </div>
@@ -630,7 +612,7 @@ async function editarTramite(id) {
                     <label>Placa</label>
                     <input type="text" id="editTramitePlaca" value="${tramite.placa}" required>
                 </div>
-                <div class="form-group">
+                 <div class="form-group">
                     <label>Tipo de Trámite</label>
                     <input type="text" id="editTramiteTipo" value="${tramite.tipo || ''}" required>
                 </div>
@@ -643,10 +625,10 @@ async function editarTramite(id) {
                     <select id="editTramiteEstado" required>
                         <option value="proceso" ${tramite.estado === 'proceso' ? 'selected' : ''}>En Proceso</option>
                         <option value="terminado" ${tramite.estado === 'terminado' ? 'selected' : ''}>Terminado</option>
-                        <option value="rechazado" ${tramite.estado === 'rechazado' ? 'disabled' : ''}>Rechazado</option>
+                        <option value="rechazado" ${tramite.estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
                     </select>
                 </div>
-                <div class="form-group">
+                 <div class="form-group">
                     <label>Estado de Pago</label>
                     <select id="editTramitePago" required>
                         <option value="pendiente" ${tramite.pago === 'pendiente' ? 'selected' : ''}>Por Cobrar</option>
@@ -655,9 +637,9 @@ async function editarTramite(id) {
                 </div>
                 <div class="form-group">
                     <label>Valor</label>
-                   <input type="text" id="editTramiteValor" value="${tramite.valor ? tramite.valor.toLocaleString('es-CO') : ''}">
+                   <input type="text" id="editTramiteValor" value="${tramite.valor ? tramite.valor.toLocaleString('es-CO') : '0'}" required>
                 </div>
-                <div class="form-group" style="grid-column: span 2;">
+                 <div class="form-group" style="grid-column: span 2;">
                     <label>Observaciones</label>
                     <textarea id="editTramiteObservaciones" placeholder="Observaciones">${tramite.observaciones || ''}</textarea>
                 </div>
@@ -677,28 +659,19 @@ async function editarTramite(id) {
         e.preventDefault();
 
         const valorInput = document.getElementById('editTramiteValor').value;
-        const valorNumerico = parseFloat(valorInput.replace(/\./g, ''));
-        
+    const valorNumerico = parseFloat(valorInput.replace(/\./g, ''));
         const updatedTramite = {
            fecha: document.getElementById('editTramiteFecha').value,
-           cliente: document.getElementById('editTramiteCliente').value,
-           nit: document.getElementById('editTramiteNIT').value,
-           placa: document.getElementById('editTramitePlaca').value.toUpperCase(),
-           tipo: document.getElementById('editTramiteTipo').value,
-           transito: document.getElementById('editTramiteTransito').value,
-           estado: document.getElementById('editTramiteEstado').value,
-           pago: document.getElementById('editTramitePago').value,
-           observaciones: document.getElementById('editTramiteObservaciones').value
+            cliente: document.getElementById('editTramiteCliente').value,
+            nit: document.getElementById('editTramiteNIT').value,
+            placa: document.getElementById('editTramitePlaca').value.toUpperCase(),
+            tipo: document.getElementById('editTramiteTipo').value,
+            transito: document.getElementById('editTramiteTransito').value,
+            estado: document.getElementById('editTramiteEstado').value,
+            pago: document.getElementById('editTramitePago').value,
+            valor: valorNumerico,
+            observaciones: document.getElementById('editTramiteObservaciones').value
         };
-
-        // Si el valor del input no es un número válido o está vacío, no se incluye el campo.
-        // Si el usuario borra el valor, se usa deleteField() para eliminar el campo de la base de datos.
-        if (valorInput !== '') {
-            updatedTramite.valor = valorNumerico;
-        } else {
-            updatedTramite.valor = deleteField();
-        }
-
         try {
             await updateDoc(docRef, updatedTramite);
             document.getElementById('editModal').style.display = 'none';
