@@ -1313,7 +1313,7 @@ async function registrarPlaca(e, db) {
     }
 }
 
-function actualizarTablaPlacas() {
+function actualizarTablaPlacas(placasAMostrar = placas) {
     const container = document.getElementById('tablaPlacas');
     if (!container) return;
     if (!placas || placas.length === 0) {
@@ -1475,6 +1475,29 @@ async function eliminarPlaca(id) {
             mostrarNotificacion('Error al eliminar la placa', 'error');
         }
     }
+}
+// Maneja la búsqueda de placas
+const placaSearchInput = document.getElementById('placaSearchInput');
+const placaSearchButton = document.getElementById('placaSearchButton');
+
+if (placaSearchButton) {
+    placaSearchButton.addEventListener('click', () => {
+        const searchTerm = placaSearchInput.value.trim().toUpperCase();
+        const placasFiltradas = placas.filter(p => p.placa.includes(searchTerm));
+        actualizarTablaPlacas(placasFiltradas);
+    });
+}
+
+if (placaSearchInput) {
+    placaSearchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.trim().toUpperCase();
+        if (searchTerm === '') {
+            actualizarTablaPlacas();
+        } else {
+            const placasFiltradas = placas.filter(p => p.placa.includes(searchTerm));
+            actualizarTablaPlacas(placasFiltradas);
+        }
+    });
 }
 
 // FUNCIONES DE UTILIDAD
