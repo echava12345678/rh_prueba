@@ -114,23 +114,27 @@
 </div>
                     
 
-                    <div class="tramites-sections">
-                        <div class="tramite-subsection">
-                            <h3>Facturas por Cobrar</h3>
-                            <div id="tramitesPorCobrar" class="tramites-list"></div>
-                        </div>
-                    <div class="tramites-sections">
-                        <div class="tramite-subsection">
-                            <h3>Trámites en Proceso</h3>
-                            <div id="tramitesProceso" class="tramites-list"></div>
-                        </div>
-                        <div class="tramite-subsection">
-                            <h3>Trámites Terminados</h3>
-                            <div id="tramitesTerminados" class="tramites-list"></div>
-                        </div>
-                        <div class="tramite-subsection">
-                            <h3>Trámites Rechazados</h3>
-                            <div id="tramitesRechazados" class="tramites-list"></div>
+                    <div id="tramitesQueryDisplay" class="query-display"></div>
+                        <div class="table-container">
+                            <h3>Listado de Trámites</h3>
+                            <div class="tramites-list">
+                                <div class="tramites-category">
+                                    <h4>Trámites por Cobrar</h4>
+                                    <div id="tramitesPorCobrar" class="tramites-list-content"></div>
+                                </div>
+                                <div class="tramites-category">
+                                    <h4>Trámites en Proceso</h4>
+                                    <div id="tramitesProceso" class="tramites-list-content"></div>
+                                </div>
+                                <div class="tramites-category">
+                                    <h4>Trámites Terminados</h4>
+                                    <div id="tramitesTerminados" class="tramites-list-content"></div>
+                                </div>
+                                <div class="tramites-category">
+                                    <h4>Trámites Rechazados</h4>
+                                    <div id="tramitesRechazados" class="tramites-list-content"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -273,10 +277,12 @@
         <button id="crmSearchButton">Buscar</button>
     </div>
 </div>
-                    <div class="table-container">
-                        <h3>Listado de Clientes y Vencimientos</h3>
-                        <div id="tablaCRM"></div>
-                    </div>
+                   <div id="crmQueryDisplay" class="query-display"></div>
+                        <div class="table-container">
+                            <h3>Listado de Clientes y Vencimientos</h3>
+                            <div id="tablaCRM"></div>
+                        </div>
+                    
                 </section>
                 
                 <!-- Sección de Placas -->
@@ -332,12 +338,13 @@
                 <button id="placaSearchButton">Buscar</button>
             </div>
         </div>
-        <div class="table-container">
-            <h3>Listado de Placas</h3>
-            <div id="tablaPlacas"></div>
-        </div>
-    </div>
-</section>
+         <div id="placasQueryDisplay" class="query-display"></div>
+                        <div class="table-container">
+                            <h3>Listado de Placas</h3>
+                            <div id="tablaPlacas"></div>
+                        </div>
+                    </div>
+                </section>
     <!-- Modal de Edición (Oculto por defecto) -->
     <div id="editModal" class="modal">
         <div class="modal-content">
