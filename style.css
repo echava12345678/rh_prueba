@@ -608,3 +608,16 @@ tr:hover {
 .search-container button:hover {
     background-color: #4cae4c;
 }
+
+/* Estilos para el apartado que muestra el texto de búsqueda */
+.query-display {
+    padding: 10px;
+    background-color: #e9f5e9; /* Un color de fondo suave */
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #4CAF50; /* Un color de texto que resalte */
+    display: none; /* Oculto por defecto */
+}
