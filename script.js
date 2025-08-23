@@ -95,8 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (crmForm) crmForm.addEventListener('submit', (e) => agregarClienteCRM(e, db));
             const placasForm = document.getElementById('placasForm');
             if (placasForm) placasForm.addEventListener('submit', (e) => registrarPlaca(e, db));
-            const searchInput = document.getElementById('tramiteSearchInput');
-            if (searchInput) searchInput.addEventListener('input', (e) => filtrarTramites(e.target.value));
+            
             
             // Configura el modal de edición
             const modal = document.getElementById('editModal');
@@ -444,50 +443,6 @@ function actualizarTramites() {
     
     const tramitesRechazados = document.getElementById('tramitesRechazados');
     if (tramitesRechazados) tramitesRechazados.innerHTML = rechazados.map(t => generarTramiteHTML(t)).join('');
-}
-function filtrarTramites(termino) {
-    const terminoNormalizado = termino.toLowerCase().trim();
-
-    // Si el término de búsqueda está vacío, volvemos a la vista normal
-    if (terminoNormalizado === '') {
-        actualizarTramites(); // Llama a la función que actualiza todo y restaura la vista
-        return;
-    }
-
-    // Filtra los trámites basándose en el término de búsqueda en cualquiera de sus campos
-    const resultados = tramites.filter(tramite => {
-        const valoresTramite = Object.values(tramite).join(' ').toLowerCase();
-        return valoresTramite.includes(terminoNormalizado);
-    });
-
-    // Limpia todas las secciones antes de mostrar los resultados de la búsqueda
-    const tramitesPorCobrar = document.getElementById('tramitesPorCobrar');
-    const tramitesProceso = document.getElementById('tramitesProceso');
-    const tramitesTerminados = document.getElementById('tramitesTerminados');
-    const tramitesRechazados = document.getElementById('tramitesRechazados');
-
-    if (tramitesPorCobrar) tramitesPorCobrar.innerHTML = '';
-    if (tramitesProceso) tramitesProceso.innerHTML = '';
-    if (tramitesTerminados) tramitesTerminados.innerHTML = '';
-    if (tramitesRechazados) tramitesRechazados.innerHTML = '';
-
-    // Ahora, renderiza cada resultado en su contenedor correspondiente
-    resultados.forEach(tramite => {
-        let contenedor;
-        if (tramite.estado === 'terminado' && tramite.pago === 'pendiente') {
-            contenedor = tramitesPorCobrar;
-        } else if (tramite.estado === 'proceso') {
-            contenedor = tramitesProceso;
-        } else if (tramite.estado === 'terminado' && tramite.pago === 'pagado') {
-            contenedor = tramitesTerminados;
-        } else if (tramite.estado === 'rechazado') {
-            contenedor = tramitesRechazados;
-        }
-
-        if (contenedor) {
-            contenedor.innerHTML += generarTramiteHTML(tramite);
-        }
-    });
 }
 
 function generarTramiteHTML(tramite) {
