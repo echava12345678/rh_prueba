@@ -103,11 +103,16 @@
                      <div style="text-align: right; margin: 15px 0;">
        <button class="btn-primary" onclick="descargarTodosRecibos()">Descargar Todos los Recibos</button>
     </div>
-                        <div class="search-container">
+            
+    </div>
+                    <div class="search-section">
+    <h3>Búsqueda</h3>
+    <div class="search-container">
         <input type="text" id="tramiteSearchInput" placeholder="Buscar trámite por placa...">
         <button id="tramiteSearchButton">Buscar</button>
     </div>
-    </div>
+</div>
+                    
 
                     <div class="tramites-sections">
                         <div class="tramite-subsection">
@@ -259,11 +264,15 @@
                             <button type="submit" class="btn-primary">Agregar Cliente</button>
                         </form>
                     </div>
+    
+    </div>
+                    <div class="search-section">
+    <h3>Búsqueda</h3>
     <div class="search-container">
-        <input type="text" id="crmSearchInput" placeholder="Buscar cliente por placa...">
+        <input type="text" id="crmSearchInput" placeholder="Buscar cliente...">
         <button id="crmSearchButton">Buscar</button>
     </div>
-    </div>
+</div>
                     <div class="table-container">
                         <h3>Listado de Clientes y Vencimientos</h3>
                         <div id="tablaCRM"></div>
@@ -271,62 +280,64 @@
                 </section>
                 
                 <!-- Sección de Placas -->
-                <section id="placas" class="section">
-                    <div class="section-header">
-                        <h2>Gestión de Placas</h2>
+              <section id="placas" class="section">
+    <div class="section-header">
+        <h2>Gestión de Placas</h2>
+    </div>
+    <div id="placasContent">
+
+        <div class="form-container">
+            <h3>Registrar Placa</h3>
+            <form id="placasForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="placaInicial">Placa Inicial:</label>
+                        <input type="text" id="placaInicial" placeholder="Ej: JHP34G" required>
                     </div>
-                    <div id="placasContent">
-    
-                    <div class="form-container">
-                        <h3>Registrar Placa</h3>
-                        <form id="placasForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="placaInicial">Placa Inicial:</label>
-                                    <input type="text" id="placaInicial" placeholder="Ej: JHP34G" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="placaFinal">Placa Final:</label>
-                                    <input type="text" id="placaFinal" placeholder="Ej: JHP35H" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="placaAsignadaA">Asignada a:</label>
-                                    <input type="text" id="placaAsignadaA" placeholder="Ej: Asesor 1">
-                                </div>
-                                <div class="form-group">
-                                    <label for="placaFechaRecepcion">Fecha de Recepción:</label>
-                                    <input type="date" id="placaFechaRecepcion" required>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="placaFechaAsignada">Fecha Asignada:</label>
-                                    <input type="date" id="placaFechaAsignada">
-                                </div>
-                                <div class="form-group">
-                                    <label for="placaFechaMatricula">Fecha Matrícula:</label>
-                                    <input type="date" id="placaFechaMatricula">
-                                </div>
-                                <div class="form-group" style="grid-column: span 2;">
-                                    <label for="placaObservaciones">Observaciones:</label>
-                                    <textarea id="placaObservaciones" placeholder="Observaciones adicionales"></textarea>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn-primary">Registrar Rango</button>
-                        </form>
+                    <div class="form-group">
+                        <label for="placaFinal">Placa Final:</label>
+                        <input type="text" id="placaFinal" placeholder="Ej: JHP35H" required>
                     </div>
-                   <div class="search-container">
-        <input type="text" id="placaSearchInput" placeholder="Buscar placa...">
-        <button id="placaSearchButton">Buscar</button>
-                    <div class="table-container">
-                        <h3>Listado de Placas</h3>
-                        <div id="tablaPlacas"></div>
+                    <div class="form-group">
+                        <label for="placaAsignadaA">Asignada a:</label>
+                        <input type="text" id="placaAsignadaA" placeholder="Ej: Asesor 1">
                     </div>
-                </section>
-            </main>
+                    <div class="form-group">
+                        <label for="placaFechaRecepcion">Fecha de Recepción:</label>
+                        <input type="date" id="placaFechaRecepcion" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="placaFechaAsignada">Fecha Asignada:</label>
+                        <input type="date" id="placaFechaAsignada">
+                    </div>
+                    <div class="form-group">
+                        <label for="placaFechaMatricula">Fecha Matrícula:</label>
+                        <input type="date" id="placaFechaMatricula">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="placaObservaciones">Observaciones:</label>
+                        <textarea id="placaObservaciones" placeholder="Observaciones adicionales"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Registrar Rango</button>
+            </form>
+        </div>
+
+        <div class="search-section">
+            <h3>Búsqueda</h3>
+            <div class="search-container">
+                <input type="text" id="placaSearchInput" placeholder="Buscar placa...">
+                <button id="placaSearchButton">Buscar</button>
+            </div>
+        </div>
+        <div class="table-container">
+            <h3>Listado de Placas</h3>
+            <div id="tablaPlacas"></div>
         </div>
     </div>
-
+</section>
     <!-- Modal de Edición (Oculto por defecto) -->
     <div id="editModal" class="modal">
         <div class="modal-content">
