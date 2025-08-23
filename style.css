@@ -727,3 +727,24 @@ tr:hover {
     padding: 8px 12px;
     border-radius: 5px;
 }
+
+/* Estilos para los estados de las placas */
+.badge-en-trámite {
+    background-color: #ffc107; /* Amarillo */
+    color: #333; /* Texto oscuro para contraste */
+}
+
+.badge-recibida {
+    background-color: #007bff; /* Azul */
+    color: white;
+}
+
+.badge-asignada {
+    background-color: #28a745; /* Verde */
+    color: white;
+}
+
+.badge-matriculada {
+    background-color: #6c757d; /* Gris */
+    color: white;
+}
