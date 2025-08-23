@@ -621,3 +621,28 @@ tr:hover {
     color: #4CAF50; /* Un color de texto que resalte */
     display: none; /* Oculto por defecto */
 }
+
+/* Estilos para la sección de Trámites */
+.tramites-list {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos pasen a la siguiente línea si no caben */
+    gap: 20px; /* Espacio entre las categorías */
+    justify-content: space-between; /* Distribuye el espacio de manera uniforme */
+}
+
+.tramites-category {
+    flex-basis: calc(50% - 10px); /* 50% del ancho, menos la mitad del espacio (gap) */
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.tramites-category h4 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
