@@ -48,6 +48,17 @@ document.addEventListener('DOMContentLoaded', function() {
     onAuthStateChanged(auth, (user) => {
         const loginPanel = document.getElementById('loginPanel');
         const appContainer = document.getElementById('appContainer');
+        const tramiteClienteInput = document.getElementById('tramiteCliente');
+        const tramiteNitInput = document.getElementById('tramiteNIT');
+
+        if (tramiteClienteInput) {
+    tramiteClienteInput.addEventListener('blur', () => {
+        const clienteEncontrado = clientesCRM.find(c => c.cliente === tramiteClienteInput.value);
+        if (clienteEncontrado) {
+            tramiteNitInput.value = clienteEncontrado.cedula;
+        }
+    });
+}
 
         if (user) {
             // El usuario ha iniciado sesión
