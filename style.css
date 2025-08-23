@@ -748,3 +748,30 @@ tr:hover {
     background-color: #6c757d; /* Gris */
     color: white;
 }
+/* Estilos para el contenedor de las placas */
+#tablaPlacas {
+    display: flex; /* Activa el modelo de caja flexible */
+    flex-wrap: wrap; /* Permite que las tarjetas se envuelvan a la siguiente línea */
+    gap: 20px; /* Crea un espacio uniforme de 20px entre las tarjetas */
+    justify-content: center; /* Centra las tarjetas horizontalmente en el contenedor */
+    align-items: flex-start; /* Alinea las tarjetas en la parte superior del contenedor */
+    padding: 20px;
+}
+
+/* Estilos para cada tarjeta de placa */
+.placa-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 280px; /* Ancho fijo para cada tarjeta */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s;
+}
+
+.placa-card:hover {
+    transform: translateY(-5px); /* Efecto sutil al pasar el mouse */
+}
