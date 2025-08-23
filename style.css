@@ -566,3 +566,45 @@ tr:hover {
     margin-bottom: 5px;
     color: #ffffff;
 }
+/* Estilos para el nuevo apartado de Búsqueda */
+.search-section {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+}
+
+.search-section h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.search-container {
+    display: flex;
+    gap: 10px;
+}
+
+.search-container input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.search-container button {
+    padding: 10px 15px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-container button:hover {
+    background-color: #4cae4c;
+}
