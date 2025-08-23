@@ -409,6 +409,36 @@ function showSection(sectionId) {
 }
 
 // SECCIÓN TRÁMITES
+// Función para filtrar los trámites por estado
+function filtrarTramitesPorEstado(filtro) {
+    const porCobrar = document.getElementById('tramitesPorCobrar').parentElement;
+    const proceso = document.getElementById('tramitesProceso').parentElement;
+    const terminados = document.getElementById('tramitesTerminados').parentElement;
+    const rechazados = document.getElementById('tramitesRechazados').parentElement;
+
+    // Oculta todas las secciones por defecto
+    porCobrar.style.display = 'none';
+    proceso.style.display = 'none';
+    terminados.style.display = 'none';
+    rechazados.style.display = 'none';
+
+    // Muestra la sección correspondiente al filtro
+    if (filtro === 'todos') {
+        porCobrar.style.display = 'block';
+        proceso.style.display = 'block';
+        terminados.style.display = 'block';
+        rechazados.style.display = 'block';
+    } else if (filtro === 'proceso') {
+        proceso.style.display = 'block';
+    } else if (filtro === 'terminado') {
+        // En tu código, el estado 'terminado' se divide en 'pagado' y 'por cobrar'.
+        // Aquí mostramos ambos para simplificar.
+        porCobrar.style.display = 'block';
+        terminados.style.display = 'block';
+    } else if (filtro === 'rechazado') {
+        rechazados.style.display = 'block';
+    }
+}
 async function agregarTramite(e, db) {
     e.preventDefault();
 
