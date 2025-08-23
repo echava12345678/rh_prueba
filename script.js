@@ -148,6 +148,14 @@ function filtrarTramites(searchTerm) {
         (t.nit && t.nit.toLowerCase().includes(term)) ||
         (t.tipo && t.tipo.toLowerCase().includes(term))
     );
+    // NUEVO: Mostrar el término de búsqueda
+    const displayElement = document.getElementById('tramitesQueryDisplay');
+    if (searchTerm.trim() !== '') {
+        displayElement.textContent = `Resultados para: "${searchTerm}"`;
+        displayElement.style.display = 'block';
+    } else {
+        displayElement.style.display = 'none';
+    }
     // Asume que las funciones de renderizado ya existen o las creas a continuación
     renderTramites(resultados);
 }
@@ -159,6 +167,14 @@ function filtrarRegistros(searchTerm) {
         (r.concepto && r.concepto.toLowerCase().includes(term)) ||
         (r.banco && r.banco.toLowerCase().includes(term))
     );
+    // NUEVO: Mostrar el término de búsqueda
+    const displayElement = document.getElementById('contaQueryDisplay');
+    if (searchTerm.trim() !== '') {
+        displayElement.textContent = `Resultados para: "${searchTerm}"`;
+        displayElement.style.display = 'block';
+    } else {
+        displayElement.style.display = 'none';
+    }
     renderRegistrosContables(resultados);
 }
 
@@ -170,6 +186,14 @@ function filtrarClientes(searchTerm) {
         (c.propietario && c.propietario.toLowerCase().includes(term)) ||
         (c.cedula && c.cedula.toLowerCase().includes(term))
     );
+     // NUEVO: Mostrar el término de búsqueda
+    const displayElement = document.getElementById('crmQueryDisplay');
+    if (searchTerm.trim() !== '') {
+        displayElement.textContent = `Resultados para: "${searchTerm}"`;
+        displayElement.style.display = 'block';
+    } else {
+        displayElement.style.display = 'none';
+    }
     renderClientesCRM(resultados);
 }
 
@@ -179,6 +203,14 @@ function filtrarPlacas(searchTerm) {
         (p.placa && p.placa.toLowerCase().includes(term)) ||
         (p.cliente && p.cliente.toLowerCase().includes(term))
     );
+     // NUEVO: Mostrar el término de búsqueda
+    const displayElement = document.getElementById('placasQueryDisplay');
+    if (searchTerm.trim() !== '') {
+        displayElement.textContent = `Resultados para: "${searchTerm}"`;
+        displayElement.style.display = 'block';
+    } else {
+        displayElement.style.display = 'none';
+    }
     renderPlacas(resultados);
 }
 function renderTramites(tramitesToRender) {
