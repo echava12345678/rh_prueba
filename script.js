@@ -95,6 +95,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (crmForm) crmForm.addEventListener('submit', (e) => agregarClienteCRM(e, db));
             const placasForm = document.getElementById('placasForm');
             if (placasForm) placasForm.addEventListener('submit', (e) => registrarPlaca(e, db));
+            const searchInput = document.getElementById('tramiteSearchInput');
+            if (searchInput) searchInput.addEventListener('input', (e) => filtrarTramites(e.target.value));
             
             // Configura el modal de edición
             const modal = document.getElementById('editModal');
