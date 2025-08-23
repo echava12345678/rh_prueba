@@ -116,7 +116,10 @@ document.addEventListener('DOMContentLoaded', function() {
             loginPanel.style.display = 'block';
             appContainer.style.display = 'none';
         }
-        // --- Nuevos event listeners para los buscadores ---
+        
+    });
+});
+ // --- Nuevos event listeners para los buscadores ---
         const tramitesSearchInput = document.getElementById('tramiteSearchInput');
         if (tramitesSearchInput) {
             tramitesSearchInput.addEventListener('keyup', (e) => filtrarTramites(e.target.value));
@@ -136,8 +139,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (placaSearchInput) {
             placaSearchInput.addEventListener('keyup', (e) => filtrarPlacas(e.target.value));
         }
-    });
-});
 // --- FUNCIONES DE BÚSQUEDA ---
 function filtrarTramites(searchTerm) {
     const term = searchTerm.toLowerCase();
