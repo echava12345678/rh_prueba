@@ -142,13 +142,36 @@ if (placaSearchInput) {
 }
 // --- FUNCIONES DE BÚSQUEDA ---
 function filtrarTramites(searchTerm) {
-    const term = searchTerm.toLowerCase();
+    const term = searchTerm.toLowerCase().trim();
+    // Si el término de búsqueda está vacío, restaura la vista completa
+    if (term === '') {
+        actualizarTramites();
+        return;
+    }
     const resultados = tramites.filter(t => 
         (t.cliente && t.cliente.toLowerCase().includes(term)) ||
         (t.placa && t.placa.toLowerCase().includes(term)) ||
         (t.nit && t.nit.toLowerCase().includes(term)) ||
         (t.tipo && t.tipo.toLowerCase().includes(term))
     );
+    // Limpia todas las secciones antes de mostrar los resultados
+    document.getElementById('tramitesPorCobrar').innerHTML = '';
+    document.getElementById('tramitesProceso').innerHTML = '';
+    document.getElementById('tramitesTerminados').innerHTML = '';
+    document.getElementById('tramitesRechazados').innerHTML = '';
+
+    // Ahora, clasifica y renderiza los resultados en su contenedor correcto
+    const porCobrar = resultados.filter(t => t.estado === 'terminado' && t.pago === 'pendiente');
+    const proceso = resultados.filter(t => t.estado === 'proceso');
+    const terminados = resultados.filter(t => t.estado === 'terminado' && t.pago === 'pagado');
+    const rechazados = resultados.filter(t => t.estado === 'rechazado');
+
+    // Renderiza cada grupo
+    document.getElementById('tramitesPorCobrar').innerHTML = porCobrar.map(t => generarTramiteHTML(t)).join('');
+    document.getElementById('tramitesProceso').innerHTML = proceso.map(t => generarTramiteHTML(t)).join('');
+    document.getElementById('tramitesTerminados').innerHTML = terminados.map(t => generarTramiteHTML(t)).join('');
+    document.getElementById('tramitesRechazados').innerHTML = rechazados.map(t => generarTramiteHTML(t)).join('');
+
     // NUEVO: Mostrar el término de búsqueda
     const displayElement = document.getElementById('tramitesQueryDisplay');
     if (searchTerm.trim() !== '') {
@@ -157,8 +180,7 @@ function filtrarTramites(searchTerm) {
     } else {
         displayElement.style.display = 'none';
     }
-    // Asume que las funciones de renderizado ya existen o las creas a continuación
-    renderTramites(resultados);
+    
 }
 
 function filtrarRegistros(searchTerm) {
