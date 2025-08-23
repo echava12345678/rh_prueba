@@ -775,3 +775,7 @@ tr:hover {
 .placa-card:hover {
     transform: translateY(-5px); /* Efecto sutil al pasar el mouse */
 }
+.btn-tramite {
+    font-size: 1rem;
+    padding: 10px 20px;
+}
