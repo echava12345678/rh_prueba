@@ -1316,7 +1316,7 @@ async function registrarPlaca(e, db) {
 function actualizarTablaPlacas(placasAMostrar = placas) {
     const container = document.getElementById('tablaPlacas');
     if (!container) return;
-    if (!placas || placas.length === 0) {
+    if (!placasAMostrar || placasAMostrar.length === 0) {
         container.innerHTML = '<p>No hay placas registradas.</p>';
         return;
     }
@@ -1329,9 +1329,12 @@ function actualizarTablaPlacas(placasAMostrar = placas) {
 
         if (matchA && matchB) {
             // Compara letras1 (alfabético)
-            if (matchA[1] !== matchB[1]) return matchA[1].localeCompare(matchB[1]);
+            const letrasCompare = matchA[1].localeCompare(matchB[1]);
+            if (letrasCompare !== 0) return letrasCompare;
             // Compara número (numérico)
-            if (parseInt(matchA[2]) !== parseInt(matchB[2])) return parseInt(matchA[2]) - parseInt(matchB[2]);
+            const numeroCompare = parseInt(matchA[2], 10) - parseInt(matchB[2], 10);
+            if (numeroCompare !== 0) return numeroCompare;
+
             // Compara letras2 (alfabético)
             return matchA[3].localeCompare(matchB[3]);
         }
