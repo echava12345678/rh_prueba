@@ -179,6 +179,132 @@ function filtrarPlacas(searchTerm) {
     );
     renderPlacas(resultados);
 }
+function renderTramites(tramitesToRender) {
+    const tramitesContainer = document.getElementById('tramitesPorCobrar'); // O el contenedor que desees para el resultado de la búsqueda
+    if (tramitesContainer) {
+        tramitesContainer.innerHTML = tramitesToRender.map(t => generarTramiteHTML(t)).join('');
+    }
+}
+
+function renderRegistrosContables(registrosToRender) {
+    const container = document.getElementById('registrosContables');
+    if (!container) return;
+
+    const tabla = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Concepto</th>
+                    <th>Banco/Efectivo</th>
+                    <th>Tipo</th>
+                    <th>Monto</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${registrosToRender.map(reg => `
+                    <tr>
+                        <td>${formatDate(reg.fecha)}</td>
+                        <td>${reg.cliente}</td>
+                        <td>${reg.concepto}</td>
+                        <td>${capitalizeFirst(reg.banco.replace('_', ' '))}</td>
+                        <td><span class="badge ${reg.tipo}">${capitalizeFirst(reg.tipo)}</span></td>
+                        <td>${reg.monto.toLocaleString()}</td>
+                        <td>
+                            <button class="btn-edit" onclick="editarMovimiento('${reg.id}')">Editar</button>
+                            <button class="btn-delete" onclick="eliminarMovimiento('${reg.id}')">Eliminar</button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+    container.innerHTML = tabla;
+}
+
+function renderClientesCRM(clientesToRender) {
+    const container = document.getElementById('tablaCRM');
+    if (!container) return;
+
+    const tabla = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Placa</th>
+                    <th>Propietario</th>
+                    <th>Cédula</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Vence SOAT</th>
+                    <th>Vence RTM</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${clientesToRender.map(cliente => `
+                    <tr>
+                        <td>${cliente.cliente}</td>
+                        <td>${cliente.placa}</td>
+                        <td>${cliente.propietario}</td>
+                        <td>${cliente.cedula}</td>
+                        <td>${cliente.telefono}</td>
+                        <td>${cliente.correo}</td>
+                        <td>${cliente.venceSOAT}</td>
+                        <td>${cliente.venceRTM}</td>
+                        <td>
+                            <button class="btn-edit" onclick="editarClienteCRM('${cliente.id}')">Editar</button>
+                            <button class="btn-delete" onclick="eliminarClienteCRM('${cliente.id}')">Eliminar</button>
+                            <button class="btn-whatsapp" onclick="notificarWhatsApp('${cliente.telefono}')"><i class="fab fa-whatsapp"></i></button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+    container.innerHTML = tabla;
+}
+
+function renderPlacas(placasToRender) {
+    const container = document.getElementById('tablaPlacas');
+    if (!container) return;
+
+    const tabla = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Placa</th>
+                    <th>Cliente</th>
+                    <th>Trámite</th>
+                    <th>Estado</th>
+                    <th>Fecha Recepción</th>
+                    <th>Observaciones</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${placasToRender.map(p => `
+                    <tr>
+                        <td>${p.placa}</td>
+                        <td>${p.cliente}</td>
+                        <td>${p.tramite}</td>
+                        <td>${p.estado}</td>
+                        <td>${p.fechaRecepcion}</td>
+                        <td>${p.observaciones}</td>
+                        <td>
+                            <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
+                            <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+    container.innerHTML = tabla;
+}
+
 
 // FUNCIÓN DE AUTENTICACIÓN
 async function handleLogin(e, auth) {
