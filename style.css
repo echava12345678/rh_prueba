@@ -810,9 +810,9 @@ tr:hover {
     /* Evita que la imagen se repita */
     background-repeat: no-repeat;
     /* Ajusta el tamaño de la imagen para que quepa dentro del botón */
-    background-size: 40px 40px;
+    background-size: 60px 60px;
     /* Posiciona el logo a la izquierda, con un pequeño margen */
     background-position: 10px center;
     /* Añade espacio al lado izquierdo del texto del botón para evitar que el logo lo cubra */
-    padding-left: 60px; 
+    padding-left: 80px; 
 }
