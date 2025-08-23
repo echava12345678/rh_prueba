@@ -120,25 +120,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
  // --- Nuevos event listeners para los buscadores ---
-        const tramitesSearchInput = document.getElementById('tramiteSearchInput');
-        if (tramitesSearchInput) {
-            tramitesSearchInput.addEventListener('keyup', (e) => filtrarTramites(e.target.value));
-        }
+      const tramitesSearchInput = document.getElementById('tramiteSearchInput');
+if (tramitesSearchInput) {
+    tramitesSearchInput.addEventListener('keyup', (e) => filtrarTramites(e.target.value));
+}
 
-        const contaSearchInput = document.getElementById('contaSearchInput');
-        if (contaSearchInput) {
-            contaSearchInput.addEventListener('keyup', (e) => filtrarRegistros(e.target.value));
-        }
+const contaSearchInput = document.getElementById('contaSearchInput');
+if (contaSearchInput) {
+    contaSearchInput.addEventListener('keyup', (e) => filtrarRegistros(e.target.value));
+}
         
-        const crmSearchInput = document.getElementById('crmSearchInput');
-        if (crmSearchInput) {
-            crmSearchInput.addEventListener('keyup', (e) => filtrarClientes(e.target.value));
-        }
+const crmSearchInput = document.getElementById('crmSearchInput');
+if (crmSearchInput) {
+    crmSearchInput.addEventListener('keyup', (e) => filtrarClientes(e.target.value));
+}
         
-        const placaSearchInput = document.getElementById('placaSearchInput');
-        if (placaSearchInput) {
-            placaSearchInput.addEventListener('keyup', (e) => filtrarPlacas(e.target.value));
-        }
+const placaSearchInput = document.getElementById('placaSearchInput');
+if (placaSearchInput) {
+    placaSearchInput.addEventListener('keyup', (e) => filtrarPlacas(e.target.value));
+}
 // --- FUNCIONES DE BÚSQUEDA ---
 function filtrarTramites(searchTerm) {
     const term = searchTerm.toLowerCase();
