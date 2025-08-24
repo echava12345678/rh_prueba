@@ -51,14 +51,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const tramiteClienteInput = document.getElementById('tramiteCliente');
         const tramiteNitInput = document.getElementById('tramiteNIT');
 
-        if (tramiteClienteInput) {
-    tramiteClienteInput.addEventListener('blur', () => {
-        const clienteEncontrado = clientesCRM.find(c => c.cliente === tramiteClienteInput.value);
-        if (clienteEncontrado) {
-            tramiteNitInput.value = clienteEncontrado.cedula;
+        if (tramiteClienteInput && tramiteCedulaInput) {
+            // El evento 'blur' se dispara cuando el usuario sale del campo
+            tramiteClienteInput.addEventListener('blur', () => {
+                const nombreCliente = tramiteClienteInput.value.trim().toLowerCase();
+                // Busca el cliente en el array de clientesCRM
+                const clienteEncontrado = clientesCRM.find(c => c.cliente.trim().toLowerCase() === nombreCliente);
+                
+                if (clienteEncontrado) {
+                    // Si se encuentra, rellena el campo de cédula/NIT
+                    tramiteCedulaInput.value = clienteEncontrado.cedula;
+                } else {
+                    // Si no se encuentra, limpia el campo para evitar datos incorrectos
+                    tramiteCedulaInput.value = '';
+                }
+            });
         }
-    });
-}
 
         if (user) {
             // El usuario ha iniciado sesión
