@@ -816,3 +816,19 @@ tr:hover {
     /* Añade espacio al lado izquierdo del texto del botón para evitar que el logo lo cubra */
     padding-left: 80px; 
 }
+
+/* Estilos para el botón con la imagen de fondo */
+.btn.logo {
+  border: none;
+  background-color: #FFA500; /* Color naranja sólido */
+  /* Si el botón tiene una imagen dentro, asegúrate de que el padding sea suficiente */
+  padding: 10px; 
+  border-radius: 8px; /* Opcional: para esquinas redondeadas */
+  cursor: pointer;
+}
+
+/* Estilo para la imagen dentro del botón */
+.btn.logo img {
+  width: 260px; 
+  height: 260px;
+}
