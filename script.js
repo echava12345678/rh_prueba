@@ -471,7 +471,7 @@ async function agregarTramite(e, db) {
     const tramite = {
         fecha: document.getElementById('tramiteFecha').value,
         cliente: document.getElementById('tramiteCliente').value,
-        nit: document.getElementById('tramiteNIT').value,
+        nit: document.getElementById('tramiteNit').value,
         placa: document.getElementById('tramitePlaca').value.toUpperCase(),
         tipo: document.getElementById('tramiteTipo').value,
         transito: document.getElementById('tramiteTransito').value,
