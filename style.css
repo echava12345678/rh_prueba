@@ -835,11 +835,11 @@ tr:hover {
 
 .btn.logo {
 border: none;
-background-color: #FF0000; /* Rojo inicial /
+background-color: linear-gradient(to right, #FF0000, #CC0000);
 padding: 10px;
 border-radius: 8px;
 cursor: pointer;
-transition: transform 0.2s ease-in-out; / Transición suave de la escala */
+transition: transform 0.4s ease-in-out; / Transición suave de la escala */
 }
 
 .btn.logo img {
