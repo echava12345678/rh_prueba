@@ -31,6 +31,33 @@ const auth = getAuth(app);
 
 // Espera a que la página se cargue
 document.addEventListener('DOMContentLoaded', function() {
+    const tramiteCliente = document.getElementById('tramiteCliente');
+    const tramiteCedula = document.getElementById('tramiteCedula');
+    if (tramiteCliente && tramiteCedula) {
+        tramiteCliente.addEventListener('input', () => {
+            const nombreCliente = tramiteCliente.value.toLowerCase();
+            const clienteEncontrado = clientesCRM.find(c => c.propietario.toLowerCase() === nombreCliente);
+            if (clienteEncontrado) {
+                tramiteCedula.value = clienteEncontrado.cedula;
+            } else {
+                tramiteCedula.value = ''; // Limpiar si no hay coincidencia
+            }
+        });
+    }
+
+    const contaCliente = document.getElementById('contaCliente');
+    const contaCedula = document.getElementById('contaCedula');
+    if (contaCliente && contaCedula) {
+        contaCliente.addEventListener('input', () => {
+            const nombreCliente = contaCliente.value.toLowerCase();
+            const clienteEncontrado = clientesCRM.find(c => c.propietario.toLowerCase() === nombreCliente);
+            if (clienteEncontrado) {
+                contaCedula.value = clienteEncontrado.cedula;
+            } else {
+                contaCedula.value = ''; // Limpiar si no hay coincidencia
+            }
+        });
+    }
     
     // Configura los formularios y botones
     const loginForm = document.getElementById('loginForm');
