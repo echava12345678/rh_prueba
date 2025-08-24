@@ -106,6 +106,13 @@ document.addEventListener('DOMContentLoaded', function() {
             onSnapshot(collection(db, 'clientesCRM'), (snapshot) => {
                 clientesCRM = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 actualizarTablaCRM();
+                // Agrega oyentes de eventos a los campos de cliente y cédula
+            document.getElementById('tramiteCliente').addEventListener('input', (e) => showAutocompleteSuggestions('tramiteCliente', e.target.value));
+            document.getElementById('tramiteNIT').addEventListener('input', (e) => showAutocompleteSuggestions('tramiteNIT', e.target.value));
+            document.getElementById('contaCliente').addEventListener('input', (e) => showAutocompleteSuggestions('contaCliente', e.target.value));
+            document.getElementById('contaCedula').addEventListener('input', (e) => showAutocompleteSuggestions('contaCedula', e.target.value));
+            document.getElementById('crmCliente').addEventListener('input', (e) => showAutocompleteSuggestions('crmCliente', e.target.value));
+            document.getElementById('crmCedula').addEventListener('input', (e) => showAutocompleteSuggestions('crmCedula', e.target.value));
             });
 
             onSnapshot(collection(db, 'placas'), (snapshot) => {
@@ -158,6 +165,72 @@ document.addEventListener('DOMContentLoaded', function() {
         
     });
 });
+
+// FUNCIÓN PARA MOSTRAR SUGERENCIAS DE AUTOCOMPLETADO
+function showAutocompleteSuggestions(fieldId, value) {
+    const inputElement = document.getElementById(fieldId);
+    const containerId = fieldId.replace('Cliente', 'Suggestions').replace('Cedula', 'Suggestions').replace('NIT', 'Suggestions');
+    let suggestionsContainer = document.getElementById(containerId);
+
+    if (!suggestionsContainer) {
+        suggestionsContainer = document.createElement('div');
+        suggestionsContainer.id = containerId;
+        suggestionsContainer.className = 'autocomplete-suggestions';
+        inputElement.parentNode.appendChild(suggestionsContainer);
+    }
+
+    suggestionsContainer.innerHTML = '';
+
+    if (value.length < 3) {
+        suggestionsContainer.style.display = 'none';
+        return;
+    }
+
+    const filteredClients = clientesCRM.filter(client =>
+        (client.cliente && client.cliente.toLowerCase().includes(value.toLowerCase())) ||
+        (client.cedula && client.cedula.includes(value)) ||
+        (client.propietario && client.propietario.toLowerCase().includes(value.toLowerCase()))
+    );
+
+    if (filteredClients.length > 0) {
+        suggestionsContainer.style.display = 'block';
+        filteredClients.forEach(client => {
+            const suggestionItem = document.createElement('div');
+            suggestionItem.className = 'suggestion-item';
+            suggestionItem.textContent = `${client.cliente} - Cédula: ${client.cedula}`;
+            suggestionItem.addEventListener('click', () => {
+                selectSuggestion(fieldId, client);
+            });
+            suggestionsContainer.appendChild(suggestionItem);
+        });
+    } else {
+        suggestionsContainer.style.display = 'none';
+    }
+}
+
+// FUNCIÓN PARA SELECCIONAR UNA SUGERENCIA Y LLENAR LOS CAMPOS
+function selectSuggestion(fieldId, client) {
+    let clientInput, cedulaInput;
+
+    if (fieldId.includes('tramite')) {
+        clientInput = document.getElementById('tramiteCliente');
+        cedulaInput = document.getElementById('tramiteNIT');
+    } else if (fieldId.includes('conta')) {
+        clientInput = document.getElementById('contaCliente');
+        cedulaInput = document.getElementById('contaCedula');
+    } else if (fieldId.includes('crm')) {
+        clientInput = document.getElementById('crmCliente');
+        cedulaInput = document.getElementById('crmCedula');
+    }
+
+    if (clientInput) clientInput.value = client.cliente;
+    if (cedulaInput) cedulaInput.value = client.cedula;
+
+    // Ocultar las sugerencias
+    const suggestionsContainers = document.querySelectorAll('.autocomplete-suggestions');
+    suggestionsContainers.forEach(container => container.style.display = 'none');
+}
+
  // --- Nuevos event listeners para los buscadores ---
       const tramitesSearchInput = document.getElementById('tramiteSearchInput');
 if (tramitesSearchInput) {
