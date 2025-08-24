@@ -1136,7 +1136,7 @@ async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, ve
         
         const vencimientoSOAT = formatDate(venceSOAT);
         const vencimientoRTM = formatDate(venceRTM);
-        const mensaje = `¡Hola ${propietario}! Te recordamos que el SOAT de tu vehículo con placa ${placa} vence el ${vencimientoSOAT} y la RTM vence el ${vencimientoRTM}. ¡Contáctanos para renovarlos!`;
+        const mensaje = `¡Hola ${propietario}! Te recordamos que el SOAT de tu vehículo con placa ${placa} vence el ${vencimientoSOAT} y la RTM vence el ${vencimientoRTM}. En RH ASESORIAS te ofrecemos la renovación para evitar inconvenientes. ¡Contáctanos para renovarlos!`;
         const mensajeCodificado = encodeURIComponent(mensaje);
         const url = `https://api.whatsapp.com/send?phone=${telefono}&text=${mensajeCodificado}`;
         window.open(url, '_blank');
