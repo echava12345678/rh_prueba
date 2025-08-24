@@ -30,35 +30,27 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 // Espera a que la página se cargue
-document.addEventListener('DOMContentLoaded', function() {
+   const sections = document.querySelectorAll('.section');
+    const tramiteForm = document.getElementById('tramiteForm');
+    const tramiteFecha = document.getElementById('tramiteFecha');
     const tramiteCliente = document.getElementById('tramiteCliente');
-    const tramiteCedula = document.getElementById('tramiteCedula');
-   if (tramiteCliente && tramiteCedula) {
-    tramiteCliente.addEventListener('input', () => {
-        const nombreCliente = tramiteCliente.value.toLowerCase();
-        const clienteEncontrado = clientesCRM.find(c => c.propietario.toLowerCase() === nombreCliente);
-        if (clienteEncontrado) {
-            tramiteCedula.value = clienteEncontrado.cedula;
-        } else {
-            tramiteCedula.value = '';
-        }
-    });
-}
-
-    const contaCliente = document.getElementById('contaCliente');
-    const contaCedula = document.getElementById('contaCedula');
-    if (contaCliente && contaCedula) {
-        contaCliente.addEventListener('input', () => {
-            const nombreCliente = contaCliente.value.toLowerCase();
+    const tramiteCedula = document.getElementById('tramiteCedula'); // Este es el ID correcto
+    const tramitePlaca = document.getElementById('tramitePlaca');
+    const tramiteEstado = document.getElementById('tramiteEstado');
+    const tramiteSearchInput = document.getElementById('tramiteSearchInput');
+    const tramiteSearchButton = document.getElementById('tramiteSearchButton');
+if (tramiteCliente && tramiteCedula) {
+        tramiteCliente.addEventListener('input', () => {
+            const nombreCliente = tramiteCliente.value.toLowerCase();
             const clienteEncontrado = clientesCRM.find(c => c.propietario.toLowerCase() === nombreCliente);
             if (clienteEncontrado) {
-                contaCedula.value = clienteEncontrado.cedula;
+                tramiteCedula.value = clienteEncontrado.cedula;
             } else {
-                contaCedula.value = ''; // Limpiar si no hay coincidencia
+                tramiteCedula.value = '';
             }
         });
     }
-    
+
     // Configura los formularios y botones
     const loginForm = document.getElementById('loginForm');
     if (loginForm) loginForm.addEventListener('submit', (e) => handleLogin(e, auth));
