@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (clienteEncontrado) {
                     // Si se encuentra una coincidencia, rellena el campo de cédula/NIT
-                    tramiteNitInput.value = clienteEncontrado.cedula;
+                    tramiteNitInput.value = clienteEncontrado.nit;
                 } else {
                     // Si no se encuentra, limpia el campo para evitar datos incorrectos
                     tramiteNitInput.value = '';
