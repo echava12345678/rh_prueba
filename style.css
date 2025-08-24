@@ -832,3 +832,21 @@ tr:hover {
   width: 260px; 
   height: 260px;
 }
+
+.btn.logo {
+border: none;
+background-color: #FF0000; /* Rojo inicial /
+padding: 10px;
+border-radius: 8px;
+cursor: pointer;
+transition: transform 0.2s ease-in-out; / Transición suave de la escala */
+}
+
+.btn.logo img {
+width: 260px;
+height: 260px;
+}
+
+.btn.logo:hover {
+transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
+}
