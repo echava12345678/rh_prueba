@@ -33,17 +33,17 @@ const auth = getAuth(app);
 document.addEventListener('DOMContentLoaded', function() {
     const tramiteCliente = document.getElementById('tramiteCliente');
     const tramiteCedula = document.getElementById('tramiteCedula');
-    if (tramiteCliente && tramiteCedula) {
-        tramiteCliente.addEventListener('input', () => {
-            const nombreCliente = tramiteCliente.value.toLowerCase();
-            const clienteEncontrado = clientesCRM.find(c => c.propietario.toLowerCase() === nombreCliente);
-            if (clienteEncontrado) {
-                tramiteCedula.value = clienteEncontrado.cedula;
-            } else {
-                tramiteCedula.value = ''; // Limpiar si no hay coincidencia
-            }
-        });
-    }
+   if (tramiteCliente && tramiteCedula) {
+    tramiteCliente.addEventListener('input', () => {
+        const nombreCliente = tramiteCliente.value.toLowerCase();
+        const clienteEncontrado = clientesCRM.find(c => c.propietario.toLowerCase() === nombreCliente);
+        if (clienteEncontrado) {
+            tramiteCedula.value = clienteEncontrado.cedula;
+        } else {
+            tramiteCedula.value = '';
+        }
+    });
+}
 
     const contaCliente = document.getElementById('contaCliente');
     const contaCedula = document.getElementById('contaCedula');
