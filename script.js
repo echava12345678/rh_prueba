@@ -90,6 +90,25 @@ document.addEventListener('DOMContentLoaded', function() {
             onSnapshot(collection(db, 'clientesCRM'), (snapshot) => {
                 clientesCRM = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 actualizarTablaCRM();
+            const tramiteClienteInput = document.getElementById('tramiteCliente');
+                const tramiteNitInput = document.getElementById('tramiteNit'); 
+                
+                if (tramiteClienteInput && tramiteNitInput) {
+                    tramiteClienteInput.addEventListener('blur', () => {
+                        const nombreCliente = tramiteClienteInput.value.trim().toLowerCase();
+                        
+                        const clienteEncontrado = clientesCRM.find(c => 
+                            c.cliente.trim().toLowerCase().includes(nombreCliente)
+                        );
+                        
+                        if (clienteEncontrado) {
+                            // Rellenar el campo con la cédula del cliente encontrado
+                            tramiteNitInput.value = clienteEncontrado.cedula;
+                        } else {
+                            tramiteNitInput.value = '';
+                        }
+                    });
+                }
             });
 
             onSnapshot(collection(db, 'placas'), (snapshot) => {
