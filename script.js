@@ -812,7 +812,8 @@ async function agregarMovimiento(e, db) {
         concepto: document.getElementById('contaConcepto').value,
         banco: document.getElementById('contaBanco').value,
         tipo: document.getElementById('contaTipo').value,
-        monto: monto
+        monto: monto,
+        placa: document.getElementById('contaPlaca').value.toUpperCase(),
     };
     
     try {
