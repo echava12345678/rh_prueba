@@ -1687,10 +1687,10 @@ async function descargarReciboTramite(tramiteId) {
        const transito = tramite.transito || 'N/A';
 
       const reciboHTML = `
-    <div class="recibo-compacto-container">
-        <img src="LOGO 2025 .png" alt="Logo de la Empresa" class="recibo-compacto-logo">
-        <h2 class="recibo-compacto-titulo">RECIBO DE TRÁMITE</h2>
-        <div class="recibo-compacto-info">
+    <div class="recibo-ticket-container">
+        <img src="LOGO 2025 .png" alt="Logo de la Empresa" class="recibo-ticket-logo">
+        <h2 class="recibo-ticket-titulo">RECIBO DE TRÁMITE</h2>
+        <div class="recibo-ticket-info">
             <p><strong>Fecha:</strong> ${formatDate(tramite.fecha)}</p>
             <p><strong>Cliente:</strong> ${tramite.cliente}</p>
             <p><strong>NIT:</strong> ${nit}</p>
@@ -1699,12 +1699,12 @@ async function descargarReciboTramite(tramiteId) {
             <p><strong>Tránsito:</strong> ${transito}</p>
         </div>
         <hr>
-        <div class="recibo-compacto-detalle">
+        <div class="recibo-ticket-detalle">
             <p><strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}</p>
             <p><strong>Estado de Pago:</strong> ${capitalizeFirst(tramite.pago)}</p>
             <p><strong>Valor:</strong> ${valorFormateado}</p>
         </div>
-        <p class="recibo-compacto-gracias">¡Gracias por su confianza!</p>
+        <p class="recibo-ticket-gracias">¡Gracias por su confianza!</p>
     </div>
 `;
 const reciboDiv = document.createElement('div');
