@@ -1686,49 +1686,56 @@ async function descargarReciboTramite(tramiteId) {
        const tipoTramite = tramite.tipo || 'N/A';
        const transito = tramite.transito || 'N/A';
 
-      const reciboHTML = `
+     const reciboHTML = `
             <style>
-                .recibo-ticket-ultra {
-                    font-family: 'Arial', sans-serif;
-                    width: 150px;
+                .recibo-ticket-final {
+                    font-family: Arial, sans-serif;
+                    width: 150px; /* Ancho del recibo, muy ajustado */
                     padding: 5px;
                     margin: 0;
                     border: 1px dashed #000;
                     color: #000;
-                    font-size: 8px;
-                    line-height: 1.1;
+                    font-size: 8px; /* Tamaño de fuente mínimo */
+                    line-height: 1.1; /* Espacio entre líneas */
                     box-sizing: border-box;
                 }
-                .recibo-ticket-ultra h2 {
+                .recibo-ticket-final h2 {
                     text-align: center;
                     font-size: 10px;
                     margin: 5px 0;
                     border-bottom: 1px solid #000;
                     padding-bottom: 3px;
                 }
-                .recibo-ticket-ultra p {
+                .recibo-ticket-final img {
+                    display: block;
+                    max-width: 50px; /* Tamaño del logo */
+                    height: auto;
+                    margin: 0 auto 5px auto;
+                }
+                .recibo-ticket-final p {
                     margin: 2px 0;
                 }
-                .recibo-ticket-ultra strong {
+                .recibo-ticket-final strong {
                     font-weight: bold;
                 }
-                .recibo-ticket-ultra hr {
+                .recibo-ticket-final hr {
                     border: none;
                     border-top: 1px dashed #ccc;
                     margin: 5px 0;
                 }
-                .recibo-ticket-ultra .detalle {
+                .recibo-ticket-final .detalle {
                     text-align: right;
                     margin-top: 5px;
                 }
-                .recibo-ticket-ultra .gracias {
+                .recibo-ticket-final .gracias {
                     text-align: center;
                     margin-top: 10px;
                     font-size: 7px;
                     font-style: italic;
                 }
             </style>
-            <div class="recibo-ticket-ultra">
+            <div class="recibo-ticket-final">
+                <img src="LOGO 2025 .png" alt="Logo de la Empresa">
                 <h2>RECIBO DE TRÁMITE</h2>
                 <div class="recibo-info">
                     <p><strong>Fecha:</strong> ${formatDate(tramite.fecha)}</p>
@@ -1747,6 +1754,7 @@ async function descargarReciboTramite(tramiteId) {
                 <p class="gracias">¡Gracias por su confianza!</p>
             </div>
         `;
+
         const reciboDiv = document.createElement('div');
         reciboDiv.innerHTML = reciboHTML;
         reciboDiv.style.position = 'absolute';
@@ -1773,7 +1781,6 @@ async function descargarReciboTramite(tramiteId) {
         mostrarNotificacion('Error al generar el recibo', 'error');
     }
 }
-
 
 async function descargarTodosRecibos() {
     // Filtra solo los trámites que están terminados y pagados
