@@ -1753,7 +1753,7 @@ async function descargarReciboTramite(tramiteId) {
         reciboDiv.style.left = '-9999px';
         document.body.appendChild(reciboDiv);
 
-        const canvas = await html2canvas(reciboDiv, { scale: 3 });
+        const canvas = await html2canvas(reciboDiv, { scale: 5 });
         const imgData = canvas.toDataURL('image/png');
 
         const { jsPDF } = window.jspdf;
