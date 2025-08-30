@@ -245,6 +245,8 @@ function filtrarRegistros(searchTerm) {
         (r.cliente && r.cliente.toLowerCase().includes(term)) ||
         (r.concepto && r.concepto.toLowerCase().includes(term)) ||
         (r.banco && r.banco.toLowerCase().includes(term))
+         (r.placa && r.placa.toLowerCase().includes(term))                                        
+                                                 
     );
     // NUEVO: Mostrar el término de búsqueda
     const displayElement = document.getElementById('contaQueryDisplay');
