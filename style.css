@@ -857,3 +857,72 @@ transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
     max-width: 40px; /* Adjust the size as needed */
     height: auto;
 }
+/* Nuevo Contenedor Principal del Recibo */
+.recibo-container-nuevo {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    width: 300px;
+    padding: 30px 20px;
+    border: 2px solid #34495e; /* Borde oscuro para un look moderno */
+    background-color: #fff;
+    margin: 20px auto;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* Estilo para el Logo */
+.recibo-logo-nuevo {
+    display: block;
+    max-width: 100px;
+    height: auto;
+    margin: 0 auto 20px auto;
+    border-radius: 5px; /* Bordes suaves */
+}
+
+/* Título del recibo */
+.recibo-titulo-nuevo {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 22px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #bdc3c7; /* Línea delgada */
+}
+
+/* Información general */
+.recibo-info-nuevo p {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.recibo-info-nuevo strong {
+    color: #555;
+    font-weight: 600;
+}
+
+/* Separador */
+.recibo-container-nuevo hr {
+    border: none;
+    border-top: 2px solid #3498db; /* Línea de color para destacar */
+    margin: 25px 0;
+}
+
+/* Detalles importantes como el valor */
+.recibo-detalle-nuevo {
+    margin-top: 20px;
+}
+
+.recibo-detalle-nuevo p {
+    font-size: 16px;
+    font-weight: bold;
+    color: #e74c3c;
+    text-align: right;
+}
+
+/* Mensaje de agradecimiento */
+.recibo-gracias-nuevo {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 13px;
+    color: #7f8c8d;
+    font-style: italic;
+}
