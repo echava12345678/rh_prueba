@@ -860,7 +860,7 @@ transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
 /* Contenedor principal del recibo tipo ticket */
 .recibo-ticket-container {
     font-family: 'Courier New', monospace; /* Fuente de ancho fijo, como en una impresora de tickets */
-    width: 150px; /* Ancho muy reducido para garantizar que quepa */
+    width: 800px; /* Ancho muy reducido para garantizar que quepa */
     padding: 5px;
     margin: 5px auto;
     border: 1px dashed #000;
@@ -872,7 +872,7 @@ transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
 /* Estilo para el logo */
 .recibo-ticket-logo {
     display: block;
-    max-width: 60px; /* Tamaño del logo muy pequeño */
+    max-width: 40px; /* Tamaño del logo muy pequeño */
     height: auto;
     margin: 0 auto 5px auto;
 }
@@ -880,7 +880,7 @@ transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
 /* Título del recibo */
 .recibo-ticket-titulo {
     text-align: center;
-    font-size: 12px;
+    font-size: 10px;
     margin-bottom: 5px;
     border-bottom: 1px solid #000;
     padding-bottom: 3px;
@@ -899,7 +899,7 @@ transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
 .recibo-ticket-container hr {
     border: none;
     border-top: 1px dashed #555;
-    margin: 5px 0;
+    margin: 3px 0;
 }
 
 /* Detalles del valor */
@@ -908,7 +908,7 @@ transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
 }
 
 .recibo-ticket-detalle p {
-    font-size: 11px;
+    font-size: 8px;
     font-weight: bold;
     text-align: right;
 }
