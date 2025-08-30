@@ -1778,7 +1778,7 @@ async function descargarReciboEgreso(movimientoId) {
                <div class="recibo-info">
                    <p><strong>Fecha:</strong> ${fecha}</p>
                    <p><strong>Cliente:</strong> ${cliente}</p>
-                   <p><strong>Placa:</strong>${placa}</p>
+                   
                    <p><strong>Concepto:</strong> ${concepto}</p>
                    <p><strong>Cuenta:</strong> ${banco}</p>
                    <hr>
