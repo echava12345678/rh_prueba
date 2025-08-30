@@ -246,20 +246,16 @@ function filtrarRegistros(searchTerm) {
         (r.concepto && String(r.concepto).toLowerCase().includes(term)) ||
         (r.banco && String(r.banco).toLowerCase().includes(term)) ||
         (r.placa && String(r.placa).toLowerCase().includes(term))                                        
+                                                 
     );
-    //
-    // INICIO: LÍNEAS DE CÓDIGO ELIMINADAS PARA SOLUCIONAR EL ERROR
-    //
-    // const displayElement = document.getElementById('contaQueryDisplay');
-    // if (searchTerm.trim() !== '') {
-    //    displayElement.textContent = `Resultados para: "${searchTerm}"`;
-    //    displayElement.style.display = 'block';
-    // } else {
-    //    displayElement.style.display = 'none';
-    // }
-    //
-    // FIN: LÍNEAS DE CÓDIGO ELIMINADAS
-    //
+    // NUEVO: Mostrar el término de búsqueda
+    const displayElement = document.getElementById('contaQueryDisplay');
+    if (searchTerm.trim() !== '') {
+        displayElement.textContent = `Resultados para: "${searchTerm}"`;
+        displayElement.style.display = 'block';
+    } else {
+        displayElement.style.display = 'none';
+    }
     renderRegistrosContables(resultados);
 }
 // NUEVO: Función para buscar placas en la sección de contabilidad
@@ -332,7 +328,8 @@ function renderRegistrosContables(registrosToRender) {
                 <tr>
                     <th>Fecha</th>
                     <th>Cliente</th>
-                    <th>Concepto</th> <th>Banco/Efectivo</th>
+                    <th>Concepto</th>
+                    <th>Banco/Efectivo</th>
                     <th>Placa</th>
                     <th>Tipo</th>
                     <th>Monto</th>
@@ -344,7 +341,9 @@ function renderRegistrosContables(registrosToRender) {
                     <tr>
                         <td>${formatDate(reg.fecha)}</td>
                         <td>${reg.cliente}</td>
-                        <td>${reg.concepto}</td>  <td>${capitalizeFirst(reg.banco.replace('_', ' '))}</td>
+                        <td>${reg.concepto}</td>
+                        <td>${capitalizeFirst(reg.banco.replace('_', ' '))}</td>
+                        <td>${reg.placa || 'N/A'}</td>
                         <td><span class="badge ${reg.tipo}">${capitalizeFirst(reg.tipo)}</span></td>
                         <td>${reg.monto.toLocaleString()}</td>
                         <td>
@@ -885,14 +884,14 @@ function actualizarRegistrosContables() {
 function consultarUtilidades() {
     const fecha = document.getElementById('fechaConsulta').value;
     const persona = document.getElementById('personaConsulta').value;
-
+    
     if (!fecha) {
         mostrarNotificacion('Seleccione una fecha para consultar', 'error');
         return;
     }
-
+    
     let movimientos = registrosContables.filter(reg => reg.fecha === fecha);
-
+    
     if (persona) {
         movimientos = movimientos.filter(reg => 
             (persona === 'victor' && reg.banco === 'victor') ||
@@ -900,20 +899,19 @@ function consultarUtilidades() {
             (persona === 'efectivo' && reg.banco === 'efectivo')
         );
     }
-
+    
     const ingresos = movimientos.filter(m => m.tipo === 'ingreso').reduce((sum, m) => sum + m.monto, 0);
     const egresos = movimientos.filter(m => m.tipo === 'egreso').reduce((sum, m) => sum + m.monto, 0);
     const utilidad = ingresos - egresos;
     const porcentaje = ingresos > 0 ? ((utilidad / ingresos) * 100).toFixed(2) : 0;
-
+    
     const victorIngresos = movimientos.filter(m => m.tipo === 'ingreso' && m.banco === 'victor').reduce((sum, m) => sum + m.monto, 0);
     const victorEgresos = movimientos.filter(m => m.tipo === 'egreso' && m.banco === 'victor').reduce((sum, m) => sum + m.monto, 0);
     const mairaIngresos = movimientos.filter(m => m.tipo === 'ingreso' && m.banco === 'maira').reduce((sum, m) => sum + m.monto, 0);
     const mairaEgresos = movimientos.filter(m => m.tipo === 'egreso' && m.banco === 'maira').reduce((sum, m) => sum + m.monto, 0);
     const efectivoIngresos = movimientos.filter(m => m.tipo === 'ingreso' && m.banco === 'efectivo').reduce((sum, m) => sum + m.monto, 0);
     const efectivoEgresos = movimientos.filter(m => m.tipo === 'egreso' && m.banco === 'efectivo').reduce((sum, m) => sum + m.monto, 0);
-
-
+    
     const resultadosUtilidad = document.getElementById('resultadosUtilidad');
     if (!resultadosUtilidad) return;
 
@@ -939,6 +937,7 @@ function consultarUtilidades() {
                 </div>
             </div>
         </div>
+        
         <div class="utilidad-card">
             <h5>Desglose por Cuenta</h5>
             <div class="utilidad-detalle">
@@ -962,6 +961,7 @@ function consultarUtilidades() {
                 </div>
             </div>
         </div>
+        
         ${movimientos.length > 0 ? `
             <div style="margin-top: 20px;">
                 <h6>Detalle de Movimientos:</h6>
@@ -988,6 +988,7 @@ function consultarUtilidades() {
             </div>
         ` : '<p style="margin-top: 15px;">No hay movimientos para esta fecha.</p>'}
     `;
+    
     resultadosUtilidad.innerHTML = resultadosHTML;
 }
 
@@ -996,7 +997,7 @@ async function editarMovimiento(id) {
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return;
     const movimiento = docSnap.data();
-
+    
     const modalBody = `
         <form id="editMovimientoForm">
             <div class="form-row">
@@ -1017,14 +1018,6 @@ async function editarMovimiento(id) {
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Placa</label>
-                    <input type="text" id="editContaPlaca" value="${movimiento.placa || ''}" required>
-                </div>
-                <div class="form-group">
-                    <label>Concepto</label>
-                    <textarea id="editContaConcepto" required>${movimiento.concepto}</textarea>
-                </div>
-                <div class="form-group">
                     <label>Tipo</label>
                     <select id="editContaTipo" required>
                         <option value="ingreso" ${movimiento.tipo === 'ingreso' ? 'selected' : ''}>Ingreso</option>
@@ -1033,7 +1026,7 @@ async function editarMovimiento(id) {
                 </div>
                 <div class="form-group">
                     <label>Monto</label>
-                    <input type="text" id="editContaMonto" value="${movimiento.monto}" required>
+                    <input type="text" id="editContaMonto" value="${movimiento.monto.toLocaleString()}" required>
                 </div>
             </div>
             <div style="margin-top: 20px;">
@@ -1046,10 +1039,9 @@ async function editarMovimiento(id) {
     document.getElementById('modalTitle').textContent = 'Editar Movimiento';
     document.getElementById('modalBody').innerHTML = modalBody;
     document.getElementById('editModal').style.display = 'block';
-
+    
     document.getElementById('editMovimientoForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-
         const montoInput = document.getElementById('editContaMonto').value;
         const monto = parseFloat(montoInput.replace(/\./g, ''));
 
@@ -1057,12 +1049,10 @@ async function editarMovimiento(id) {
             fecha: document.getElementById('editContaFecha').value,
             cliente: document.getElementById('editContaCliente').value,
             concepto: document.getElementById('editContaConcepto').value,
-            placa: document.getElementById('editContaPlaca').value.toUpperCase(),
             banco: document.getElementById('editContaBanco').value,
             tipo: document.getElementById('editContaTipo').value,
-            monto: monto,
+            monto: monto
         };
-
         try {
             await updateDoc(docRef, updatedMovimiento);
             document.getElementById('editModal').style.display = 'none';
@@ -1074,9 +1064,8 @@ async function editarMovimiento(id) {
     });
 }
 
-
 async function eliminarMovimiento(id) {
-    if (window.confirm('¿Está seguro de eliminar este movimiento?')) {
+    if (window.confirm('¿Está seguro de eliminar este movimiento contable?')) {
         try {
             await deleteDoc(doc(db, 'registrosContables', id));
             mostrarNotificacion('Movimiento eliminado', 'success');
@@ -1099,12 +1088,12 @@ async function agregarClienteCRM(e, db) {
         correo: document.getElementById('crmCorreo').value,
         venceSOAT: document.getElementById('crmVenceSOAT').value,
         venceRTM: document.getElementById('crmVenceRTM').value,
+        cantidadAvisos: 0
     };
-
     try {
         await addDoc(collection(db, 'clientesCRM'), cliente);
         document.getElementById('crmForm').reset();
-        mostrarNotificacion('Cliente agregado correctamente', 'success');
+        mostrarNotificacion('Cliente agregado al CRM correctamente', 'success');
     } catch (error) {
         console.error("Error al agregar el cliente: ", error);
         mostrarNotificacion('Error al agregar el cliente', 'error');
@@ -1112,7 +1101,174 @@ async function agregarClienteCRM(e, db) {
 }
 
 function actualizarTablaCRM() {
-    renderClientesCRM(clientesCRM);
+    const container = document.getElementById('tablaCRM');
+    if (!container) return;
+    if (clientesCRM.length === 0) {
+        container.innerHTML = '<p>No hay clientes registrados en el CRM.</p>';
+        return;
+    }
+    
+    const tabla = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Placa</th>
+                    <th>Propietario</th>
+                    <th>Cédula</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Vence SOAT</th>
+                    <th>Vence RTM</th>
+                    <th>Avisos</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${clientesCRM.map(cliente => {
+                    const soatVencimiento = calcularDiasVencimiento(cliente.venceSOAT);
+                    const rtmVencimiento = calcularDiasVencimiento(cliente.venceRTM);
+                    return `
+                        <tr>
+                            <td>${cliente.cliente}</td>
+                            <td>${cliente.placa}</td>
+                            <td>${cliente.propietario}</td>
+                            <td>${cliente.cedula}</td>
+                            <td>${cliente.telefono}</td>
+                            <td>${cliente.correo}</td>
+                            <td>
+                                ${formatDate(cliente.venceSOAT)}
+                                ${soatVencimiento <= 30 && soatVencimiento >= 0 ? '<span class="alerta-vencimiento">¡Próximo a vencer!</span>' : ''}
+                            </td>
+                            <td>
+                                ${formatDate(cliente.venceRTM)}
+                                ${rtmVencimiento <= 30 && rtmVencimiento >= 0 ? '<span class="alerta-vencimiento">¡Próximo a vencer!</span>' : ''}
+                            </td>
+                            <td>
+                                <span class="cant-avisos cant-avisos-${Math.min(cliente.cantidadAvisos, 3)}">
+                                    ${cliente.cantidadAvisos || 0}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn-edit" onclick="editarClienteCRM('${cliente.id}')">Editar</button>
+                                <button class="btn-delete" onclick="eliminarClienteCRM('${cliente.id}')">Eliminar</button>
+                                <button class="btn-whatsapp" onclick="notificarWhatsApp('${cliente.id}', '${cliente.telefono}', '${cliente.propietario}', '${cliente.placa}', '${cliente.venceSOAT}', '${cliente.venceRTM}')">
+                                     <i class="fab fa-whatsapp"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+    `;
+    container.innerHTML = tabla;
+}
+
+async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, venceRTM) {
+    try {
+        const docRef = doc(db, 'clientesCRM', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const cliente = docSnap.data();
+            const newAvisos = (cliente.cantidadAvisos || 0) + 1;
+            await updateDoc(docRef, { cantidadAvisos: newAvisos });
+        }
+        
+        const vencimientoSOAT = formatDate(venceSOAT);
+        const vencimientoRTM = formatDate(venceRTM);
+        const mensaje = `¡Hola ${propietario}! Te recordamos que el SOAT de tu vehículo con placa ${placa} vence el ${vencimientoSOAT} y la RTM vence el ${venceRTM}. En RH ASESORIAS te ofrecemos la renovación para evitar inconvenientes. ¡Contáctanos para renovarlos!`;
+        const mensajeCodificado = encodeURIComponent(mensaje);
+        const url = `https://api.whatsapp.com/send?phone=${telefono}&text=${mensajeCodificado}`;
+        window.open(url, '_blank');
+    } catch (error) {
+        console.error("Error al notificar por WhatsApp: ", error);
+        mostrarNotificacion('Error al enviar la notificación', 'error');
+    }
+}
+
+async function enviarNotificacionVencimiento(cliente, documento, dias) {
+    const asuntoEmail = `Vencimiento ${documento} - Placa ${cliente.placa}`;
+    const cuerpoEmail = `Estimado/a ${cliente.propietario},\n\nSu ${documento} del vehículo con placa ${cliente.placa} vence en ${dias} día${dias > 1 ? 's' : ''}.\n\nFecha de vencimiento: ${formatDate(documento === 'SOAT' ? cliente.venceSOAT : cliente.venceRTM)}\n\nEn RH ASESORIAS te ofrecemos la renovación para evitar inconvenientes.\n\nSaludos cordiales.`;
+
+    try {
+        const response = await fetch('http://localhost:3000/api/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                correo: cliente.correo,
+                asunto: asuntoEmail,
+                cuerpo: cuerpoEmail
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('La respuesta del servidor no fue exitosa.');
+        }
+
+        const data = await response.json();
+        console.log('Respuesta del servidor:', data.message);
+        const docRef = doc(db, 'clientesCRM', cliente.id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const clienteData = docSnap.data();
+            const newAvisos = (clienteData.cantidadAvisos || 0) + 1;
+            await updateDoc(docRef, { cantidadAvisos: newAvisos });
+            console.log(`Contador de avisos actualizado a ${newAvisos} para el cliente con ID: ${cliente.id}`);
+        } else {
+            console.error(`Error: No se encontró el documento para el cliente con ID: ${cliente.id}`);
+        }
+        return true;
+
+    } catch (error) {
+        console.error('Error al enviar el email:', error);
+        mostrarNotificacion(`Error al enviar el email: ${error.message}`, 'error');
+        return false;
+    }
+}
+
+async function verificarVencimientos(db) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const hoyISO = today.toISOString().split('T')[0];
+    let avisosEnviados = 0;
+
+    const snapshot = await getDocs(collection(db, 'clientesCRM'));
+    const clientes = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    for (const cliente of clientes) {
+        if (!cliente.correo) continue;
+        const venceSOAT = new Date(cliente.venceSOAT);
+        venceSOAT.setHours(0, 0, 0, 0);
+        const venceRTM = new Date(cliente.venceRTM);
+        venceRTM.setHours(0, 0, 0, 0);
+        const diasSOAT = Math.ceil((venceSOAT - today) / (1000 * 60 * 60 * 24));
+        const diasRTM = Math.ceil((venceRTM - today) / (1000 * 60 * 60 * 24));
+        const keySOAT = `notificacion_enviada_${cliente.id}_SOAT_${hoyISO}`;
+        const keyRTM = `notificacion_enviada_${cliente.id}_RTM_${hoyISO}`;
+        
+        if (diasSOAT <= 7 && diasSOAT >= 0 && !localStorage.getItem(keySOAT)) {
+            const emailSent = await enviarNotificacionVencimiento(cliente, 'SOAT', diasSOAT);
+            if (emailSent) {
+                localStorage.setItem(keySOAT, true);
+                avisosEnviados++;
+            }
+        }
+        
+        if (diasRTM <= 7 && diasRTM >= 0 && !localStorage.getItem(keyRTM)) {
+            const emailSent = await enviarNotificacionVencimiento(cliente, 'RTM', diasRTM);
+            if (emailSent) {
+                localStorage.setItem(keyRTM, true);
+                avisosEnviados++;
+            }
+        }
+    }
+
+    if (avisosEnviados > 0) {
+        mostrarNotificacion(`Se han enviado ${avisosEnviados} avisos de vencimiento por Email.`, 'info');
+    }
 }
 
 async function editarClienteCRM(id) {
@@ -1120,7 +1276,7 @@ async function editarClienteCRM(id) {
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return;
     const cliente = docSnap.data();
-
+    
     const modalBody = `
         <form id="editCrmForm">
             <div class="form-row">
@@ -1140,13 +1296,15 @@ async function editarClienteCRM(id) {
                     <label>Cédula</label>
                     <input type="text" id="editCrmCedula" value="${cliente.cedula}" required>
                 </div>
+            </div>
+            <div class="form-row">
                 <div class="form-group">
                     <label>Teléfono</label>
-                    <input type="text" id="editCrmTelefono" value="${cliente.telefono}" required>
+                    <input type="tel" id="editCrmTelefono" value="${cliente.telefono}" required>
                 </div>
                 <div class="form-group">
                     <label>Correo</label>
-                    <input type="email" id="editCrmCorreo" value="${cliente.correo}" required>
+                    <input type="email" id="editCrmCorreo" value="${cliente.correo}">
                 </div>
                 <div class="form-group">
                     <label>Vence SOAT</label>
@@ -1163,11 +1321,11 @@ async function editarClienteCRM(id) {
             </div>
         </form>
     `;
-
+    
     document.getElementById('modalTitle').textContent = 'Editar Cliente CRM';
     document.getElementById('modalBody').innerHTML = modalBody;
     document.getElementById('editModal').style.display = 'block';
-
+    
     document.getElementById('editCrmForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const updatedCliente = {
@@ -1178,9 +1336,8 @@ async function editarClienteCRM(id) {
             telefono: document.getElementById('editCrmTelefono').value,
             correo: document.getElementById('editCrmCorreo').value,
             venceSOAT: document.getElementById('editCrmVenceSOAT').value,
-            venceRTM: document.getElementById('editCrmVenceRTM').value,
+            venceRTM: document.getElementById('editCrmVenceRTM').value
         };
-
         try {
             await updateDoc(docRef, updatedCliente);
             document.getElementById('editModal').style.display = 'none';
@@ -1196,151 +1353,199 @@ async function eliminarClienteCRM(id) {
     if (window.confirm('¿Está seguro de eliminar este cliente del CRM?')) {
         try {
             await deleteDoc(doc(db, 'clientesCRM', id));
-            mostrarNotificacion('Cliente eliminado del CRM', 'success');
+            mostrarNotificacion('Cliente eliminado', 'success');
         } catch (error) {
             console.error("Error al eliminar el cliente: ", error);
             mostrarNotificacion('Error al eliminar el cliente', 'error');
         }
     }
 }
-
-function notificarWhatsApp(telefono) {
-    const mensaje = `Hola, te contactamos de R&H Asesorías para recordarte que el SOAT de tu vehículo está próximo a vencer. Por favor, contáctanos para ayudarte a renovarlo.`;
-    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
-    window.open(url, '_blank');
-}
-
-function verificarVencimientos(db) {
-    const hoy = new Date();
-    const hoyTimestamp = hoy.getTime();
-    const unMesEnMilisegundos = 30 * 24 * 60 * 60 * 1000;
-
-    clientesCRM.forEach(cliente => {
-        // Verificar SOAT
-        const fechaSOAT = new Date(cliente.venceSOAT);
-        const diferenciaSOAT = fechaSOAT.getTime() - hoyTimestamp;
-        if (diferenciaSOAT > 0 && diferenciaSOAT <= unMesEnMilisegundos) {
-            mostrarNotificacion(`¡Atención! El SOAT de ${cliente.cliente} (${cliente.placa}) vence pronto.`, 'warning');
-        }
-
-        // Verificar RTM
-        const fechaRTM = new Date(cliente.venceRTM);
-        const diferenciaRTM = fechaRTM.getTime() - hoyTimestamp;
-        if (diferenciaRTM > 0 && diferenciaRTM <= unMesEnMilisegundos) {
-            mostrarNotificacion(`¡Atención! La RTM de ${cliente.cliente} (${cliente.placa}) vence pronto.`, 'warning');
-        }
-    });
-}
-
+// SECCIÓN PLACAS
 // SECCIÓN PLACAS
 async function registrarPlaca(e, db) {
     e.preventDefault();
-    const placa = {
-        placa: document.getElementById('placaInput').value.toUpperCase(),
-        cliente: document.getElementById('placaCliente').value,
-        tramite: document.getElementById('placaTramite').value,
-        estado: document.getElementById('placaEstado').value,
-        fechaRecepcion: document.getElementById('placaFechaRecepcion').value,
-        observaciones: document.getElementById('placaObservaciones').value,
-    };
+
+    const placaInicialStr = document.getElementById('placaInicial').value.toUpperCase();
+    const placaFinalStr = document.getElementById('placaFinal').value.toUpperCase();
+    const asignadaA = document.getElementById('placaAsignadaA').value;
+    const fechaRecepcion = document.getElementById('placaFechaRecepcion').value;
+    const fechaAsignada = document.getElementById('placaFechaAsignada').value;
+    const fechaMatricula = document.getElementById('placaFechaMatricula').value;
+    const observaciones = document.getElementById('placaObservaciones').value;
+
+    function parsePlaca(placa) {
+        const match = placa.match(/^([A-Z]+)(\d+)([A-Z]?)$/);
+        if (!match) {
+            mostrarNotificacion('Formato de placa inválido. Ej: JHP34G', 'error');
+            throw new Error('Formato de placa inválido');
+        }
+        return {
+            letras1: match[1],
+            numero: parseInt(match[2], 10),
+            letras2: match[3] || ''
+        };
+    }
+
     try {
-        await addDoc(collection(db, 'placas'), placa);
+        const placaInicial = parsePlaca(placaInicialStr);
+        const placaFinal = parsePlaca(placaFinalStr);
+
+        if (placaInicial.letras1 !== placaFinal.letras1 || placaInicial.letras2 !== placaFinal.letras2 || placaInicial.numero > placaFinal.numero) {
+            mostrarNotificacion('El rango de placas no es válido. Las letras deben coincidir y la placa final debe ser mayor que la inicial.', 'error');
+            return;
+        }
+
+        const padding = placaInicialStr.match(/\d+/)[0].length;
+        const batch = writeBatch(db);
+
+        for (let i = placaInicial.numero; i <= placaFinal.numero; i++) {
+            const numeroFormateado = String(i).padStart(padding, '0');
+            const nuevaPlaca = `${placaInicial.letras1}${numeroFormateado}${placaInicial.letras2}`;
+
+            const placaData = {
+                placa: nuevaPlaca,
+                asignadaA,
+                fechaRecepcion,
+                fechaAsignada,
+                fechaMatricula,
+                observaciones,
+                estado: obtenerEstadoPlaca(fechaAsignada, fechaMatricula, asignadaA)
+            };
+            const docRef = doc(collection(db, 'placas'));
+            batch.set(docRef, placaData);
+        }
+        await batch.commit();
+
         document.getElementById('placasForm').reset();
-        mostrarNotificacion('Placa registrada correctamente', 'success');
-    } catch (error) {
-        console.error("Error al registrar la placa: ", error);
-        mostrarNotificacion('Error al registrar la placa', 'error');
+        document.getElementById('placaFechaRecepcion').value = new Date().toISOString().split('T')[0];
+        mostrarNotificacion(`Rango de placas de ${placaInicialStr} a ${placaFinalStr} registrado correctamente`, 'success');
+
+    } catch (e) {
+        console.error(e);
+        mostrarNotificacion('Error al registrar las placas', 'error');
     }
 }
 
-function actualizarTablaPlacas() {
-    const placasContainer = document.getElementById('tablaPlacas');
-    if (!placasContainer) return;
-
-    // Agrupar las placas por estado
-    const placasPorEstado = placas.reduce((acc, placa) => {
-        acc[placa.estado] = acc[placa.estado] || [];
-        acc[placa.estado].push(placa);
-        return acc;
-    }, {});
-
-    const estadosOrdenados = ['proceso', 'entregada', 'oficina'];
-    let html = '';
-
-    estadosOrdenados.forEach(estado => {
-        const placasEnEsteEstado = placasPorEstado[estado] || [];
-        html += `
-            <div class="placas-estado-seccion">
-                <h3>${capitalizeFirst(estado)}</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Placa</th>
-                            <th>Cliente</th>
-                            <th>Trámite</th>
-                            <th>Fecha Recepción</th>
-                            <th>Observaciones</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${placasEnEsteEstado.map(p => `
-                            <tr>
-                                <td>${p.placa}</td>
-                                <td>${p.cliente}</td>
-                                <td>${p.tramite}</td>
-                                <td>${p.fechaRecepcion}</td>
-                                <td>${p.observaciones}</td>
-                                <td>
-                                    <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
-                                    <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        `;
-    });
-
-    placasContainer.innerHTML = html;
-}
-
-// Función para mostrar las placas en la sección de contabilidad
-function actualizarTablaPlacasContabilidad(placasToRender = placas) {
-    const container = document.getElementById('placasContabilidad');
+function actualizarTablaPlacas(placasAMostrar = placas) {
+    const container = document.getElementById('tablaPlacas');
     if (!container) return;
-
-    if (placasToRender.length === 0) {
-        container.innerHTML = '<p>No se encontraron placas.</p>';
+    if (!placasAMostrar || placasAMostrar.length === 0) {
+        // Mensaje más descriptivo para la búsqueda
+        container.innerHTML = '<p>No hay placas que coincidan con la búsqueda.</p>';
         return;
     }
+    // Ordena las placas de menor a mayor
+    const placasOrdenadas = [...placasAMostrar].sort((a, b) => {
+        // Extrae letras y números para comparación adecuada
+        const placaRegex = /^([A-Z]+)(\d+)([A-Z]?)$/;
+        const matchA = a.placa.match(placaRegex);
+        const matchB = b.placa.match(placaRegex);
+
+        if (matchA && matchB) {
+            const letrasCompare = matchA[1].localeCompare(matchB[1]);
+            if (letrasCompare !== 0) return letrasCompare;
+            const numeroCompare = parseInt(matchA[2], 10) - parseInt(matchB[2], 10);
+            if (numeroCompare !== 0) return numeroCompare;
+            return matchA[3].localeCompare(matchB[3]);
+        }
+        return a.placa.localeCompare(b.placa);
+    });
 
     const tabla = `
         <table>
             <thead>
                 <tr>
                     <th>Placa</th>
-                    <th>Asignada A</th>
-                    <th>Trámite</th>
+                    <th>Asignada a</th>
+                    <th>F. Recepción</th>
+                    <th>F. Asignada</th>
+                    <th>F. Matrícula</th>
+                    <th>Observaciones</th>
                     <th>Estado</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                ${placasToRender.map(p => `
-                    <tr>
-                        <td>${p.placa}</td>
-                        <td>${p.asignadaA || 'N/A'}</td>
-                        <td>${p.tramite}</td>
-                        <td>${p.estado}</td>
-                    </tr>
-                `).join('')}
+                ${placasOrdenadas.map(p => {
+                    const estado = obtenerEstadoPlaca(p.fechaAsignada, p.fechaMatricula, p.asignadaA);
+                    return `
+                        <tr>
+                            <td>${p.placa}</td>
+                            <td>${p.asignadaA || 'N/A'}</td>
+                            <td>${formatDate(p.fechaRecepcion)}</td>
+                            <td>${formatDate(p.fechaAsignada)}</td>
+                            <td>${formatDate(p.fechaMatricula)}</td>
+                            <td>${p.observaciones || 'N/A'}</td>
+                            <td><span class="badge badge-${estado.toLowerCase().replace(' ', '-')}">${estado}</span></td>
+                            <td>
+                                <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
+                                <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('')}
             </tbody>
         </table>
     `;
     container.innerHTML = tabla;
 }
 
+// NUEVO: Función para actualizar la tabla de placas en la sección de contabilidad
+function actualizarTablaPlacasContabilidad(placasAMostrar = placas) {
+    const container = document.getElementById('tablaPlacasContabilidad');
+    if (!container) return;
+    if (!placasAMostrar || placasAMostrar.length === 0) {
+        container.innerHTML = '<p>No hay placas que coincidan con la búsqueda.</p>';
+        return;
+    }
+
+    const placasOrdenadas = [...placasAMostrar].sort((a, b) => a.placa.localeCompare(b.placa));
+
+    const tabla = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Placa</th>
+                    <th>Asignada a</th>
+                    <th>F. Recepción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${placasOrdenadas.map(p => {
+                    const estado = obtenerEstadoPlaca(p.fechaAsignada, p.fechaMatricula, p.asignadaA);
+                    return `
+                        <tr>
+                            <td>${p.placa}</td>
+                            <td>${p.asignadaA || 'N/A'}</td>
+                            <td>${formatDate(p.fechaRecepcion)}</td>
+                            <td><span class="badge badge-${estado.toLowerCase().replace(' ', '-')}">${estado}</span></td>
+                            <td>
+                                <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
+                                <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+    `;
+    container.innerHTML = tabla;
+}
+
+
+function obtenerEstadoPlaca(fechaAsignada, fechaMatricula, asignadaA) {
+    if (fechaMatricula && fechaMatricula.length > 0) {
+        return 'Matriculada';
+    } else if (fechaAsignada && fechaAsignada.length > 0) {
+        return 'Asignada';
+    } else if (asignadaA && asignadaA.length > 0) {
+        return 'Recibida';
+    } else {
+        return 'En Trámite';
+    }
+}
 
 async function editarPlaca(id) {
     const docRef = doc(db, 'placas', id);
@@ -1353,31 +1558,29 @@ async function editarPlaca(id) {
             <div class="form-row">
                 <div class="form-group">
                     <label>Placa</label>
-                    <input type="text" id="editPlacaInput" value="${placa.placa}" required>
+                    <input type="text" id="editPlaca" value="${placa.placa}" required>
                 </div>
                 <div class="form-group">
-                    <label>Cliente</label>
-                    <input type="text" id="editPlacaCliente" value="${placa.cliente}" required>
-                </div>
-                <div class="form-group">
-                    <label>Trámite</label>
-                    <input type="text" id="editPlacaTramite" value="${placa.tramite}" required>
-                </div>
-                 <div class="form-group">
-                    <label>Estado</label>
-                    <select id="editPlacaEstado" required>
-                        <option value="proceso" ${placa.estado === 'proceso' ? 'selected' : ''}>En Proceso</option>
-                        <option value="entregada" ${placa.estado === 'entregada' ? 'selected' : ''}>Entregada</option>
-                        <option value="oficina" ${placa.estado === 'oficina' ? 'selected' : ''}>En Oficina</option>
-                    </select>
+                    <label>Asignada a</label>
+                    <input type="text" id="editPlacaAsignadaA" value="${placa.asignadaA || ''}" required>
                 </div>
                 <div class="form-group">
                     <label>Fecha Recepción</label>
                     <input type="date" id="editPlacaFechaRecepcion" value="${placa.fechaRecepcion}" required>
                 </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fecha Asignada</label>
+                    <input type="date" id="editPlacaFechaAsignada" value="${placa.fechaAsignada}">
+                </div>
+                <div class="form-group">
+                    <label>Fecha Matrícula</label>
+                    <input type="date" id="editPlacaFechaMatricula" value="${placa.fechaMatricula}">
+                </div>
                 <div class="form-group">
                     <label>Observaciones</label>
-                    <textarea id="editPlacaObservaciones">${placa.observaciones || ''}</textarea>
+                    <textarea id="editPlacaObservaciones" placeholder="Observaciones adicionales">${placa.observaciones || ''}</textarea>
                 </div>
             </div>
             <div style="margin-top: 20px;">
@@ -1387,19 +1590,27 @@ async function editarPlaca(id) {
         </form>
     `;
 
-    document.getElementById('modalTitle').textContent = 'Editar Placa';
+    document.getElementById('modalTitle').textContent = 'Editar Registro de Placa';
     document.getElementById('modalBody').innerHTML = modalBody;
     document.getElementById('editModal').style.display = 'block';
 
     document.getElementById('editPlacaForm').addEventListener('submit', async function(e) {
         e.preventDefault();
+        const nuevaPlaca = document.getElementById('editPlaca').value.toUpperCase();
+        const nuevaAsignadaA = document.getElementById('editPlacaAsignadaA').value;
+        const nuevaFechaRecepcion = document.getElementById('editPlacaFechaRecepcion').value;
+        const nuevaFechaAsignada = document.getElementById('editPlacaFechaAsignada').value;
+        const nuevaFechaMatricula = document.getElementById('editPlacaFechaMatricula').value;
+        const nuevasObservaciones = document.getElementById('editPlacaObservaciones').value;
+
         const updatedPlaca = {
-            placa: document.getElementById('editPlacaInput').value.toUpperCase(),
-            cliente: document.getElementById('editPlacaCliente').value,
-            tramite: document.getElementById('editPlacaTramite').value,
-            estado: document.getElementById('editPlacaEstado').value,
-            fechaRecepcion: document.getElementById('editPlacaFechaRecepcion').value,
-            observaciones: document.getElementById('editPlacaObservaciones').value,
+            placa: nuevaPlaca,
+            asignadaA: nuevaAsignadaA,
+            fechaRecepcion: nuevaFechaRecepcion,
+            fechaAsignada: nuevaFechaAsignada,
+            fechaMatricula: nuevaFechaMatricula,
+            observaciones: nuevasObservaciones,
+            estado: obtenerEstadoPlaca(nuevaFechaAsignada, nuevaFechaMatricula, nuevaAsignadaA)
         };
         try {
             await updateDoc(docRef, updatedPlaca);
@@ -1425,176 +1636,178 @@ async function eliminarPlaca(id) {
 }
 
 
-// FUNCIONES AUXILIARES
+// FUNCIONES DE UTILIDAD
+function capitalizeFirst(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function mostrarNotificacion(mensaje, tipo) {
     const notificacion = document.getElementById('notificacion');
-    if (!notificacion) return;
-    notificacion.textContent = mensaje;
-    notificacion.className = `notificacion ${tipo}`;
-    notificacion.style.display = 'block';
-    setTimeout(() => {
-        notificacion.style.display = 'none';
-    }, 3000);
+    if (notificacion) {
+        notificacion.textContent = mensaje;
+        notificacion.className = `notificacion ${tipo}`;
+        notificacion.style.display = 'block';
+        setTimeout(() => {
+            notificacion.style.display = 'none';
+        }, 5000);
+    } else {
+        console.log(mensaje);
+    }
 }
 
-function capitalizeFirst(string) {
-    if (!string) return '';
-    return string.charAt(0).toUpperCase() + string.slice(1);
+function calcularDiasVencimiento(fecha) {
+    const hoy = new Date();
+    const fechaVencimiento = new Date(fecha);
+    const diferenciaMs = fechaVencimiento - hoy;
+    return Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
 }
+
 
 function formatDate(dateString) {
-    const [year, month, day] = dateString.split('-');
-    return `${day}/${month}/${year}`;
-}
-// Función para generar PDF
-function generarPDF(htmlContent, filename) {
-    const options = {
-        margin: 10,
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().set(options).from(htmlContent).save();
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    // Agrega un pequeño ajuste de 12 horas para evitar la transición de medianoche en la zona horaria.
+    date.setHours(date.getHours() + 12);
+    return date.toLocaleDateString();
 }
 
-// Función para descargar recibo de trámite
-async function descargarReciboTramite(id) {
+
+async function descargarReciboTramite(tramiteId) {
     try {
-        const docRef = doc(db, 'tramites', id);
-        const docSnap = await getDoc(docRef);
-
-        if (!docSnap.exists()) {
-            mostrarNotificacion('No se encontró el trámite para generar el recibo', 'error');
+        const tramite = tramites.find(t => t.id === tramiteId);
+        if (!tramite) {
+            mostrarNotificacion('No se encontró el trámite', 'error');
             return;
         }
 
-        const tramite = docSnap.data();
+       const valorFormateado = tramite.valor ? tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP'}) : 'N/A';
+       const nit = tramite.nit || 'N/A';
+       const tipoTramite = tramite.tipo || 'N/A';
+       const transito = tramite.transito || 'N/A';
 
-        const htmlContent = `
-            <style>
-                body { font-family: sans-serif; }
-                .recibo { width: 100%; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-                .recibo-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
-                .recibo-header h1 { margin: 0; font-size: 24px; }
-                .recibo-info { display: flex; justify-content: space-between; margin-bottom: 20px; }
-                .recibo-info div { flex: 1; margin-right: 20px; }
-                .recibo-info div:last-child { margin-right: 0; }
-                .recibo-details h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; }
-                .recibo-details p { margin: 5px 0; }
-                .recibo-total { text-align: right; margin-top: 30px; font-size: 18px; font-weight: bold; }
-            </style>
-            <div class="recibo">
-                <div class="recibo-header">
-                    <h1>Recibo de Trámite</h1>
-                    <p>R&H Asesorías - NIT: 123456789</p>
-                    <p>Fecha: ${formatDate(tramite.fecha)}</p>
-                </div>
-                <div class="recibo-info">
-                    <div>
-                        <p><strong>Cliente:</strong> ${tramite.cliente}</p>
-                        <p><strong>Cédula/NIT:</strong> ${tramite.nit}</p>
-                        <p><strong>Placa:</strong> ${tramite.placa}</p>
-                    </div>
-                    <div>
-                        <p><strong>Trámite:</strong> ${tramite.tipo}</p>
-                        <p><strong>Tránsito:</strong> ${tramite.transito}</p>
-                        <p><strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}</p>
-                    </div>
-                </div>
-                <div class="recibo-details">
-                    <h2>Detalles del Pago</h2>
-                    <p><strong>Concepto:</strong> Pago por servicio de trámite de ${tramite.tipo} para la placa ${tramite.placa}.</p>
-                </div>
-                <div class="recibo-total">
-                    <p>Valor Pagado: ${tramite.valor.toLocaleString('es-CO', {style: 'currency', currency: 'COP'})}</p>
-                </div>
-            </div>
-        `;
-        
-        generarPDF(htmlContent, `recibo_tramite_${tramite.placa}.pdf`);
-        mostrarNotificacion('Recibo de trámite generado correctamente', 'success');
+       const reciboHTML = `
+           <div class="recibo-container">
+               <h2 class="recibo-titulo">RECIBO DE TRÁMITE</h2>
+               <div class="recibo-info">
+                   <p><strong>Fecha:</strong> ${formatDate(tramite.fecha)}</p>
+                   <p><strong>Cliente:</strong> ${tramite.cliente}</p>
+                   <p><strong>NIT:</strong> ${nit}</p>
+                   <p><strong>Placa:</strong> ${tramite.placa}</p>
+                   <p><strong>Tipo de Trámite:</strong> ${tipoTramite}</p>
+                   <p><strong>Tránsito:</strong> ${transito}</p>
+                   <hr>
+                   <div class="recibo-detalle">
+                       <p><strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}</p>
+                       <p><strong>Estado de Pago:</strong> ${capitalizeFirst(tramite.pago)}</p>
+                       <p><strong>Valor:</strong> ${valorFormateado}</p>
+                   </div>
+               </div>
+               <p class="recibo-gracias">¡Gracias por su confianza!</p>
+           </div>
+       `;
+       const reciboDiv = document.createElement('div');
+       reciboDiv.innerHTML = reciboHTML;
+       reciboDiv.style.position = 'absolute';
+       reciboDiv.style.left = '-9999px';
+       document.body.appendChild(reciboDiv);
+
+        const canvas = await html2canvas(reciboDiv, { scale: 5 });
+        const imgData = canvas.toDataURL('image/png');
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`);
+
+        document.body.removeChild(reciboDiv);
+        mostrarNotificacion('Recibo descargado correctamente.', 'success');
 
     } catch (err) {
         console.error("Error generando PDF:", err);
-        mostrarNotificacion('Error al generar el recibo de trámite', 'error');
+        mostrarNotificacion('Error al generar el recibo', 'error');
     }
 }
+
+
 async function descargarTodosRecibos() {
-    try {
-        const querySnapshot = await getDocs(collection(db, 'registrosContables'));
-        const batch = db.batch();
-        const promises = [];
+    // Filtra solo los trámites que están terminados y pagados
+   const tramitesTerminados = tramites.filter(t => t.estado === 'terminado');
 
-        querySnapshot.forEach(docSnapshot => {
-            const movimiento = docSnapshot.data();
-            if (movimiento.tipo === 'egreso') {
-                const docRef = doc(db, 'registrosContables', docSnapshot.id);
-                promises.push(generarReciboEgreso(movimiento, docSnapshot.id));
-            }
-        });
-
-        await Promise.all(promises);
-        mostrarNotificacion('Todos los recibos de egreso generados y descargados.', 'success');
-
-    } catch (err) {
-        console.error("Error al descargar todos los recibos:", err);
-        mostrarNotificacion('Error al generar todos los recibos de egreso.', 'error');
+    if (tramitesTerminados.length === 0) {
+        mostrarNotificacion('No hay recibos para descargar.', 'info');
+        return;
     }
-}
-// Función auxiliar para generar PDF de egreso individual
-async function generarReciboEgreso(movimiento, id) {
-    const htmlContent = `
-        <style>
-            /* Tus estilos de recibo aquí, por ejemplo... */
-            .recibo { width: 100%; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-            .recibo-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
-            .recibo-header h1 { margin: 0; font-size: 24px; }
-            .recibo-info { display: flex; justify-content: space-between; margin-bottom: 20px; }
-            .recibo-details h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; }
-            .recibo-details p { margin: 5px 0; }
-            .recibo-total { text-align: right; margin-top: 30px; font-size: 18px; font-weight: bold; }
-        </style>
-        <div class="recibo">
-            <div class="recibo-header">
-                <h1>Comprobante de Egreso</h1>
-                <p>R&H Asesorías - NIT: 123456789</p>
-                <p>Fecha: ${formatDate(movimiento.fecha)}</p>
-            </div>
-            <div class="recibo-info">
-                <div>
-                    <p><strong>Cliente:</strong> ${movimiento.cliente}</p>
-                    <p><strong>Placa:</strong> ${movimiento.placa || 'N/A'}</p>
-                </div>
-            </div>
-            <div class="recibo-details">
-                <h2>Detalles del Pago</h2>
-                <p><strong>Concepto:</strong> ${movimiento.concepto}</p>
-                <p><strong>Medio de Pago:</strong> ${capitalizeFirst(movimiento.banco)}</p>
-            </div>
-            <div class="recibo-total">
-                <p>Monto: ${movimiento.monto.toLocaleString('es-CO', {style: 'currency', currency: 'COP'})}</p>
-            </div>
-        </div>
-    `;
 
-    return html2pdf().set({ filename: `recibo_egreso_${id}.pdf` }).from(htmlContent).save();
+    mostrarNotificacion(`Iniciando la descarga de ${tramitesTerminados.length} recibos... Esto puede tomar un momento.`, 'info');
+
+    // Bucle asíncrono para descargar un recibo a la vez con un retraso
+    for (const tramite of tramitesTerminados) {
+        // Asegúrate de usar la versión corregida de descargarReciboTramite
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Retraso de 1 segundo
+        await descargarReciboTramite(tramite.id);
+    }
+    
+    mostrarNotificacion('Descarga de todos los recibos completada.', 'success');
 }
 
-async function descargarReciboEgreso(id) {
+// NUEVO: Función para generar y descargar un recibo de egreso en PDF
+async function descargarReciboEgreso(movimientoId) {
     try {
-        const docRef = doc(db, 'registrosContables', id);
-        const docSnap = await getDoc(docRef);
-
-        if (!docSnap.exists()) {
-            mostrarNotificacion('No se encontró el movimiento de egreso para generar el recibo', 'error');
+        const movimiento = registrosContables.find(m => m.id === movimientoId);
+        if (!movimiento) {
+            mostrarNotificacion('No se encontró el movimiento de egreso', 'error');
             return;
         }
 
-        const movimiento = docSnap.data();
+        const montoFormateado = movimiento.monto ? movimiento.monto.toLocaleString('es-CO', {style: 'currency', currency: 'COP'}) : 'N/A';
+        const fecha = formatDate(movimiento.fecha);
+        const concepto = movimiento.concepto || 'N/A';
+        const cliente = movimiento.cliente || 'N/A';
+        const banco = capitalizeFirst(movimiento.banco.replace('_', ' ')) || 'N/A';
 
-        await generarReciboEgreso(movimiento, id);
-        mostrarNotificacion('Recibo de egreso generado correctamente', 'success');
+        const reciboHTML = `
+           <div class="recibo-container">
+               <h2 class="recibo-titulo">RECIBO DE EGRESO</h2>
+               <div class="recibo-info">
+                   <p><strong>Fecha:</strong> ${fecha}</p>
+                   <p><strong>Cliente:</strong> ${cliente}</p>
+                   <p><strong>Concepto:</strong> ${concepto}</p>
+                   <p><strong>Cuenta:</strong> ${banco}</p>
+                   <hr>
+                   <div class="recibo-detalle">
+                       <p><strong>Monto:</strong> ${montoFormateado}</p>
+                   </div>
+               </div>
+               <p class="recibo-gracias">Este documento sirve como constancia del egreso.</p>
+           </div>
+        `;
+
+        const reciboDiv = document.createElement('div');
+        reciboDiv.innerHTML = reciboHTML;
+        reciboDiv.style.position = 'absolute';
+        reciboDiv.style.left = '-9999px';
+        document.body.appendChild(reciboDiv);
+
+        const canvas = await html2canvas(reciboDiv, { scale: 5 });
+        const imgData = canvas.toDataURL('image/png');
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Recibo_Egreso_${movimiento.fecha}_${movimiento.cliente}.pdf`);
+
+        document.body.removeChild(reciboDiv);
+        mostrarNotificacion('Recibo de egreso descargado correctamente.', 'success');
+
     } catch (err) {
         console.error("Error generando PDF de egreso:", err);
         mostrarNotificacion('Error al generar el recibo de egreso', 'error');
@@ -1628,6 +1841,3 @@ window.actualizarValorConBoton = actualizarValorConBoton;
 window.descargarReciboEgreso = descargarReciboEgreso; // NUEVO: Exponer la nueva función
 window.actualizarTablaPlacasContabilidad = actualizarTablaPlacasContabilidad;
 window.filtrarPlacasContabilidad = filtrarPlacasContabilidad;
-window.filtrarPlacas = filtrarPlacas;
-window.filtrarClientes = filtrarClientes;
-window.filtrarRegistros = filtrarRegistros;
