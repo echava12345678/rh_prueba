@@ -857,67 +857,67 @@ transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
     max-width: 40px; /* Adjust the size as needed */
     height: auto;
 }
-/* Contenedor del recibo */
-.recibo-compacto-container {
-    font-family: Arial, sans-serif;
-    width: 200px; /* Reducción de ancho para asegurar que quepa */
-    padding: 10px;
-    border: 1px dashed #ccc;
-    margin: 10px auto;
-    background-color: #fff;
-    font-size: 12px;
+/* Contenedor principal del recibo tipo ticket */
+.recibo-ticket-container {
+    font-family: 'Courier New', monospace; /* Fuente de ancho fijo, como en una impresora de tickets */
+    width: 150px; /* Ancho muy reducido para garantizar que quepa */
+    padding: 5px;
+    margin: 5px auto;
+    border: 1px dashed #000;
+    color: #000;
+    font-size: 10px; /* Tamaño de fuente muy pequeño */
+    line-height: 1.2;
 }
 
-/* Estilo del logo */
-.recibo-compacto-logo {
+/* Estilo para el logo */
+.recibo-ticket-logo {
     display: block;
-    max-width: 80px; /* Tamaño del logo ajustado */
+    max-width: 60px; /* Tamaño del logo muy pequeño */
     height: auto;
-    margin: 0 auto 10px auto;
+    margin: 0 auto 5px auto;
 }
 
 /* Título del recibo */
-.recibo-compacto-titulo {
+.recibo-ticket-titulo {
     text-align: center;
-    font-size: 16px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #333;
-    padding-bottom: 5px;
+    font-size: 12px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #000;
+    padding-bottom: 3px;
 }
 
 /* Información del recibo */
-.recibo-compacto-info p {
-    margin: 3px 0;
+.recibo-ticket-info p {
+    margin: 1px 0;
 }
 
-.recibo-compacto-info strong {
+.recibo-ticket-info strong {
     font-weight: bold;
-    color: #555;
 }
 
 /* Separador */
-.recibo-compacto-container hr {
+.recibo-ticket-container hr {
     border: none;
-    border-top: 1px solid #eee;
-    margin: 10px 0;
+    border-top: 1px dashed #555;
+    margin: 5px 0;
 }
 
 /* Detalles del valor */
-.recibo-compacto-detalle {
-    text-align: right;
-    margin-top: 10px;
+.recibo-ticket-detalle {
+    margin-top: 5px;
 }
 
-.recibo-compacto-detalle strong {
-    font-size: 14px;
-    color: #000;
+.recibo-ticket-detalle p {
+    font-size: 11px;
+    font-weight: bold;
+    text-align: right;
 }
 
 /* Mensaje de agradecimiento */
-.recibo-compacto-gracias {
+.recibo-ticket-gracias {
     text-align: center;
-    margin-top: 15px;
-    font-size: 10px;
+    margin-top: 10px;
+    font-size: 8px;
     font-style: italic;
-    color: #777;
+    color: #333;
 }
