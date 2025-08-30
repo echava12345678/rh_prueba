@@ -248,17 +248,17 @@ function filtrarRegistros(searchTerm) {
         (r.placa && String(r.placa).toLowerCase().includes(term))                                        
                                                  
     );
-//     // NUEVO: Mostrar el término de búsqueda
-//     const displayElement = document.getElementById('contaQueryDisplay');
-//     if (searchTerm.trim() !== '') {
-//         displayElement.textContent = `Resultados para: "${searchTerm}"`;
-//         displayElement.style.display = 'block';
-//     } else {
-//         displayElement.style.display = 'none';
-//     }
-//     renderRegistrosContables(resultados);
-// }
-// NUEVO: Función para buscar placas en la sección de contabilidad
+    // // NUEVO: Mostrar el término de búsqueda
+    // const displayElement = document.getElementById('contaQueryDisplay');
+    // if (searchTerm.trim() !== '') {
+    //     displayElement.textContent = `Resultados para: "${searchTerm}"`;
+    //     displayElement.style.display = 'block';
+    // } else {
+    //     displayElement.style.display = 'none';
+    // }
+     renderRegistrosContables(resultados);
+}
+//NUEVO: Función para buscar placas en la sección de contabilidad
 function filtrarPlacasContabilidad(searchTerm) {
     const term = searchTerm.toLowerCase();
     const resultados = placas.filter(p => 
