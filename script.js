@@ -173,6 +173,13 @@ const contaSearchInput = document.getElementById('contaSearchInput');
 if (contaSearchInput) {
     contaSearchInput.addEventListener('keyup', (e) => filtrarRegistros(e.target.value));
 }
+const contaSearchButton = document.getElementById('contaSearchButton');
+if (contaSearchButton) {
+    contaSearchButton.addEventListener('click', () => {
+        const searchTerm = document.getElementById('contaSearchInput').value;
+        filtrarRegistros(searchTerm);
+    });
+}
         
 const crmSearchInput = document.getElementById('crmSearchInput');
 if (crmSearchInput) {
