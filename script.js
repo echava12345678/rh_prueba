@@ -1688,53 +1688,54 @@ async function descargarReciboTramite(tramiteId) {
 
      const reciboHTML = `
             <style>
-                .recibo-ticket-final {
+                .recibo-final-ajuste {
                     font-family: Arial, sans-serif;
-                    width: 150px; /* Ancho del recibo, muy ajustado */
-                    padding: 5px;
+                    width: 100px; /* Ancho muy pequeño */
+                    padding: 3px;
                     margin: 0;
-                    border: 1px dashed #000;
+                    border: 1px solid #000;
                     color: #000;
-                    font-size: 8px; /* Tamaño de fuente mínimo */
-                    line-height: 1.1; /* Espacio entre líneas */
+                    font-size: 7px;
+                    line-height: 1.1;
                     box-sizing: border-box;
+                    word-wrap: break-word; /* Asegura que el texto largo se rompa */
                 }
-                .recibo-ticket-final h2 {
+                .recibo-final-ajuste h2 {
                     text-align: center;
-                    font-size: 10px;
-                    margin: 5px 0;
+                    font-size: 8px;
+                    margin: 3px 0;
                     border-bottom: 1px solid #000;
-                    padding-bottom: 3px;
+                    padding-bottom: 2px;
                 }
-                .recibo-ticket-final img {
+                .recibo-final-ajuste img {
                     display: block;
-                    max-width: 50px; /* Tamaño del logo */
+                    max-width: 40px;
                     height: auto;
-                    margin: 0 auto 5px auto;
+                    margin: 0 auto 3px auto;
                 }
-                .recibo-ticket-final p {
-                    margin: 2px 0;
+                .recibo-final-ajuste p {
+                    margin: 1px 0;
                 }
-                .recibo-ticket-final strong {
+                .recibo-final-ajuste strong {
                     font-weight: bold;
                 }
-                .recibo-ticket-final hr {
+                .recibo-final-ajuste hr {
                     border: none;
                     border-top: 1px dashed #ccc;
-                    margin: 5px 0;
+                    margin: 3px 0;
                 }
-                .recibo-ticket-final .detalle {
+                .recibo-final-ajuste .detalle {
                     text-align: right;
-                    margin-top: 5px;
+                    margin-top: 3px;
                 }
-                .recibo-ticket-final .gracias {
+                .recibo-final-ajuste .gracias {
                     text-align: center;
-                    margin-top: 10px;
-                    font-size: 7px;
+                    margin-top: 5px;
+                    font-size: 6px;
                     font-style: italic;
                 }
             </style>
-            <div class="recibo-ticket-final">
+            <div class="recibo-final-ajuste">
                 <img src="LOGO 2025 .png" alt="Logo de la Empresa">
                 <h2>RECIBO DE TRÁMITE</h2>
                 <div class="recibo-info">
