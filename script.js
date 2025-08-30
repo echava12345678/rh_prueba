@@ -1687,46 +1687,87 @@ async function descargarReciboTramite(tramiteId) {
        const transito = tramite.transito || 'N/A';
 
       const reciboHTML = `
-    <div class="recibo-ticket-container">
-        <img src="LOGO 2025 .png" alt="Logo de la Empresa" class="recibo-ticket-logo">
-        <h2 class="recibo-ticket-titulo">RECIBO DE TRÁMITE</h2>
-        <div class="recibo-ticket-info">
-            <p><strong>Fecha:</strong> ${formatDate(tramite.fecha)}</p>
-            <p><strong>Cliente:</strong> ${tramite.cliente}</p>
-            <p><strong>NIT:</strong> ${nit}</p>
-            <p><strong>Placa:</strong> ${tramite.placa}</p>
-            <p><strong>Tipo de Trámite:</strong> ${tipoTramite}</p>
-            <p><strong>Tránsito:</strong> ${transito}</p>
-        </div>
-        <hr>
-        <div class="recibo-ticket-detalle">
-            <p><strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}</p>
-            <p><strong>Estado de Pago:</strong> ${capitalizeFirst(tramite.pago)}</p>
-            <p><strong>Valor:</strong> ${valorFormateado}</p>
-        </div>
-        <p class="recibo-ticket-gracias">¡Gracias por su confianza!</p>
-    </div>
-`;
-const reciboDiv = document.createElement('div');
-reciboDiv.innerHTML = reciboHTML;
-reciboDiv.style.position = 'absolute';
-reciboDiv.style.left = '-9999px';
-document.body.appendChild(reciboDiv);
+            <style>
+                .recibo-ticket-ultra {
+                    font-family: 'Arial', sans-serif;
+                    width: 150px;
+                    padding: 5px;
+                    margin: 0;
+                    border: 1px dashed #000;
+                    color: #000;
+                    font-size: 8px;
+                    line-height: 1.1;
+                    box-sizing: border-box;
+                }
+                .recibo-ticket-ultra h2 {
+                    text-align: center;
+                    font-size: 10px;
+                    margin: 5px 0;
+                    border-bottom: 1px solid #000;
+                    padding-bottom: 3px;
+                }
+                .recibo-ticket-ultra p {
+                    margin: 2px 0;
+                }
+                .recibo-ticket-ultra strong {
+                    font-weight: bold;
+                }
+                .recibo-ticket-ultra hr {
+                    border: none;
+                    border-top: 1px dashed #ccc;
+                    margin: 5px 0;
+                }
+                .recibo-ticket-ultra .detalle {
+                    text-align: right;
+                    margin-top: 5px;
+                }
+                .recibo-ticket-ultra .gracias {
+                    text-align: center;
+                    margin-top: 10px;
+                    font-size: 7px;
+                    font-style: italic;
+                }
+            </style>
+            <div class="recibo-ticket-ultra">
+                <h2>RECIBO DE TRÁMITE</h2>
+                <div class="recibo-info">
+                    <p><strong>Fecha:</strong> ${formatDate(tramite.fecha)}</p>
+                    <p><strong>Cliente:</strong> ${tramite.cliente}</p>
+                    <p><strong>NIT:</strong> ${nit}</p>
+                    <p><strong>Placa:</strong> ${tramite.placa}</p>
+                    <p><strong>Tipo de Trámite:</strong> ${tipoTramite}</p>
+                    <p><strong>Tránsito:</strong> ${transito}</p>
+                </div>
+                <hr>
+                <div class="detalle">
+                    <p><strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}</p>
+                    <p><strong>Estado de Pago:</strong> ${capitalizeFirst(tramite.pago)}</p>
+                    <p><strong>Valor:</strong> ${valorFormateado}</p>
+                </div>
+                <p class="gracias">¡Gracias por su confianza!</p>
+            </div>
+        `;
+        const reciboDiv = document.createElement('div');
+        reciboDiv.innerHTML = reciboHTML;
+        reciboDiv.style.position = 'absolute';
+        reciboDiv.style.left = '-9999px';
+        document.body.appendChild(reciboDiv);
 
-const canvas = await html2canvas(reciboDiv, { scale: 5 });
-const imgData = canvas.toDataURL('image/png');
+        const canvas = await html2canvas(reciboDiv, { scale: 5 });
+        const imgData = canvas.toDataURL('image/png');
 
-const { jsPDF } = window.jspdf;
-const pdf = new jsPDF('p', 'mm', 'a4');
-const imgProps = pdf.getImageProperties(imgData);
-const pdfWidth = pdf.internal.pageSize.getWidth();
-const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-pdf.save(`Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`);
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Recibo_Tramite_${tramite.placa}_${tramite.cliente}.pdf`);
 
-document.body.removeChild(reciboDiv);
-mostrarNotificacion('Recibo descargado correctamente.', 'success');
+        document.body.removeChild(reciboDiv);
+        mostrarNotificacion('Recibo descargado correctamente.', 'success');
+
     } catch (err) {
         console.error("Error generando PDF:", err);
         mostrarNotificacion('Error al generar el recibo', 'error');
