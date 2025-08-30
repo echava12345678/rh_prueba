@@ -114,6 +114,8 @@ document.addEventListener('DOMContentLoaded', function() {
             onSnapshot(collection(db, 'placas'), (snapshot) => {
                 placas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 actualizarTablaPlacas();
+                // Nuevo: Actualizar también la tabla de placas en la sección de contabilidad
+                actualizarTablaPlacasContabilidad(); 
             });
 
             // Configura la fecha actual por defecto en los campos de fecha
@@ -181,6 +183,12 @@ const placaSearchInput = document.getElementById('placaSearchInput');
 if (placaSearchInput) {
     placaSearchInput.addEventListener('keyup', (e) => filtrarPlacas(e.target.value));
 }
+// NUEVO: Buscador de placas en la sección de contabilidad
+const contaPlacaSearchInput = document.getElementById('contaPlacaSearchInput');
+if (contaPlacaSearchInput) {
+    contaPlacaSearchInput.addEventListener('keyup', (e) => filtrarPlacasContabilidad(e.target.value));
+}
+
 // --- FUNCIONES DE BÚSQUEDA ---
 function filtrarTramites(searchTerm) {
     const term = searchTerm.toLowerCase().trim();
@@ -240,6 +248,23 @@ function filtrarRegistros(searchTerm) {
         displayElement.style.display = 'none';
     }
     renderRegistrosContables(resultados);
+}
+// NUEVO: Función para buscar placas en la sección de contabilidad
+function filtrarPlacasContabilidad(searchTerm) {
+    const term = searchTerm.toLowerCase();
+    const resultados = placas.filter(p => 
+        (p.placa && p.placa.toLowerCase().includes(term)) ||
+        (p.asignadaA && p.asignadaA.toLowerCase().includes(term))
+    );
+     // NUEVO: Mostrar el término de búsqueda
+    const displayElement = document.getElementById('contaPlacaQueryDisplay');
+    if (searchTerm.trim() !== '') {
+        displayElement.textContent = `Resultados para: "${searchTerm}"`;
+        displayElement.style.display = 'block';
+    } else {
+        displayElement.style.display = 'none';
+    }
+    actualizarTablaPlacasContabilidad(resultados);
 }
 
 function filtrarClientes(searchTerm) {
@@ -313,6 +338,7 @@ function renderRegistrosContables(registrosToRender) {
                         <td>
                             <button class="btn-edit" onclick="editarMovimiento('${reg.id}')">Editar</button>
                             <button class="btn-delete" onclick="eliminarMovimiento('${reg.id}')">Eliminar</button>
+                            ${reg.tipo === 'egreso' ? `<button class="btn-download" onclick="descargarReciboEgreso('${reg.id}')"><i class="fas fa-file-download"></i> Recibo</button>` : ''}
                         </td>
                     </tr>
                 `).join('')}
@@ -831,6 +857,7 @@ function actualizarRegistrosContables() {
                         <td>
                             <button class="btn-edit" onclick="editarMovimiento('${reg.id}')">Editar</button>
                             <button class="btn-delete" onclick="eliminarMovimiento('${reg.id}')">Eliminar</button>
+                            ${reg.tipo === 'egreso' ? `<button class="btn-download" onclick="descargarReciboEgreso('${reg.id}')"><i class="fas fa-file-download"></i> Recibo</button>` : ''}
                         </td>
                     </tr>
                 `).join('')}
@@ -1136,7 +1163,7 @@ async function notificarWhatsApp(id, telefono, propietario, placa, venceSOAT, ve
         
         const vencimientoSOAT = formatDate(venceSOAT);
         const vencimientoRTM = formatDate(venceRTM);
-        const mensaje = `¡Hola ${propietario}! Te recordamos que el SOAT de tu vehículo con placa ${placa} vence el ${vencimientoSOAT} y la RTM vence el ${vencimientoRTM}. En RH ASESORIAS te ofrecemos la renovación para evitar inconvenientes. ¡Contáctanos para renovarlos!`;
+        const mensaje = `¡Hola ${propietario}! Te recordamos que el SOAT de tu vehículo con placa ${placa} vence el ${vencimientoSOAT} y la RTM vence el ${venceRTM}. En RH ASESORIAS te ofrecemos la renovación para evitar inconvenientes. ¡Contáctanos para renovarlos!`;
         const mensajeCodificado = encodeURIComponent(mensaje);
         const url = `https://api.whatsapp.com/send?phone=${telefono}&text=${mensajeCodificado}`;
         window.open(url, '_blank');
@@ -1449,6 +1476,51 @@ function actualizarTablaPlacas(placasAMostrar = placas) {
     container.innerHTML = tabla;
 }
 
+// NUEVO: Función para actualizar la tabla de placas en la sección de contabilidad
+function actualizarTablaPlacasContabilidad(placasAMostrar = placas) {
+    const container = document.getElementById('tablaPlacasContabilidad');
+    if (!container) return;
+    if (!placasAMostrar || placasAMostrar.length === 0) {
+        container.innerHTML = '<p>No hay placas que coincidan con la búsqueda.</p>';
+        return;
+    }
+
+    const placasOrdenadas = [...placasAMostrar].sort((a, b) => a.placa.localeCompare(b.placa));
+
+    const tabla = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Placa</th>
+                    <th>Asignada a</th>
+                    <th>F. Recepción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${placasOrdenadas.map(p => {
+                    const estado = obtenerEstadoPlaca(p.fechaAsignada, p.fechaMatricula, p.asignadaA);
+                    return `
+                        <tr>
+                            <td>${p.placa}</td>
+                            <td>${p.asignadaA || 'N/A'}</td>
+                            <td>${formatDate(p.fechaRecepcion)}</td>
+                            <td><span class="badge badge-${estado.toLowerCase().replace(' ', '-')}">${estado}</span></td>
+                            <td>
+                                <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
+                                <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+    `;
+    container.innerHTML = tabla;
+}
+
+
 function obtenerEstadoPlaca(fechaAsignada, fechaMatricula, asignadaA) {
     if (fechaMatricula && fechaMatricula.length > 0) {
         return 'Matriculada';
@@ -1669,6 +1741,65 @@ async function descargarTodosRecibos() {
     mostrarNotificacion('Descarga de todos los recibos completada.', 'success');
 }
 
+// NUEVO: Función para generar y descargar un recibo de egreso en PDF
+async function descargarReciboEgreso(movimientoId) {
+    try {
+        const movimiento = registrosContables.find(m => m.id === movimientoId);
+        if (!movimiento) {
+            mostrarNotificacion('No se encontró el movimiento de egreso', 'error');
+            return;
+        }
+
+        const montoFormateado = movimiento.monto ? movimiento.monto.toLocaleString('es-CO', {style: 'currency', currency: 'COP'}) : 'N/A';
+        const fecha = formatDate(movimiento.fecha);
+        const concepto = movimiento.concepto || 'N/A';
+        const cliente = movimiento.cliente || 'N/A';
+        const banco = capitalizeFirst(movimiento.banco.replace('_', ' ')) || 'N/A';
+
+        const reciboHTML = `
+           <div class="recibo-container">
+               <h2 class="recibo-titulo">RECIBO DE EGRESO</h2>
+               <div class="recibo-info">
+                   <p><strong>Fecha:</strong> ${fecha}</p>
+                   <p><strong>Cliente:</strong> ${cliente}</p>
+                   <p><strong>Concepto:</strong> ${concepto}</p>
+                   <p><strong>Cuenta:</strong> ${banco}</p>
+                   <hr>
+                   <div class="recibo-detalle">
+                       <p><strong>Monto:</strong> ${montoFormateado}</p>
+                   </div>
+               </div>
+               <p class="recibo-gracias">Este documento sirve como constancia del egreso.</p>
+           </div>
+        `;
+
+        const reciboDiv = document.createElement('div');
+        reciboDiv.innerHTML = reciboHTML;
+        reciboDiv.style.position = 'absolute';
+        reciboDiv.style.left = '-9999px';
+        document.body.appendChild(reciboDiv);
+
+        const canvas = await html2canvas(reciboDiv, { scale: 5 });
+        const imgData = canvas.toDataURL('image/png');
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Recibo_Egreso_${movimiento.fecha}_${movimiento.cliente}.pdf`);
+
+        document.body.removeChild(reciboDiv);
+        mostrarNotificacion('Recibo de egreso descargado correctamente.', 'success');
+
+    } catch (err) {
+        console.error("Error generando PDF de egreso:", err);
+        mostrarNotificacion('Error al generar el recibo de egreso', 'error');
+    }
+}
+
 
 // Expone las funciones a la ventana global para que el HTML pueda acceder a ellas.
 window.descargarReciboTramite = descargarReciboTramite;
@@ -1693,3 +1824,6 @@ window.actualizarTablaCRM = actualizarTablaCRM;
 window.actualizarTablaPlacas = actualizarTablaPlacas;
 window.filtrarTramites = filtrarTramites;
 window.actualizarValorConBoton = actualizarValorConBoton;
+window.descargarReciboEgreso = descargarReciboEgreso; // NUEVO: Exponer la nueva función
+window.actualizarTablaPlacasContabilidad = actualizarTablaPlacasContabilidad;
+window.filtrarPlacasContabilidad = filtrarPlacasContabilidad;
