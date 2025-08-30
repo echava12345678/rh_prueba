@@ -860,9 +860,9 @@ transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
 /* Contenedor principal del recibo tipo ticket */
 .recibo-ticket-container {
     font-family: 'Courier New', monospace; /* Fuente de ancho fijo, como en una impresora de tickets */
-    width: 800px; /* Ancho muy reducido para garantizar que quepa */
-    padding: 5px;
-    margin: 5px auto;
+    width: 100px; /* Ancho muy reducido para garantizar que quepa */
+    padding: 2px;
+    margin: 2px auto;
     border: 1px dashed #000;
     color: #000;
     font-size: 10px; /* Tamaño de fuente muy pequeño */
