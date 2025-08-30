@@ -1705,6 +1705,7 @@ async function descargarReciboTramite(tramiteId) {
                     font-size: 8px; /* Título más pequeño */
                     font-weight: bold;
                     margin: 0 0 3px 0;
+                    color: orange;
                 }
                 .recibo-minimo img {
                     display: block;
