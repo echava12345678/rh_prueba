@@ -1770,6 +1770,7 @@ async function descargarReciboEgreso(movimientoId) {
         const concepto = movimiento.concepto || 'N/A';
         const cliente = movimiento.cliente || 'N/A';
         const banco = capitalizeFirst(movimiento.banco.replace('_', ' ')) || 'N/A';
+        const placa = movimiento.placa || 'N/A';
 
         const reciboHTML = `
            <div class="recibo-container">
@@ -1778,7 +1779,7 @@ async function descargarReciboEgreso(movimientoId) {
                <div class="recibo-info">
                    <p><strong>Fecha:</strong> ${fecha}</p>
                    <p><strong>Cliente:</strong> ${cliente}</p>
-                   
+                   <p><strong>Placa:</strong> ${placa}</p>
                    <p><strong>Concepto:</strong> ${concepto}</p>
                    <p><strong>Cuenta:</strong> ${banco}</p>
                    <hr>
