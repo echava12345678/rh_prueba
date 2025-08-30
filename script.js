@@ -330,6 +330,7 @@ function renderRegistrosContables(registrosToRender) {
                     <th>Cliente</th>
                     <th>Concepto</th>
                     <th>Banco/Efectivo</th>
+                    <th>Placa</th>
                     <th>Tipo</th>
                     <th>Monto</th>
                     <th>Acciones</th>
@@ -342,6 +343,7 @@ function renderRegistrosContables(registrosToRender) {
                         <td>${reg.cliente}</td>
                         <td>${reg.concepto}</td>
                         <td>${capitalizeFirst(reg.banco.replace('_', ' '))}</td>
+                        <td>${reg.placa || 'N/A'}</td>
                         <td><span class="badge ${reg.tipo}">${capitalizeFirst(reg.tipo)}</span></td>
                         <td>${reg.monto.toLocaleString()}</td>
                         <td>
