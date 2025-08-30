@@ -1688,71 +1688,75 @@ async function descargarReciboTramite(tramiteId) {
 
      const reciboHTML = `
             <style>
-                .recibo-final-ajuste {
-                    font-family: Arial, sans-serif;
-                    width: 100px; /* Ancho muy pequeño */
-                    padding: 3px;
+                .recibo-caja-diseno {
+                    font-family: 'Arial', sans-serif;
+                    width: 200px;
+                    padding: 15px;
                     margin: 0;
-                    border: 1px solid #000;
+                    border: 1px dashed #333;
                     color: #000;
-                    font-size: 7px;
-                    line-height: 1.1;
+                    font-size: 10px;
+                    line-height: 1.4;
                     box-sizing: border-box;
-                    word-wrap: break-word; /* Asegura que el texto largo se rompa */
                 }
-                .recibo-final-ajuste h2 {
+                .recibo-caja-diseno h2 {
                     text-align: center;
-                    font-size: 8px;
-                    margin: 3px 0;
-                    border-bottom: 1px solid #000;
-                    padding-bottom: 2px;
-                }
-                .recibo-final-ajuste img {
-                    display: block;
-                    max-width: 40px;
-                    height: auto;
-                    margin: 0 auto 3px auto;
-                }
-                .recibo-final-ajuste p {
-                    margin: 1px 0;
-                }
-                .recibo-final-ajuste strong {
+                    font-size: 18px;
                     font-weight: bold;
+                    margin: 0 0 10px 0;
                 }
-                .recibo-final-ajuste hr {
-                    border: none;
-                    border-top: 1px dashed #ccc;
+                .recibo-caja-diseno img {
+                    display: block;
+                    max-width: 80px;
+                    height: auto;
+                    margin: 0 auto 10px auto;
+                }
+                .recibo-caja-diseno .info-section {
+                    text-align: left;
+                    margin-bottom: 10px;
+                }
+                .recibo-caja-diseno .info-section p {
                     margin: 3px 0;
                 }
-                .recibo-final-ajuste .detalle {
-                    text-align: right;
-                    margin-top: 3px;
+                .recibo-caja-diseno .info-section strong {
+                    font-weight: bold;
+                    display: inline-block;
+                    width: 80px; /* Ancho fijo para las etiquetas */
                 }
-                .recibo-final-ajuste .gracias {
+                .recibo-caja-diseno hr {
+                    border: none;
+                    border-top: 1px dashed #000;
+                    margin: 10px 0;
+                }
+                .recibo-caja-diseno .valor-section {
                     text-align: center;
+                    margin-top: 15px;
+                }
+                .recibo-caja-diseno .valor-section .valor {
+                    font-size: 16px;
+                    font-weight: bold;
                     margin-top: 5px;
-                    font-size: 6px;
-                    font-style: italic;
                 }
             </style>
-            <div class="recibo-final-ajuste">
+            <div class="recibo-caja-diseno">
                 <img src="LOGO 2025 .png" alt="Logo de la Empresa">
                 <h2>RECIBO DE TRÁMITE</h2>
-                <div class="recibo-info">
+                <div class="info-section">
                     <p><strong>Fecha:</strong> ${formatDate(tramite.fecha)}</p>
                     <p><strong>Cliente:</strong> ${tramite.cliente}</p>
                     <p><strong>NIT:</strong> ${nit}</p>
                     <p><strong>Placa:</strong> ${tramite.placa}</p>
                     <p><strong>Tipo de Trámite:</strong> ${tipoTramite}</p>
                     <p><strong>Tránsito:</strong> ${transito}</p>
-                </div>
-                <hr>
-                <div class="detalle">
                     <p><strong>Estado:</strong> ${capitalizeFirst(tramite.estado)}</p>
                     <p><strong>Estado de Pago:</strong> ${capitalizeFirst(tramite.pago)}</p>
-                    <p><strong>Valor:</strong> ${valorFormateado}</p>
                 </div>
-                <p class="gracias">¡Gracias por su confianza!</p>
+                <hr>
+                <div class="valor-section">
+                    <p><strong>Valor:</strong></p>
+                    <p class="valor">${valorFormateado}</p>
+                </div>
+                <p style="text-align: center; font-size: 8px; margin-top: 10px;">¡Gracias por su confianza!</p>
             </div>
         `;
 
