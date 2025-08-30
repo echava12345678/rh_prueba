@@ -853,7 +853,7 @@ transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
 
 .recibo-logo {
     display: block;
-    margin: 0 auto 20px auto;
-    max-width: 60px; /* Adjust the size as needed */
+    margin: 0 auto 10px auto;
+    max-width: 40px; /* Adjust the size as needed */
     height: auto;
 }
