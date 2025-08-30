@@ -850,3 +850,10 @@ height: 260px;
 .btn.logo:hover {
 transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
 }
+
+.recibo-logo {
+    display: block;
+    margin: 0 auto 20px auto;
+    max-width: 150px; /* Adjust the size as needed */
+    height: auto;
+}
