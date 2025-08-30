@@ -1686,7 +1686,8 @@ async function descargarReciboTramite(tramiteId) {
        const tipoTramite = tramite.tipo || 'N/A';
        const transito = tramite.transito || 'N/A';
 
-     const reciboHTML = `
+    
+        const reciboHTML = `
             <style>
                 .recibo-caja-diseno {
                     font-family: 'Arial', sans-serif;
@@ -1695,47 +1696,47 @@ async function descargarReciboTramite(tramiteId) {
                     margin: 0;
                     border: 1px dashed #333;
                     color: #000;
-                    font-size: 10px;
-                    line-height: 1.4;
+                    font-size: 8px; /* Letra más pequeña */
+                    line-height: 1.3;
                     box-sizing: border-box;
                 }
                 .recibo-caja-diseno h2 {
                     text-align: center;
-                    font-size: 18px;
+                    font-size: 14px; /* Título más pequeño */
                     font-weight: bold;
-                    margin: 0 0 10px 0;
+                    margin: 0 0 8px 0;
                 }
                 .recibo-caja-diseno img {
                     display: block;
-                    max-width: 80px;
+                    max-width: 70px; /* Logo un poco más pequeño */
                     height: auto;
-                    margin: 0 auto 10px auto;
+                    margin: 0 auto 8px auto;
                 }
                 .recibo-caja-diseno .info-section {
                     text-align: left;
-                    margin-bottom: 10px;
+                    margin-bottom: 8px;
                 }
                 .recibo-caja-diseno .info-section p {
-                    margin: 3px 0;
+                    margin: 2px 0;
                 }
                 .recibo-caja-diseno .info-section strong {
                     font-weight: bold;
                     display: inline-block;
-                    width: 80px; /* Ancho fijo para las etiquetas */
+                    width: 70px; /* Ancho fijo para las etiquetas */
                 }
                 .recibo-caja-diseno hr {
                     border: none;
                     border-top: 1px dashed #000;
-                    margin: 10px 0;
+                    margin: 8px 0;
                 }
                 .recibo-caja-diseno .valor-section {
                     text-align: center;
-                    margin-top: 15px;
+                    margin-top: 10px;
                 }
                 .recibo-caja-diseno .valor-section .valor {
-                    font-size: 16px;
+                    font-size: 14px; /* Valor más pequeño */
                     font-weight: bold;
-                    margin-top: 5px;
+                    margin-top: 3px;
                 }
             </style>
             <div class="recibo-caja-diseno">
@@ -1756,7 +1757,7 @@ async function descargarReciboTramite(tramiteId) {
                     <p><strong>Valor:</strong></p>
                     <p class="valor">${valorFormateado}</p>
                 </div>
-                <p style="text-align: center; font-size: 8px; margin-top: 10px;">¡Gracias por su confianza!</p>
+                <p style="text-align: center; font-size: 7px; margin-top: 8px;">¡Gracias por su confianza!</p>
             </div>
         `;
 
@@ -1786,7 +1787,6 @@ async function descargarReciboTramite(tramiteId) {
         mostrarNotificacion('Error al generar el recibo', 'error');
     }
 }
-
 async function descargarTodosRecibos() {
     // Filtra solo los trámites que están terminados y pagados
    const tramitesTerminados = tramites.filter(t => t.estado === 'terminado');
