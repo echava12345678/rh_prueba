@@ -183,6 +183,10 @@
             <input type="text" id="contaConcepto" placeholder="Ej: Traspaso, TCC, Salario" required>
         </div>
                                 <div class="form-group">
+    <label for="contaPlaca">Placa</label>
+    <input type="text" id="contaPlaca" placeholder="Placa del vehículo">
+</div>
+                                <div class="form-group">
                                     <label for="contaBanco">Banco / Efectivo:</label>
                                     <select id="contaBanco" required>
                                         <option value="victor">Banco de Víctor</option>
@@ -226,6 +230,14 @@
                         <button onclick="consultarUtilidades()" class="btn-primary">Consultar</button>
                         <div id="resultadosUtilidad" class="resultados-utilidad"></div>
                     </div>
+
+                     <div class="search-section">
+    <h3>Búsqueda</h3>
+    <div class="search-container">
+        <input type="text" id="contaSearchInput" placeholder="Buscar movimiento...">
+        <button id="contaSearchButton">Buscar</button>
+    </div>
+</div>
                     
                     <div class="table-container">
                         <h3>Registros Contables</h3>
