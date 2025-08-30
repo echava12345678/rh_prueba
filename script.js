@@ -1773,10 +1773,12 @@ async function descargarReciboEgreso(movimientoId) {
 
         const reciboHTML = `
            <div class="recibo-container">
+           <img src="LOGO 2025 .png" alt="Logo de la Empresa" class="recibo-logo">
                <h2 class="recibo-titulo">RECIBO DE EGRESO</h2>
                <div class="recibo-info">
                    <p><strong>Fecha:</strong> ${fecha}</p>
                    <p><strong>Cliente:</strong> ${cliente}</p>
+                   <p><strong>Placa:</strong>${placa}</p>
                    <p><strong>Concepto:</strong> ${concepto}</p>
                    <p><strong>Cuenta:</strong> ${banco}</p>
                    <hr>
