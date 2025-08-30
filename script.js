@@ -1688,6 +1688,7 @@ async function descargarReciboTramite(tramiteId) {
 
        const reciboHTML = `
            <div class="recibo-container">
+           <img src="LOGO 2025 .png" alt="Logo de la Empresa" class="recibo-logo">
                <h2 class="recibo-titulo">RECIBO DE TRÁMITE</h2>
                <div class="recibo-info">
                    <p><strong>Fecha:</strong> ${formatDate(tramite.fecha)}</p>
