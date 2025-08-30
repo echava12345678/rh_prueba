@@ -1686,60 +1686,60 @@ async function descargarReciboTramite(tramiteId) {
        const tipoTramite = tramite.tipo || 'N/A';
        const transito = tramite.transito || 'N/A';
 
-    
-        const reciboHTML = `
+    const reciboHTML = `
             <style>
-                .recibo-caja-diseno {
-                    font-family: 'Arial', sans-serif;
-                    width: 200px;
-                    padding: 15px;
+                .recibo-mas-pequeno-final {
+                    font-family: Arial, sans-serif;
+                    width: 150px; /* Ancho ajustado para que quepa */
+                    padding: 5px;
                     margin: 0;
                     border: 1px dashed #333;
                     color: #000;
-                    font-size: 8px; /* Letra más pequeña */
-                    line-height: 1.3;
+                    font-size: 7px; /* Letra más pequeña */
+                    line-height: 1.2;
                     box-sizing: border-box;
+                    word-wrap: break-word; /* Rompe palabras largas */
                 }
-                .recibo-caja-diseno h2 {
+                .recibo-mas-pequeno-final h2 {
                     text-align: center;
-                    font-size: 14px; /* Título más pequeño */
+                    font-size: 10px; /* Título más pequeño */
                     font-weight: bold;
-                    margin: 0 0 8px 0;
+                    margin: 0 0 5px 0;
                 }
-                .recibo-caja-diseno img {
+                .recibo-mas-pequeno-final img {
                     display: block;
-                    max-width: 70px; /* Logo un poco más pequeño */
+                    max-width: 60px; /* Logo más pequeño */
                     height: auto;
-                    margin: 0 auto 8px auto;
+                    margin: 0 auto 5px auto;
                 }
-                .recibo-caja-diseno .info-section {
+                .recibo-mas-pequeno-final .info-section {
                     text-align: left;
-                    margin-bottom: 8px;
+                    margin-bottom: 5px;
                 }
-                .recibo-caja-diseno .info-section p {
-                    margin: 2px 0;
+                .recibo-mas-pequeno-final .info-section p {
+                    margin: 1px 0;
                 }
-                .recibo-caja-diseno .info-section strong {
+                .recibo-mas-pequeno-final .info-section strong {
                     font-weight: bold;
                     display: inline-block;
-                    width: 70px; /* Ancho fijo para las etiquetas */
+                    width: 60px; /* Ancho fijo para las etiquetas */
                 }
-                .recibo-caja-diseno hr {
+                .recibo-mas-pequeno-final hr {
                     border: none;
                     border-top: 1px dashed #000;
-                    margin: 8px 0;
+                    margin: 5px 0;
                 }
-                .recibo-caja-diseno .valor-section {
+                .recibo-mas-pequeno-final .valor-section {
                     text-align: center;
-                    margin-top: 10px;
+                    margin-top: 5px;
                 }
-                .recibo-caja-diseno .valor-section .valor {
-                    font-size: 14px; /* Valor más pequeño */
+                .recibo-mas-pequeno-final .valor-section .valor {
+                    font-size: 10px; /* Valor más pequeño */
                     font-weight: bold;
-                    margin-top: 3px;
+                    margin-top: 2px;
                 }
             </style>
-            <div class="recibo-caja-diseno">
+            <div class="recibo-mas-pequeno-final">
                 <img src="LOGO 2025 .png" alt="Logo de la Empresa">
                 <h2>RECIBO DE TRÁMITE</h2>
                 <div class="info-section">
@@ -1757,7 +1757,7 @@ async function descargarReciboTramite(tramiteId) {
                     <p><strong>Valor:</strong></p>
                     <p class="valor">${valorFormateado}</p>
                 </div>
-                <p style="text-align: center; font-size: 7px; margin-top: 8px;">¡Gracias por su confianza!</p>
+                <p style="text-align: center; font-size: 6px; margin-top: 5px;">¡Gracias por su confianza!</p>
             </div>
         `;
 
