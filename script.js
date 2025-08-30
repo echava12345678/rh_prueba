@@ -814,10 +814,11 @@ async function agregarMovimiento(e, db) {
         fecha: document.getElementById('contaFecha').value,
         cliente: document.getElementById('contaCliente').value,
         concepto: document.getElementById('contaConcepto').value,
+        placa: document.getElementById('contaPlaca').value.toUpperCase(),
         banco: document.getElementById('contaBanco').value,
         tipo: document.getElementById('contaTipo').value,
         monto: monto,
-        placa: document.getElementById('contaPlaca').value.toUpperCase(),
+        
     };
     
     try {
@@ -853,6 +854,7 @@ function actualizarRegistrosContables() {
                     <th>Fecha</th>
                     <th>Cliente</th>
                     <th>Concepto</th> <th>Banco/Efectivo</th>
+                    <th>Placa</th>
                     <th>Tipo</th>
                     <th>Monto</th>
                     <th>Acciones</th>
