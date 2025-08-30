@@ -857,72 +857,67 @@ transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
     max-width: 40px; /* Adjust the size as needed */
     height: auto;
 }
-/* Nuevo Contenedor Principal del Recibo */
-.recibo-container-nuevo {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    width: 300px;
-    padding: 30px 20px;
-    border: 2px solid #34495e; /* Borde oscuro para un look moderno */
+/* Contenedor del recibo */
+.recibo-compacto-container {
+    font-family: Arial, sans-serif;
+    width: 200px; /* Reducción de ancho para asegurar que quepa */
+    padding: 10px;
+    border: 1px dashed #ccc;
+    margin: 10px auto;
     background-color: #fff;
-    margin: 20px auto;
-    color: #333;
-    line-height: 1.5;
+    font-size: 12px;
 }
 
-/* Estilo para el Logo */
-.recibo-logo-nuevo {
+/* Estilo del logo */
+.recibo-compacto-logo {
     display: block;
-    max-width: 100px;
+    max-width: 80px; /* Tamaño del logo ajustado */
     height: auto;
-    margin: 0 auto 20px auto;
-    border-radius: 5px; /* Bordes suaves */
+    margin: 0 auto 10px auto;
 }
 
 /* Título del recibo */
-.recibo-titulo-nuevo {
+.recibo-compacto-titulo {
     text-align: center;
-    color: #2c3e50;
-    font-size: 22px;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #bdc3c7; /* Línea delgada */
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
 }
 
-/* Información general */
-.recibo-info-nuevo p {
-    margin: 8px 0;
-    font-size: 14px;
+/* Información del recibo */
+.recibo-compacto-info p {
+    margin: 3px 0;
 }
 
-.recibo-info-nuevo strong {
+.recibo-compacto-info strong {
+    font-weight: bold;
     color: #555;
-    font-weight: 600;
 }
 
 /* Separador */
-.recibo-container-nuevo hr {
+.recibo-compacto-container hr {
     border: none;
-    border-top: 2px solid #3498db; /* Línea de color para destacar */
-    margin: 25px 0;
+    border-top: 1px solid #eee;
+    margin: 10px 0;
 }
 
-/* Detalles importantes como el valor */
-.recibo-detalle-nuevo {
-    margin-top: 20px;
-}
-
-.recibo-detalle-nuevo p {
-    font-size: 16px;
-    font-weight: bold;
-    color: #e74c3c;
+/* Detalles del valor */
+.recibo-compacto-detalle {
     text-align: right;
+    margin-top: 10px;
+}
+
+.recibo-compacto-detalle strong {
+    font-size: 14px;
+    color: #000;
 }
 
 /* Mensaje de agradecimiento */
-.recibo-gracias-nuevo {
+.recibo-compacto-gracias {
     text-align: center;
-    margin-top: 30px;
-    font-size: 13px;
-    color: #7f8c8d;
+    margin-top: 15px;
+    font-size: 10px;
     font-style: italic;
+    color: #777;
 }
