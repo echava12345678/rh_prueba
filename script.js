@@ -242,10 +242,10 @@ function filtrarTramites(searchTerm) {
 function filtrarRegistros(searchTerm) {
     const term = searchTerm.toLowerCase();
     const resultados = registrosContables.filter(r => 
-        (r.cliente && r.cliente.toLowerCase().includes(term)) ||
-        (r.concepto && r.concepto.toLowerCase().includes(term)) ||
-        (r.banco && r.banco.toLowerCase().includes(term))
-         (r.placa && r.placa.toLowerCase().includes(term))                                        
+       (r.cliente && String(r.cliente).toLowerCase().includes(term)) ||
+        (r.concepto && String(r.concepto).toLowerCase().includes(term)) ||
+        (r.banco && String(r.banco).toLowerCase().includes(term)) ||
+        (r.placa && String(r.placa).toLowerCase().includes(term))                                        
                                                  
     );
     // NUEVO: Mostrar el término de búsqueda
