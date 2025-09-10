@@ -910,6 +910,8 @@ function consultarUtilidades() {
             (persona === 'efectivo' && reg.banco === 'efectivo')
         );
     }
+    // Ordena los movimientos por fecha (de menor a mayor)
+    movimientos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
     
     const ingresos = movimientos.filter(m => m.tipo === 'ingreso').reduce((sum, m) => sum + m.monto, 0);
     const egresos = movimientos.filter(m => m.tipo === 'egreso').reduce((sum, m) => sum + m.monto, 0);
