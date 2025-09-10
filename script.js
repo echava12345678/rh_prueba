@@ -882,15 +882,26 @@ function actualizarRegistrosContables() {
 }
 
 function consultarUtilidades() {
-    const fecha = document.getElementById('fechaConsulta').value;
+     const fechaInicio = document.getElementById('fechaInicio').value;
+    const fechaFin = document.getElementById('fechaFin').value;
     const persona = document.getElementById('personaConsulta').value;
     
-    if (!fecha) {
-        mostrarNotificacion('Seleccione una fecha para consultar', 'error');
+    if (!fechaInicio || !fechaFin) {
+        mostrarNotificacion('Seleccione un rango de fechas para consultar', 'error');
         return;
     }
-    
-    let movimientos = registrosContables.filter(reg => reg.fecha === fecha);
+
+    const start = new Date(fechaInicio);
+    const end = new Date(fechaFin);
+    // Establece la hora al final del día para incluir la fecha de fin
+    end.setHours(23, 59, 59, 999); 
+
+    let movimientos = registrosContables.filter(reg => {
+        const fechaMovimiento = new Date(reg.fecha);
+        fechaMovimiento.setHours(0, 0, 0, 0); // Normaliza la hora para la comparación
+        return fechaMovimiento >= start && fechaMovimiento <= end;
+    });
+
     
     if (persona) {
         movimientos = movimientos.filter(reg => 
@@ -917,7 +928,7 @@ function consultarUtilidades() {
 
     const resultadosHTML = `
         <div class="utilidad-card">
-            <h4>Resumen del ${formatDate(fecha)} ${persona ? '- ' + capitalizeFirst(persona) : ''}</h4>
+            <h4>Resumen del periodo: ${formatDate(fechaInicio)} - ${formatDate(fechaFin)}</h4>
             <div class="utilidad-detalle">
                 <div class="utilidad-item">
                     <strong>Total Ingresos</strong><br>
