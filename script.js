@@ -284,6 +284,13 @@ function filtrarPlacasContabilidad(searchTerm) {
         (p.placa && p.placa.toLowerCase().includes(term)) ||
         (p.asignadaA && p.asignadaA.toLowerCase().includes(term))
     );
+    // NUEVO: Llama a la nueva función para actualizar el formulario con el primer resultado.
+    if (resultados.length > 0) {
+        // Asegúrate de tener una función que actualice el formulario de contabilidad.
+        actualizarFormularioContabilidad(resultados[0]);
+    } else {
+        actualizarFormularioContabilidad(null); // Borra el formulario si no hay resultados.
+    }
      // NUEVO: Mostrar el término de búsqueda
     const displayElement = document.getElementById('contaPlacaQueryDisplay');
     if (searchTerm.trim() !== '') {
