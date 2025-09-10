@@ -372,9 +372,9 @@
         <div class="search-section">
             <h3>Búsqueda</h3>
             <div class="search-container">
-                <input type="text" id="placaSearchInput" placeholder="Buscar placa...">
-                <button id="placaSearchButton">Buscar</button>
-            </div>
+        <input type="text" id="placaSearchInput" onkeyup="filtrarPlacas(this.value)" placeholder="Buscar placa...">
+        <button id="placaSearchButton" onclick="filtrarPlacas(document.getElementById('placaSearchInput').value)">Buscar</button>
+    </div>
         </div>
          <div id="placasQueryDisplay" class="query-display"></div>
                         <div class="table-container">
