@@ -431,12 +431,12 @@ function renderPlacas(placasToRender) {
             <tbody>
                 ${placasToRender.map(p => `
                     <tr>
-                        <td>${p.placa}</td>
-                        <td>${p.cliente}</td>
-                        <td>${p.tramite}</td>
-                        <td>${p.estado}</td>
-                        <td>${p.fechaRecepcion}</td>
-                        <td>${p.observaciones}</td>
+                        <td>${p.placa || 'N/A'}</td>
+                        <td>${p.cliente || 'N/A'}</td>
+                        <td>${p.tramite || 'N/A'}</td>
+                        <td>${p.estado || 'N/A'}</td>
+                        <td>${p.fechaRecepcion || 'N/A'}</td>
+                        <td>${p.observaciones || 'N/A'}</td>
                         <td>
                             <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
                             <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
