@@ -420,29 +420,34 @@ function renderPlacas(placasToRender) {
             <thead>
                 <tr>
                     <th>Placa</th>
-                    <th>Cliente</th>
-                    <th>Trámite</th>
-                    <th>Estado</th>
-                    <th>Fecha Recepción</th>
+                    <th>Asignada a</th>
+                    <th>F. Recepción</th>
+                    <th>F. Asignada</th>
+                    <th>F. Matrícula</th>
                     <th>Observaciones</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                ${placasToRender.map(p => `
-                    <tr>
-                        <td>${p.placa || 'N/A'}</td>
-                        <td>${p.cliente || 'N/A'}</td>
-                        <td>${p.tramite || 'N/A'}</td>
-                        <td>${p.estado || 'N/A'}</td>
-                        <td>${p.fechaRecepcion || 'N/A'}</td>
-                        <td>${p.observaciones || 'N/A'}</td>
-                        <td>
-                            <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
-                            <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
-                        </td>
-                    </tr>
-                `).join('')}
+                 ${placasOrdenadas.map(p => {
+                    const estado = obtenerEstadoPlaca(p.fechaAsignada, p.fechaMatricula, p.asignadaA);
+                    return `
+                        <tr>
+                            <td>${p.placa}</td>
+                            <td>${p.asignadaA || 'N/A'}</td>
+                            <td>${formatDate(p.fechaRecepcion)}</td>
+                            <td>${formatDate(p.fechaAsignada)}</td>
+                            <td>${formatDate(p.fechaMatricula)}</td>
+                            <td>${p.observaciones || 'N/A'}</td>
+                            <td><span class="badge badge-${estado.toLowerCase().replace(' ', '-')}">${estado}</span></td>
+                            <td>
+                                <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
+                                <button class="btn-delete" onclick="eliminarPlaca('${p.id}')">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('')}
             </tbody>
         </table>
     `;
