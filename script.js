@@ -979,6 +979,7 @@ function consultarUtilidades() {
                 <table style="width: 100%; margin-top: 10px;">
                     <thead>
                         <tr style="background: rgba(255,255,255,0.1);">
+                            <th>Fecha</th>
                             <th>Cliente</th>
                             <th>Cuenta</th>
                             <th>Tipo</th>
@@ -988,6 +989,7 @@ function consultarUtilidades() {
                     <tbody>
                         ${movimientos.map(m => `
                             <tr>
+                                <td>${formatDate(m.fecha)}</td>
                                 <td>${m.cliente}</td>
                                 <td>${capitalizeFirst(m.banco)}</td>
                                 <td>${capitalizeFirst(m.tipo)}</td>
