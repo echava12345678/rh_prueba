@@ -430,16 +430,16 @@ function renderPlacas(placasToRender) {
                 </tr>
             </thead>
             <tbody>
-                 ${placasOrdenadas.map(p => {
+                 ${placasToRender.map(p => {
                     const estado = obtenerEstadoPlaca(p.fechaAsignada, p.fechaMatricula, p.asignadaA);
                     return `
                         <tr>
-                            <td>${p.placa}</td>
-                            <td>${p.asignadaA || 'N/A'}</td>
-                            <td>${formatDate(p.fechaRecepcion)}</td>
-                            <td>${formatDate(p.fechaAsignada)}</td>
-                            <td>${formatDate(p.fechaMatricula)}</td>
-                            <td>${p.observaciones || 'N/A'}</td>
+                            <td>${p.placa || ''}</td>
+                            <td>${p.asignadaA || ''}</td>
+                            <td>${p.fechaRecepcion || ''}</td>
+                            <td>${p.fechaAsignada || ''}</td>
+                            <td>${p.fechaMatricula || ''}</td>
+                            <td>${p.observaciones || ''}</td>
                             <td><span class="badge badge-${estado.toLowerCase().replace(' ', '-')}">${estado}</span></td>
                             <td>
                                 <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
