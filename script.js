@@ -434,12 +434,12 @@ function renderPlacas(placasToRender) {
                     const estado = obtenerEstadoPlaca(p.fechaAsignada, p.fechaMatricula, p.asignadaA);
                     return `
                         <tr>
-                            <td>${p.placa || ''}</td>
-                            <td>${p.asignadaA || ''}</td>
-                            <td>${p.fechaRecepcion || ''}</td>
-                            <td>${p.fechaAsignada || ''}</td>
-                            <td>${p.fechaMatricula || ''}</td>
-                            <td>${p.observaciones || ''}</td>
+                            <td>${p.placa || 'N/A'}</td>
+                            <td>${p.asignadaA || 'N/A'}</td>
+                            <td>${p.fechaRecepcion || 'N/A'}</td>
+                            <td>${p.fechaAsignada || 'N/A'}</td>
+                            <td>${p.fechaMatricula || 'N/A'}</td>
+                            <td>${p.observaciones || 'N/A'}</td>
                             <td><span class="badge badge-${estado.toLowerCase().replace(' ', '-')}">${estado}</span></td>
                             <td>
                                 <button class="btn-edit" onclick="editarPlaca('${p.id}')">Editar</button>
