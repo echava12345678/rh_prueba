@@ -1,1029 +1,1845 @@
 /* Reset y configuración base */
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
 }
+
+
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    color: #333;
-    line-height: 1.6;
-    min-height: 100vh;
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+    color: #333;
+
+    line-height: 1.6;
+
+    min-height: 100vh;
+
 }
+
+
 
 .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
-    background: white;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    border-radius: 10px;
-    margin-top: 20px;
-    margin-bottom: 20px;
+
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    padding: 20px;
+
+    background: white;
+
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+
+    border-radius: 10px;
+
+    margin-top: 20px;
+
+    margin-bottom: 20px;
+
 }
+
+
 
 /* Header y Navegación */
+
 .header {
-    background: linear-gradient(135deg, #f57c00 0%, #f50d05 100%);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+    background: linear-gradient(135deg, #f57c00 0%, #f50d05 100%);
+
+    color: white;
+
+    padding: 20px;
+
+    border-radius: 10px;
+
+    margin-bottom: 30px;
+
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
 }
+
+
 
 .header h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 2.2rem;
-    font-weight: 300;
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+    font-size: 2.2rem;
+
+    font-weight: 300;
+
 }
+
+
 
 .nav {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
 }
+
+
 
 .nav-btn {
-    padding: 12px 24px;
-    background: rgba(255,255,255,0.1);
-    border: 2px solid rgba(255,255,255,0.2);
-    color: white;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    font-weight: 500;
+
+    padding: 12px 24px;
+
+    background: rgba(255,255,255,0.1);
+
+    border: 2px solid rgba(255,255,255,0.2);
+
+    color: white;
+
+    border-radius: 25px;
+
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
 }
+
+
 
 .nav-btn:hover, .nav-btn.active {
-    background: rgba(255,255,255,0.2);
-    border-color: rgba(255,255,255,0.4);
-    transform: translateY(-2px);
+
+    background: rgba(255,255,255,0.2);
+
+    border-color: rgba(255,255,255,0.4);
+
+    transform: translateY(-2px);
+
 }
+
+
 
 /* Secciones */
+
 .section {
-    display: none;
-    animation: fadeIn 0.3s ease-in;
+
+    display: none;
+
+    animation: fadeIn 0.3s ease-in;
+
 }
+
+
 
 .section.active {
-    display: block;
+
+    display: block;
+
 }
+
+
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+
+    from { opacity: 0; transform: translateY(20px); }
+
+    to { opacity: 1; transform: translateY(0); }
+
 }
+
+
 
 .section-header {
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 3px solid #667eea;
+
+    margin-bottom: 30px;
+
+    padding-bottom: 15px;
+
+    border-bottom: 3px solid #667eea;
+
 }
+
+
 
 .section-header h2 {
-    color: #667eea;
-    font-size: 1.8rem;
-    font-weight: 400;
+
+    color: #667eea;
+
+    font-size: 1.8rem;
+
+    font-weight: 400;
+
 }
+
+
 
 /* Formularios */
+
 .form-container {
-    background: #f8f9fa;
-    padding: 25px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    border-left: 4px solid #667eea;
+
+    background: #f8f9fa;
+
+    padding: 25px;
+
+    border-radius: 10px;
+
+    margin-bottom: 30px;
+
+    border-left: 4px solid #667eea;
+
 }
+
+
 
 .form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+
 }
+
+
 
 .form-group {
-    display: flex;
-    flex-direction: column;
+
+    display: flex;
+
+    flex-direction: column;
+
 }
+
+
 
 .form-group label {
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 5px;
-    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #555;
+
+    margin-bottom: 5px;
+
+    font-size: 14px;
+
 }
+
+
 
 .form-group input,
+
 .form-group select,
+
 .form-group textarea {
-    padding: 12px;
-    border: 2px solid #e9ecef;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-    background: white;
+
+    padding: 12px;
+
+    border: 2px solid #e9ecef;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+
+    transition: border-color 0.3s ease;
+
+    background: white;
+
 }
+
+
 
 .form-group input:focus,
+
 .form-group select:focus,
+
 .form-group textarea:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+
+    outline: none;
+
+    border-color: #667eea;
+
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+
 }
+
+
 
 .form-group textarea {
-    resize: vertical;
-    min-height: 60px;
+
+    resize: vertical;
+
+    min-height: 60px;
+
 }
+
+
 
 /* Botones */
+
 .btn-primary, .btn-secondary {
-    padding: 12px 30px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+
+    padding: 12px 30px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition: all 0.3s ease;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
 }
+
+
 
 .btn-primary {
-    background: linear-gradient(135deg, #f57c00 0%, #f50d05 100%);
-    color: white;
+
+    background: linear-gradient(135deg, #f57c00 0%, #f50d05 100%);
+
+    color: white;
+
 }
+
+
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+
 }
+
+
 
 .btn-secondary {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-    color: #333;
+
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+
+    color: #333;
+
 }
+
+
 
 .btn-secondary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(168, 237, 234, 0.4);
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 4px 15px rgba(168, 237, 234, 0.4);
+
 }
+
+
 
 .btn-edit, .btn-delete, .btn-whatsapp, .btn-download {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    margin: 0 2px;
-    transition: all 0.3s ease;
+
+    padding: 6px 12px;
+
+    border: none;
+
+    border-radius: 4px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    margin: 0 2px;
+
+    transition: all 0.3s ease;
+
 }
+
+
 
 .btn-edit {
-    background: #28a745;
-    color: white;
+
+    background: #28a745;
+
+    color: white;
+
 }
+
+
 
 .btn-edit:hover {
-    background: #218838;
+
+    background: #218838;
+
 }
+
+
 
 .btn-delete {
-    background: #dc3545;
-    color: white;
+
+    background: #dc3545;
+
+    color: white;
+
 }
+
+
 
 .btn-delete:hover {
-    background: #c82333;
+
+    background: #c82333;
+
 }
+
+
 
 .btn-whatsapp {
-    background: #25d366;
-    color: white;
+
+    background: #25d366;
+
+    color: white;
+
 }
+
+
 
 .btn-whatsapp:hover {
-    background: #128c7e;
+
+    background: #128c7e;
+
 }
+
+
 
 .btn-download {
-    background: #007bff;
-    color: white;
+
+    background: #007bff;
+
+    color: white;
+
 }
+
+
 
 .btn-download:hover {
-    background: #0069d9;
+
+    background: #0069d9;
+
 }
+
+
 
 /* Subsecciones de Trámites */
+
 .tramites-sections {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 25px;
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+
+    gap: 25px;
+
 }
+
+
 
 .tramite-subsection {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    border: 1px solid #e9ecef;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+
+    background: white;
+
+    border-radius: 10px;
+
+    padding: 20px;
+
+    border: 1px solid #e9ecef;
+
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+
 }
+
+
 
 .tramite-subsection h3 {
-    color: #667eea;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #f8f9fa;
+
+    color: #667eea;
+
+    margin-bottom: 15px;
+
+    padding-bottom: 10px;
+
+    border-bottom: 2px solid #f8f9fa;
+
 }
+
+
 
 .tramite-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+
 }
+
+
 
 .tramite-card {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    border-left: 5px solid;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    background: #f8f9fa;
+
+    padding: 15px;
+
+    border-radius: 8px;
+
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+
+    border-left: 5px solid;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
 }
+
+
 
 .tramite-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
 }
+
+
 
 .tramite-card.proceso {
-    border-color: #ffc107; /* Amarillo para En Proceso */
+
+    border-color: #ffc107; /* Amarillo para En Proceso */
+
 }
+
+
 
 .tramite-card.terminado {
-    border-color: #28a745; /* Verde para Terminado */
+
+    border-color: #28a745; /* Verde para Terminado */
+
 }
+
+
 
 .tramite-card.rechazado {
-    border-color: #dc3545; /* Rojo para Rechazado */
+
+    border-color: #dc3545; /* Rojo para Rechazado */
+
 }
+
+
 
 .tramite-info {
-    margin-bottom: 10px;
-    line-height: 1.8;
+
+    margin-bottom: 10px;
+
+    line-height: 1.8;
+
 }
+
+
 
 .tramite-info strong {
-    color: #495057;
+
+    color: #495057;
+
 }
+
+
 
 .estado-pago {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    margin-bottom: 10px;
+
 }
+
+
 
 .estado-pago select {
-    margin-top: 5px;
-    padding: 8px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
+
+    margin-top: 5px;
+
+    padding: 8px;
+
+    border: 1px solid #ced4da;
+
+    border-radius: 4px;
+
 }
+
+
 
 .tramite-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 5px;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    gap: 5px;
+
 }
+
+
 
 /* Notificaciones */
+
 .notificacion {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #5cb85c;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+
+    position: fixed;
+
+    top: 20px;
+
+    right: 20px;
+
+    background-color: #5cb85c;
+
+    color: white;
+
+    padding: 15px 25px;
+
+    border-radius: 5px;
+
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+    z-index: 1000;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+
 }
+
+
 
 .notificacion.show {
-    opacity: 1;
-    visibility: visible;
+
+    opacity: 1;
+
+    visibility: visible;
+
 }
+
+
 
 .notificacion.success {
-    background-color: #28a745;
+
+    background-color: #28a745;
+
 }
+
+
 
 .notificacion.error {
-    background-color: #dc3545;
+
+    background-color: #dc3545;
+
 }
+
+
 
 .notificacion.info {
-    background-color: #17a2b8;
+
+    background-color: #17a2b8;
+
 }
+
+
 
 /* Tablas */
+
 .table-container {
-    margin-bottom: 30px;
+
+    margin-bottom: 30px;
+
 }
+
+
 
 .table-container h3 {
-    margin-bottom: 15px;
-    color: #667eea;
+
+    margin-bottom: 15px;
+
+    color: #667eea;
+
 }
+
+
 
 table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    border-radius: 8px;
-    overflow: hidden;
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: white;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+    border-radius: 8px;
+
+    overflow: hidden;
+
 }
+
+
 
 thead {
-    background-color: #667eea;
-    color: white;
+
+    background-color: #667eea;
+
+    color: white;
+
 }
+
+
 
 th, td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #dee2e6;
-    font-size: 14px;
+
+    padding: 12px 15px;
+
+    text-align: left;
+
+    border-bottom: 1px solid #dee2e6;
+
+    font-size: 14px;
+
 }
+
+
 
 tr:nth-child(even) {
-    background-color: #f8f9fa;
+
+    background-color: #f8f9fa;
+
 }
+
+
 
 tr:hover {
-    background-color: #e9ecef;
+
+    background-color: #e9ecef;
+
 }
+
+
 
 .badge {
-    padding: 5px 10px;
-    border-radius: 50px;
-    font-size: 11px;
-    font-weight: bold;
-    color: white;
+
+    padding: 5px 10px;
+
+    border-radius: 50px;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    color: white;
+
 }
+
+
 
 .badge.ingreso {
-    background-color: #28a745;
+
+    background-color: #28a745;
+
 }
+
+
 
 .badge.egreso {
-    background-color: #dc3545;
+
+    background-color: #dc3545;
+
 }
+
+
 
 .badge.vigente {
-    background-color: #28a745;
+
+    background-color: #28a745;
+
 }
+
+
 
 .badge.pronto-a-vencer {
-    background-color: #ffc107;
+
+    background-color: #ffc107;
+
 }
 
+
+
 .badge.vencido {
-    background-color: #dc3545;
+
+    background-color: #dc3545;
+
 }
+
+
 
 /* Estilos de recibo */
 
+
+
 .recibo-container {
-    width: 100%;
-    max-width: 400px; /* Tamaño máximo del recibo */
-    margin: 20px auto;
-    padding: 20px;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
+
+    width: 100%;
+
+    max-width: 400px; /* Tamaño máximo del recibo */
+
+    margin: 20px auto;
+
+    padding: 20px;
+
+    background: #fff;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+    font-family: Arial, sans-serif;
+
 }
+
+
 
 .recibo-titulo {
-    text-align: center;
-    color: #333;
-    font-size: 1.5rem; /* Tamaño de letra más pequeño */
-    margin-bottom: 15px;
-    border-bottom: 2px solid #f57c00;
-    padding-bottom: 10px;
+
+    text-align: center;
+
+    color: #333;
+
+    font-size: 1.5rem; /* Tamaño de letra más pequeño */
+
+    margin-bottom: 15px;
+
+    border-bottom: 2px solid #f57c00;
+
+    padding-bottom: 10px;
+
 }
+
+
 
 .recibo-info {
-    font-size: 0.9rem; /* Tamaño de letra más pequeño */
-    line-height: 1.8;
+
+    font-size: 0.9rem; /* Tamaño de letra más pequeño */
+
+    line-height: 1.8;
+
 }
+
+
 
 .recibo-info strong {
-    color: #555;
+
+    color: #555;
+
 }
+
+
 
 .recibo-gracias {
-    text-align: center;
-    margin-top: 20px;
-    font-style: italic;
-    color: #888;
+
+    text-align: center;
+
+    margin-top: 20px;
+
+    font-style: italic;
+
+    color: #888;
+
 }
+
+
 
 /* Modal */
+
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    animation: fadeIn 0.3s ease;
+
+    display: none;
+
+    position: fixed;
+
+    z-index: 1000;
+
+    left: 0;
+
+    top: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    background-color: rgba(0,0,0,0.5);
+
+    animation: fadeIn 0.3s ease;
+
 }
+
+
 
 .modal-content {
-    background-color: white;
-    margin: 5% auto;
-    padding: 30px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 600px;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+
+    background-color: white;
+
+    margin: 5% auto;
+
+    padding: 30px;
+
+    border-radius: 10px;
+
+    width: 90%;
+
+    max-width: 600px;
+
+    max-height: 80vh;
+
+    overflow-y: auto;
+
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+
 }
+
+
 
 .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: -10px;
+
+    color: #aaa;
+
+    float: right;
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    margin-top: -10px;
+
 }
+
+
 
 .close:hover {
-    color: #000;
+
+    color: #000;
+
 }
+
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+    .container {
+
+        margin: 10px;
+
+        padding: 15px;
+
+    }
+
+    
+
+    .header h1 {
+
+        font-size: 1.5rem;
+
+    }
+
+    
+
+    .nav {
+
+        flex-direction: column;
+
+        align-items: center;
+
+    }
+
+    
+
+    .nav-btn {
+
+        width: 200px;
+
+        margin: 5px 0;
+
+    }
+
+    
+
+    .form-row {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    
+
+    th, td {
+
+        padding: 8px;
+
+    }
+
+}
+
+
 
 /* Estilos generales para las tarjetas de utilidad */
+
 .utilidad-card {
-    background-color: #2c2f33; /* Un gris oscuro para el fondo */
-    border-radius: 12px;
-    padding: 25px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra suave para un efecto 3D */
-    color: #e0e0e0; /* Color de texto claro */
-    transition: transform 0.3s ease-in-out;
+
+    background-color: #2c2f33; /* Un gris oscuro para el fondo */
+
+    border-radius: 12px;
+
+    padding: 25px;
+
+    margin-bottom: 20px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra suave para un efecto 3D */
+
+    color: #e0e0e0; /* Color de texto claro */
+
+    transition: transform 0.3s ease-in-out;
+
 }
+
+
 
 .utilidad-card:hover {
-    transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
+
+    transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
+
 }
+
+
 
 /* Encabezados de las tarjetas */
+
 .utilidad-card h4,
+
 .utilidad-card h5 {
-    border-bottom: 2px solid #5a5f64; /* Separador sutil */
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 1.2rem;
-    color: #ffffff;
+
+    border-bottom: 2px solid #5a5f64; /* Separador sutil */
+
+    padding-bottom: 10px;
+
+    margin-bottom: 20px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    font-size: 1.2rem;
+
+    color: #ffffff;
+
 }
+
+
 
 /* Contenedor de los detalles */
+
 .utilidad-detalle {
-    display: flex;
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
-    gap: 20px; /* Espacio entre los ítems */
-    justify-content: space-around; /* Distribuye el espacio entre los ítems */
-    text-align: center;
+
+    display: flex;
+
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+
+    gap: 20px; /* Espacio entre los ítems */
+
+    justify-content: space-around; /* Distribuye el espacio entre los ítems */
+
+    text-align: center;
+
 }
+
+
 
 /* Estilo para cada ítem de utilidad */
+
 .utilidad-item {
-    background-color: #3b3e42;
-    padding: 20px 15px;
-    border-radius: 10px;
-    flex: 1; /* Permite que los ítems se expandan para ocupar el espacio disponible */
-    min-width: 150px; /* Asegura un ancho mínimo para cada ítem */
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+
+    background-color: #3b3e42;
+
+    padding: 20px 15px;
+
+    border-radius: 10px;
+
+    flex: 1; /* Permite que los ítems se expandan para ocupar el espacio disponible */
+
+    min-width: 150px; /* Asegura un ancho mínimo para cada ítem */
+
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+
 }
+
+
 
 .utilidad-item strong {
-    display: block;
-    font-size: 1rem;
-    margin-bottom: 5px;
-    color: #ffffff;
+
+    display: block;
+
+    font-size: 1rem;
+
+    margin-bottom: 5px;
+
+    color: #ffffff;
+
 }
+
 /* Estilos para el nuevo apartado de Búsqueda */
+
 .search-section {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
+
+    background-color: #f9f9f9;
+
+    padding: 15px;
+
+    border-radius: 8px;
+
+    margin-bottom: 20px;
+
+    border: 1px solid #ddd;
+
 }
+
+
 
 .search-section h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #333;
-    font-size: 1.2em;
+
+    margin-top: 0;
+
+    margin-bottom: 10px;
+
+    color: #333;
+
+    font-size: 1.2em;
+
 }
+
+
 
 .search-container {
-    display: flex;
-    gap: 10px;
+
+    display: flex;
+
+    gap: 10px;
+
 }
+
+
 
 .search-container input[type="text"] {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
+
+    flex-grow: 1;
+
+    padding: 10px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 5px;
+
+    font-size: 1em;
+
 }
+
+
 
 .search-container button {
-    padding: 10px 15px;
-    background-color: #5cb85c;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+
+    padding: 10px 15px;
+
+    background-color: #5cb85c;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    transition: background-color 0.3s ease;
+
 }
+
+
 
 .search-container button:hover {
-    background-color: #4cae4c;
+
+    background-color: #4cae4c;
+
 }
+
+
 
 /* Estilos para el apartado que muestra el texto de búsqueda */
+
 .query-display {
-    padding: 10px;
-    background-color: #e9f5e9; /* Un color de fondo suave */
-    border-radius: 5px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    font-size: 1.1em;
-    font-weight: bold;
-    color: #4CAF50; /* Un color de texto que resalte */
-    display: none; /* Oculto por defecto */
+
+    padding: 10px;
+
+    background-color: #e9f5e9; /* Un color de fondo suave */
+
+    border-radius: 5px;
+
+    margin-top: 10px;
+
+    margin-bottom: 10px;
+
+    font-size: 1.1em;
+
+    font-weight: bold;
+
+    color: #4CAF50; /* Un color de texto que resalte */
+
+    display: none; /* Oculto por defecto */
+
 }
+
+
 
 /* Estilos para la sección de Trámites */
+
 .tramites-list {
-    display: flex;
-    flex-wrap: wrap; /* Permite que los elementos pasen a la siguiente línea si no caben */
-    gap: 20px; /* Espacio entre las categorías */
-    justify-content: space-between; /* Distribuye el espacio de manera uniforme */
+
+    display: flex;
+
+    flex-wrap: wrap; /* Permite que los elementos pasen a la siguiente línea si no caben */
+
+    gap: 20px; /* Espacio entre las categorías */
+
+    justify-content: space-between; /* Distribuye el espacio de manera uniforme */
+
 }
+
+
 
 .tramites-category {
-    flex-basis: calc(50% - 10px); /* 50% del ancho, menos la mitad del espacio (gap) */
-    box-sizing: border-box;
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
+
+    flex-basis: calc(50% - 10px); /* 50% del ancho, menos la mitad del espacio (gap) */
+
+    box-sizing: border-box;
+
+    background-color: #f9f9f9;
+
+    padding: 15px;
+
+    border-radius: 8px;
+
+    border: 1px solid #ddd;
+
 }
 
+
+
 .tramites-category h4 {
-    margin-top: 0;
-    color: #333;
-    border-bottom: 2px solid #ccc;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
+
+    margin-top: 0;
+
+    color: #333;
+
+    border-bottom: 2px solid #ccc;
+
+    padding-bottom: 5px;
+
+    margin-bottom: 10px;
+
 }
+
+
 
 /* --- Mejora en la visualización de los trámites --- */
 
+
+
 /* Contenedor principal para las categorías */
+
 .tramites-list {
-    display: flex; /* Habilita el diseño flexible */
-    flex-wrap: wrap; /* Permite que las tarjetas se envuelvan en la siguiente línea */
-    gap: 20px; /* Espacio uniforme entre las categorías */
-    justify-content: space-between; /* Distribuye el espacio entre los elementos */
+
+    display: flex; /* Habilita el diseño flexible */
+
+    flex-wrap: wrap; /* Permite que las tarjetas se envuelvan en la siguiente línea */
+
+    gap: 20px; /* Espacio uniforme entre las categorías */
+
+    justify-content: space-between; /* Distribuye el espacio entre los elementos */
+
 }
+
+
 
 /* Contenedor de cada categoría (Por Cobrar, En Proceso, etc.) */
+
 .tramites-category {
-    flex: 1 1 calc(50% - 10px); /* Ocupa la mitad del espacio en una fila, menos el espacio entre ellas */
-    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
-    background-color: #ffffff; /* Fondo blanco */
-    border: 1px solid #e0e0e0; /* Borde suave */
-    border-radius: 12px; /* Bordes más redondeados */
-    padding: 20px; /* Más espacio interno */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Sombra sutil para un efecto 3D */
-    transition: transform 0.2s, box-shadow 0.2s;
+
+    flex: 1 1 calc(50% - 10px); /* Ocupa la mitad del espacio en una fila, menos el espacio entre ellas */
+
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+
+    background-color: #ffffff; /* Fondo blanco */
+
+    border: 1px solid #e0e0e0; /* Borde suave */
+
+    border-radius: 12px; /* Bordes más redondeados */
+
+    padding: 20px; /* Más espacio interno */
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Sombra sutil para un efecto 3D */
+
+    transition: transform 0.2s, box-shadow 0.2s;
+
 }
+
+
 
 .tramites-category:hover {
-    transform: translateY(-5px); /* Pequeño efecto de elevación al pasar el mouse */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+
+    transform: translateY(-5px); /* Pequeño efecto de elevación al pasar el mouse */
+
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+
 }
+
+
 
 /* Estilos para el encabezado de cada categoría */
+
 .tramites-category h4 {
-    margin: 0 0 15px;
-    color: #444;
-    font-size: 1.2em;
-    font-weight: 600;
-    border-bottom: 2px solid #5cb85c; /* Línea de color para el título */
-    padding-bottom: 8px;
+
+    margin: 0 0 15px;
+
+    color: #444;
+
+    font-size: 1.2em;
+
+    font-weight: 600;
+
+    border-bottom: 2px solid #5cb85c; /* Línea de color para el título */
+
+    padding-bottom: 8px;
+
 }
+
+
 
 /* Contenedor de las tarjetas de trámites individuales */
+
 .tramites-list-content {
-    display: flex;
-    flex-direction: column; /* Apila las tarjetas una debajo de otra */
-    gap: 15px; /* Espacio entre cada tarjeta de trámite */
+
+    display: flex;
+
+    flex-direction: column; /* Apila las tarjetas una debajo de otra */
+
+    gap: 15px; /* Espacio entre cada tarjeta de trámite */
+
 }
+
+
 
 /* Estilo de la tarjeta individual de cada trámite */
+
 .tramite-card {
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    border-left: 5px solid; /* Borde de color en el lado izquierdo */
-    border-radius: 8px;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    font-size: 0.9em;
+
+    background-color: #f9f9f9;
+
+    border: 1px solid #ccc;
+
+    border-left: 5px solid; /* Borde de color en el lado izquierdo */
+
+    border-radius: 8px;
+
+    padding: 15px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    font-size: 0.9em;
+
 }
+
+
 
 .tramite-card strong {
-    color: #333; /* Color oscuro para las etiquetas de campo */
+
+    color: #333; /* Color oscuro para las etiquetas de campo */
+
 }
+
+
 
 /* Colores de borde para cada tipo de estado */
+
 .tramite-card.proceso { border-left-color: #f0ad4e; /* Naranja */ }
+
 .tramite-card.terminado { border-left-color: #5cb85c; /* Verde */ }
+
 .tramite-card.rechazado { border-left-color: #d9534f; /* Rojo */ }
 
+
+
 /* Estilos para los botones dentro de la tarjeta */
+
 .tramite-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 10px;
+
 }
+
+
 
 .tramite-actions select,
+
 .tramite-actions button {
-    font-size: 0.8em;
-    padding: 8px 12px;
-    border-radius: 5px;
+
+    font-size: 0.8em;
+
+    padding: 8px 12px;
+
+    border-radius: 5px;
+
 }
+
+
 
 /* Estilos para los estados de las placas */
+
 .badge-en-trámite {
-    background-color: #ffc107; /* Amarillo */
-    color: #333; /* Texto oscuro para contraste */
+
+    background-color: #ffc107; /* Amarillo */
+
+    color: #333; /* Texto oscuro para contraste */
+
 }
+
+
 
 .badge-recibida {
-    background-color: #007bff; /* Azul */
-    color: white;
+
+    background-color: #007bff; /* Azul */
+
+    color: white;
+
 }
+
+
 
 .badge-asignada {
-    background-color: #28a745; /* Verde */
-    color: white;
+
+    background-color: #28a745; /* Verde */
+
+    color: white;
+
 }
+
+
 
 .badge-matriculada {
-    background-color: #6c757d; /* Gris */
-    color: white;
+
+    background-color: #6c757d; /* Gris */
+
+    color: white;
+
 }
+
 /* Estilos para el contenedor de las placas */
+
 #tablaPlacas {
-    display: flex; /* Activa el modelo de caja flexible */
-    flex-wrap: wrap; /* Permite que las tarjetas se envuelvan a la siguiente línea */
-    gap: 20px; /* Crea un espacio uniforme de 20px entre las tarjetas */
-    justify-content: center; /* Centra las tarjetas horizontalmente en el contenedor */
-    align-items: flex-start; /* Alinea las tarjetas en la parte superior del contenedor */
-    padding: 20px;
+
+    display: flex; /* Activa el modelo de caja flexible */
+
+    flex-wrap: wrap; /* Permite que las tarjetas se envuelvan a la siguiente línea */
+
+    gap: 20px; /* Crea un espacio uniforme de 20px entre las tarjetas */
+
+    justify-content: center; /* Centra las tarjetas horizontalmente en el contenedor */
+
+    align-items: flex-start; /* Alinea las tarjetas en la parte superior del contenedor */
+
+    padding: 20px;
+
 }
+
+
 
 /* Estilos para cada tarjeta de placa */
+
 .placa-card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    width: 280px; /* Ancho fijo para cada tarjeta */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.2s;
+
+    background-color: #ffffff;
+
+    border: 1px solid #e0e0e0;
+
+    border-radius: 10px;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    padding: 20px;
+
+    width: 280px; /* Ancho fijo para cada tarjeta */
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    transition: transform 0.2s;
+
 }
+
+
 
 .placa-card:hover {
-    transform: translateY(-5px); /* Efecto sutil al pasar el mouse */
+
+    transform: translateY(-5px); /* Efecto sutil al pasar el mouse */
+
 }
+
 .btn-tramite {
-    font-size: 1rem;
-    padding: 10px 20px;
+
+    font-size: 1rem;
+
+    padding: 10px 20px;
+
 }
+
+
 
 .btn-compacto {
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    background: linear-gradient(45deg, #FF7E5F, #FE0944);
-    color: white;
-    border: none;
-    transition: transform 0.2s ease-in-out;
+
+    padding: 8px 16px;
+
+    font-size: 0.9rem;
+
+    background: linear-gradient(45deg, #FF7E5F, #FE0944);
+
+    color: white;
+
+    border: none;
+
+    transition: transform 0.2s ease-in-out;
+
 }
+
+
 
 .btn-compacto:hover {
-    transform: scale(1.05);
+
+    transform: scale(1.05);
+
 }
+
 .btn-primary logo {
-    background-image: url('LOGO 2025 .png') !important;
-    background-size: 20px; /* Tamaño del logo */
-    background-repeat: no-repeat;
-    background-position: 10px center; /* Posición del logo a la izquierda */
-    padding-left: 40px; /* Ajusta el padding para que el texto no se superponga con el logo */
-}
+
+        background-image: url('LOGO 2025 .png') !important;
+
+        background-size: 20px; /* Tamaño del logo */
+
+        background-repeat: no-repeat;
+
+        background-position: 10px center; /* Posición del logo a la izquierda */
+
+        padding-left: 40px; /* Ajusta el padding para que el texto no se superponga con el logo */
+
+    } 
+
+
 
 .tramites-category h4 {
-    color: #FF8C00; /* Un color naranja distintivo */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Sombra para que el texto resalte más */
+
+    color: #FF8C00; /* Un color naranja distintivo */
+
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Sombra para que el texto resalte más */
+
 }
+
 .btn logo {
-    /* Define el logo como imagen de fondo */
-    background-image: url('LOGO 2025 .png');
-    /* Evita que la imagen se repita */
-    background-repeat: no-repeat;
-    /* Ajusta el tamaño de la imagen para que quepa dentro del botón */
-    background-size: 60px 60px;
-    /* Posiciona el logo a la izquierda, con un pequeño margen */
-    background-position: 10px center;
-    /* Añade espacio al lado izquierdo del texto del botón para evitar que el logo lo cubra */
-    padding-left: 80px; 
+
+    /* Define el logo como imagen de fondo */
+
+    background-image: url('LOGO 2025 .png');
+
+    /* Evita que la imagen se repita */
+
+    background-repeat: no-repeat;
+
+    /* Ajusta el tamaño de la imagen para que quepa dentro del botón */
+
+    background-size: 60px 60px;
+
+    /* Posiciona el logo a la izquierda, con un pequeño margen */
+
+    background-position: 10px center;
+
+    /* Añade espacio al lado izquierdo del texto del botón para evitar que el logo lo cubra */
+
+    padding-left: 80px; 
+
 }
+
+
 
 /* Estilos para el botón con la imagen de fondo */
+
 .btn.logo {
-  border: none;
-  background-color: #FFA500; /* Color naranja sólido */
-  /* Si el botón tiene una imagen dentro, asegúrate de que el padding sea suficiente */
-  padding: 10px; 
-  border-radius: 8px; /* Opcional: para esquinas redondeadas */
-  cursor: pointer;
+
+  border: none;
+
+  background-color: #FFA500; /* Color naranja sólido */
+
+  /* Si el botón tiene una imagen dentro, asegúrate de que el padding sea suficiente */
+
+  padding: 10px; 
+
+  border-radius: 8px; /* Opcional: para esquinas redondeadas */
+
+  cursor: pointer;
+
 }
+
+
 
 /* Estilo para la imagen dentro del botón */
+
 .btn.logo img {
-  width: 260px; 
-  height: 260px;
+
+  width: 260px; 
+
+  height: 260px;
+
 }
+
+
 
 .btn.logo {
+
 border: none;
+
 background-color: linear-gradient(to right, #FF0000, #CC0000);
+
 padding: 10px;
+
 border-radius: 8px;
+
 cursor: pointer;
-transition: transform 0.4s ease-in-out; /* Transición suave de la escala */
+
+transition: transform 0.4s ease-in-out; / Transición suave de la escala */
+
 }
+
+
 
 .btn.logo img {
+
 width: 260px;
+
 height: 260px;
+
 }
+
+
 
 .btn.logo:hover {
+
 transform: scale(1.05); /* Escala el botón al 105% de su tamaño */
+
 }
+
+
 
 .recibo-logo {
-    display: block;
-    margin: 0 auto 10px auto;
-    max-width: 160px; /* Adjust the size as needed */
-    height: auto;
+
+    display: block;
+
+    margin: 0 auto 10px auto;
+
+    max-width: 160px; /* Adjust the size as needed */
+
+    height: auto;
+
 }
+
 /* Contenedor principal del recibo tipo ticket */
+
 .recibo-ticket-container {
-   font-family: Arial, sans-serif; /* Fuente de ancho fijo, como en una impresora de tickets */
-    width: 100px; /* Ancho muy reducido para garantizar que quepa */
-    padding: 2px;
-    margin: 2px auto;
-    border: 1px dashed #000;
-    color: #000;
-    font-size: 10px; /* Tamaño de fuente muy pequeño */
-    line-height: 1.2;
+
+   font-family: Arial, sans-serif; /* Fuente de ancho fijo, como en una impresora de tickets */
+
+    width: 100px; /* Ancho muy reducido para garantizar que quepa */
+
+    padding: 2px;
+
+    margin: 2px auto;
+
+    border: 1px dashed #000;
+
+    color: #000;
+
+    font-size: 10px; /* Tamaño de fuente muy pequeño */
+
+    line-height: 1.2;
+
 }
+
+
 
 /* Estilo para el logo */
+
 .recibo-ticket-logo {
-    display: block;
-    max-width: 40px; /* Tamaño del logo muy pequeño */
-    height: auto;
-    margin: 0 auto 5px auto;
+
+    display: block;
+
+    max-width: 40px; /* Tamaño del logo muy pequeño */
+
+    height: auto;
+
+    margin: 0 auto 5px auto;
+
 }
+
+
 
 /* Título del recibo */
+
 .recibo-ticket-titulo {
-    text-align: center;
-    font-size: 10px;
-    margin-bottom: 5px;
-    border-bottom: 1px solid #000;
-    padding-bottom: 3px;
+
+    text-align: center;
+
+    font-size: 10px;
+
+    margin-bottom: 5px;
+
+    border-bottom: 1px solid #000;
+
+    padding-bottom: 3px;
+
 }
+
+
 
 /* Información del recibo */
+
 .recibo-ticket-info p {
-    margin: 1px 0;
+
+    margin: 1px 0;
+
 }
+
+
 
 .recibo-ticket-info strong {
-    font-weight: bold;
+
+    font-weight: bold;
+
 }
+
+
 
 /* Separador */
+
 .recibo-ticket-container hr {
-    border: none;
-    border-top: 1px dashed #555;
-    margin: 3px 0;
+
+    border: none;
+
+    border-top: 1px dashed #555;
+
+    margin: 3px 0;
+
 }
+
+
 
 /* Detalles del valor */
+
 .recibo-ticket-detalle {
-    margin-top: 5px;
+
+    margin-top: 5px;
+
 }
+
+
 
 .recibo-ticket-detalle p {
-    font-size: 8px;
-    font-weight: bold;
-    text-align: right;
+
+    font-size: 8px;
+
+    font-weight: bold;
+
+    text-align: right;
+
 }
+
+
 
 /* Mensaje de agradecimiento */
+
 .recibo-ticket-gracias {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 8px;
-    font-style: italic;
-    color: #333;
-}
-/* Responsive */
-@media (max-width: 768px) {
-    .container {
-        margin: 10px;
-        padding: 15px;
-    }
-    
-    .header h1 {
-        font-size: 1.5rem;
-    }
-    
-    .nav {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .nav-btn {
-        width: 100%;
-        margin: 5px 0;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    /* Ajustes para secciones de trámites */
-    .tramites-list {
-        flex-direction: column;
-    }
 
-    .tramites-category {
-        flex: 1 1 100%;
-    }
-    
-    /* Ajustes para utilidades */
-    .utilidad-detalle {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .utilidad-item {
-        min-width: unset;
-        width: 100%;
-    }
+    text-align: center;
 
-    /* Reglas de responsividad específicas para la tabla */
-    .table-container {
-        overflow-x: auto;
-    }
+    margin-top: 10px;
 
-    .table-container table,
-    .table-container thead,
-    .table-container tbody,
-    .table-container th,
-    .table-container td,
-    .table-container tr {
-        display: block; 
-    }
-    
-    .table-container thead tr { 
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-    }
-    
-    .table-container tr { border: 1px solid #ccc; margin-bottom: 10px; }
-    
-    .table-container td { 
-        border: none;
-        border-bottom: 1px solid #eee; 
-        position: relative;
-        padding-left: 50%; 
-        text-align: right;
-    }
-    
-    .table-container td:before { 
-        position: absolute;
-        top: 6px;
-        left: 6px;
-        width: 45%; 
-        padding-right: 10px; 
-        white-space: nowrap;
-        text-align: left;
-        font-weight: bold;
-    }
-    
-    /* Etiquetas para cada celda en modo móvil */
-    .table-container td:nth-of-type(1):before { content: "Fecha"; }
-    .table-container td:nth-of-type(2):before { content: "Cliente"; }
-    .table-container td:nth-of-type(3):before { content: "Cuenta"; }
-    .table-container td:nth-of-type(4):before { content: "Tipo"; }
-    .table-container td:nth-of-type(5):before { content: "Monto"; }
-    .table-container td:nth-of-type(6):before { content: "Acciones"; }
-    
-    .recibo-ticket-container {
-        width: 100%; /* Ajusta el recibo a la anchura completa del móvil */
-    }
-}
+    font-size: 8px;
 
-/* Media Query para teléfonos pequeños (hasta 480px) */
-@media (max-width: 480px) {
-    .header h1 {
-        font-size: 1.2rem;
-    }
-    
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        font-size: 12px;
-    }
-    
-    .btn-primary, .btn-secondary {
-        padding: 10px 20px;
-        font-size: 12px;
-    }
+    font-style: italic;
 
-    .btn-edit, .btn-delete, .btn-whatsapp, .btn-download {
-        font-size: 10px;
-        padding: 5px 8px;
-    }
+    color: #333;
 
-    .tramite-actions {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .tramite-actions select,
-    .tramite-actions button {
-        width: 100%;
-    }
-
-    /* Reajuste para tablas en pantallas muy pequeñas */
-    .table-container td:before {
-        font-size: 10px;
-    }
 }
