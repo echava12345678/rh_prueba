@@ -238,25 +238,7 @@ function filtrarTramites(searchTerm) {
     }
     
 }
-function actualizarFormularioPlaca(placa) {
-    // Si se encuentra una placa (el objeto no es nulo), rellena los campos del formulario.
-    if (placa) {
-        document.getElementById('placaInput').value = placa.placa || '';
-        document.getElementById('placaCliente').value = placa.cliente || '';
-        document.getElementById('placaTramite').value = placa.tramite || '';
-        document.getElementById('placaEstado').value = placa.estado || '';
-        document.getElementById('placaFechaRecepcion').value = placa.fechaRecepcion || '';
-        document.getElementById('placaObservaciones').value = placa.observaciones || '';
-    } else {
-        // Si no se encuentra ninguna placa, vacía todos los campos para evitar valores "undefined".
-        document.getElementById('placaInput').value = '';
-        document.getElementById('placaCliente').value = '';
-        document.getElementById('placaTramite').value = '';
-        document.getElementById('placaEstado').value = '';
-        document.getElementById('placaFechaRecepcion').value = '';
-        document.getElementById('placaObservaciones').value = '';
-    }
-}
+
 
 function filtrarRegistros(searchTerm) {
     const term = searchTerm.toLowerCase();
@@ -335,11 +317,7 @@ function filtrarPlacas(searchTerm) {
     } else {
         displayElement.style.display = 'none';
     }
-     if (resultados.length > 0) {
-        actualizarFormularioPlaca(resultados[0]);
-    } else {
-        actualizarFormularioPlaca(null);
-    }
+     
     renderPlacas(resultados);
 }
 function renderTramites(tramitesToRender) {
@@ -1950,3 +1928,9 @@ window.actualizarValorConBoton = actualizarValorConBoton;
 window.descargarReciboEgreso = descargarReciboEgreso; // NUEVO: Exponer la nueva función
 window.actualizarTablaPlacasContabilidad = actualizarTablaPlacasContabilidad;
 window.filtrarPlacasContabilidad = filtrarPlacasContabilidad;
+
+window.filtrarPlacas = filtrarPlacas;
+window.filtrarPlacasContabilidad = filtrarPlacasContabilidad;
+window.filtrarTramites = filtrarTramites;
+window.filtrarClientes = filtrarClientes;
+window.filtrarRegistros = filtrarRegistros;
