@@ -238,6 +238,25 @@ function filtrarTramites(searchTerm) {
     }
     
 }
+function actualizarFormularioPlaca(placa) {
+    // Si se encuentra una placa (el objeto no es nulo), rellena los campos del formulario.
+    if (placa) {
+        document.getElementById('placaInput').value = placa.placa || '';
+        document.getElementById('placaCliente').value = placa.cliente || '';
+        document.getElementById('placaTramite').value = placa.tramite || '';
+        document.getElementById('placaEstado').value = placa.estado || '';
+        document.getElementById('placaFechaRecepcion').value = placa.fechaRecepcion || '';
+        document.getElementById('placaObservaciones').value = placa.observaciones || '';
+    } else {
+        // Si no se encuentra ninguna placa, vacía todos los campos para evitar valores "undefined".
+        document.getElementById('placaInput').value = '';
+        document.getElementById('placaCliente').value = '';
+        document.getElementById('placaTramite').value = '';
+        document.getElementById('placaEstado').value = '';
+        document.getElementById('placaFechaRecepcion').value = '';
+        document.getElementById('placaObservaciones').value = '';
+    }
+}
 
 function filtrarRegistros(searchTerm) {
     const term = searchTerm.toLowerCase();
@@ -308,6 +327,11 @@ function filtrarPlacas(searchTerm) {
         displayElement.style.display = 'block';
     } else {
         displayElement.style.display = 'none';
+    }
+     if (resultados.length > 0) {
+        actualizarFormularioPlaca(resultados[0]);
+    } else {
+        actualizarFormularioPlaca(null);
     }
     renderPlacas(resultados);
 }
