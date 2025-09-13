@@ -855,6 +855,7 @@ function actualizarRegistrosContables() {
     if (filtroTipo !== 'todos') {
         registrosFiltrados = registrosContables.filter(reg => reg.tipo === filtroTipo);
     }
+    registrosFiltrados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
     
     if (registrosFiltrados.length === 0) {
         container.innerHTML = '<p>No hay registros contables para el filtro seleccionado.</p>';
