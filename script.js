@@ -1039,6 +1039,10 @@ async function editarMovimiento(id) {
                     <input type="text" id="editContaCliente" value="${movimiento.cliente}" required>
                 </div>
                 <div class="form-group">
+                    <label>Concepto</label>
+                    <input type="text" id="editContaConcepto" value="${movimiento.concepto}" required>
+                </div>
+                <div class="form-group">
                     <label>Banco</label>
                     <select id="editContaBanco" required>
                         <option value="victor" ${movimiento.banco === 'victor' ? 'selected' : ''}>Banco de Víctor</option>
